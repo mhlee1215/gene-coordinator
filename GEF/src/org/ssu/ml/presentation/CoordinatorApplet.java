@@ -96,8 +96,15 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 		setSize(500, 500);
 
+		
+		System.setProperty(
+	            "Quaqua.tabLayoutPolicy","wrap"
+	         );
 		try {
 			// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+			UIManager.setLookAndFeel(
+	                  "ch.randelshofer.quaqua.QuaquaLookAndFeel"
+	              );
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

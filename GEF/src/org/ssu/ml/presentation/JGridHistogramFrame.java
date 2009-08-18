@@ -24,12 +24,10 @@
 package org.ssu.ml.presentation;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -41,20 +39,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.ui.RefineryUtilities;
-import org.ssu.ml.base.CGridHistogramData;
-import org.ssu.ml.base.HistogramDescriptor;
-import org.ssu.ml.base.UiGlobals;
-import org.ssu.ml.ui.NodeRenderManager;
-import org.tigris.gef.base.*;
-import org.tigris.gef.presentation.FigRect;
-import org.tigris.gef.presentation.FigText;
 import org.tigris.gef.ui.*;
-import org.tigris.gef.undo.RedoAction;
-import org.tigris.gef.undo.UndoAction;
-import org.tigris.gef.event.*;
-import org.tigris.gef.graph.*;
-import org.tigris.gef.graph.presentation.JGraph;
-import org.tigris.gef.util.*;
 
 /**
  * A window that displays a toolbar, a connected graph editing pane, and a
@@ -63,23 +48,21 @@ import org.tigris.gef.util.*;
 
 public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable, ChangeListener{
 	
+	Vector<double[]> datas = new Vector<double[]>();
 	double data[];            
 	int precise = 10;
 	int beanCurValue = 10;
-	JPanel histogram;
+	JPanel _histogram;
 
     private static final long serialVersionUID = -8167010467922210977L;
     /** The toolbar (shown at top of window). */
     private ToolBar _toolbar = new PaletteFig();
-    /** The graph pane (shown in middle of window). */
-    private JGraph _graph;
+    
     /** A statusbar (shown at bottom ow window). */
     private JLabel _statusbar = new JLabel(" ");
-
     private JPanel _mainPanel = new JPanel(new BorderLayout());
-    private JPanel _graphPanel = new JPanel(new BorderLayout());
-    private JMenuBar _menubar = new JMenuBar();
 
+    HistogramDataset histogramdataset = new HistogramDataset();
     Dimension drawingSize = null;
     /**
      * Contruct a new JGraphFrame with the title "untitled" and a new
@@ -95,7 +78,12 @@ public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable
 
     public JGridHistogramFrame(String title, double[] data) {
         this(title);
-        this.data = data;
+        //this.data = data;
+        datas.add(data);
+    }
+    
+    public void addData(double[] data){
+    	datas.add(data);
     }
     
     public int getPrecise() {
@@ -157,9 +145,9 @@ public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable
         beanResizer.addChangeListener(this);
        // beanResizer.setPaintTicks(true);
         beanResizer.setMinorTickSpacing(5);
-        BorderFactory a;
         
         
+        //BorderFactory a;
         //beanResizer.setBorder(
                 //BorderFactory.createEmptyBorder(0,0,0,0)
                 //BorderFactory.createLineBorder(Color.black, 1)
@@ -182,9 +170,9 @@ public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable
     
     public void drawHistogram()
     {
-    	histogram = createPanel();
-    	histogram.setPreferredSize(new Dimension(700, 270));
-        _mainPanel.add(histogram);
+    	_histogram = createPanel();
+    	_histogram.setPreferredSize(new Dimension(700, 270));
+        _mainPanel.add(_histogram);
         //this.remove
     }
     
@@ -192,8 +180,13 @@ public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable
     {
     	return createDataset(data, 10);
     }
-	private static IntervalXYDataset createDataset(double data[], int precise) {
-		HistogramDataset histogramdataset = new HistogramDataset();
+    
+    private static IntervalXYDataset createDataset(double data[], int precise){
+    	HistogramDataset histogramdataset = new HistogramDataset();
+    	return addDataset(histogramdataset, data, precise);
+    }
+    
+	private static IntervalXYDataset addDataset(HistogramDataset histogramdataset, double data[], int precise) {	
 		histogramdataset.addSeries("Grid Density", data, precise);
 		return histogramdataset;
 	}
@@ -201,24 +194,40 @@ public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable
 	private static JFreeChart createChart(IntervalXYDataset intervalxydataset)
 	{
 	     JFreeChart jfreechart = ChartFactory.createHistogram("Grid Density", "Density", "Frequency", intervalxydataset, PlotOrientation.VERTICAL, true, true, false);
+	     
 	     XYPlot xyplot = (XYPlot)jfreechart.getPlot();
-	     xyplot.setForegroundAlpha(0.85F);
+	     xyplot.setForegroundAlpha(0.3F);
 
 	     return jfreechart;
 	}
 	
-	public JPanel createPanel()
-	{
-		System.out.println("create Panel, precise : "+precise);
-	     JFreeChart jfreechart = createChart(createDataset(data, precise));
-	     return new ChartPanel(jfreechart);
+	public JPanel createPanel() {
+		System.out.println("create Panel, precise : " + precise);
+		for(int count = 0 ; count < datas.size() ; count++)
+		{
+			histogramdataset = (HistogramDataset) addDataset(histogramdataset, datas.get(count), precise);	
+		}
+		
+		JFreeChart jfreechart = createChart(histogramdataset);
+		XYPlot plot = jfreechart.getXYPlot();
+		//jfreechart.get
+		//XYItemRenderer renderer = plot.getRenderer();
+		//renderer.set
+		//BarRenderer renderer = (BarRenderer)plot.getRenderer();
+		//renderer.set
+		return new ChartPanel(jfreechart);
 	}
-	
 
+	public void clean()
+	{
+		histogramdataset = new HistogramDataset();
+	}
     public static void main(String[] argv)
     {
     	double data[] = {1, 2, 3, 2, 1, 4, 5, 3, 1, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
+    	double data1[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
     	JGridHistogramFrame _jgf = new JGridHistogramFrame("title", data);
+    	_jgf.addData(data1);
         _jgf.drawHistogram();
         _jgf.pack();
         RefineryUtilities.centerFrameOnScreen(_jgf);
@@ -233,7 +242,6 @@ public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable
 		{
 			JSlider slider = (JSlider)source;
 			String sliderName = slider.getName();
-			//System.out.println(sliderName);
 			if(sliderName != null){
 				if (sliderName.equals("beanResizer")) {
 
@@ -241,20 +249,22 @@ public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable
 						beanCurValue = slider.getValue();
 						
 						precise = beanCurValue;
-						
-						_mainPanel.remove(histogram);
-						histogram = createPanel();
-				    	histogram.setPreferredSize(new Dimension(700, 270));
-				        _mainPanel.add(histogram);
-				        
-				        
-						//this.repaint();
-						histogram.repaint();
-						
+						clean();
+						_mainPanel.remove(_histogram);
+						_histogram = createPanel();
+				        _mainPanel.add(_histogram);
+				        _histogram.revalidate();
 					}
 				}
 			}
 		}
+		
+	}
+	
+	public void paint(Graphics g)
+	{
+		super.paint(g);
+		System.out.println("Iam a repaint");
 		
 	}
 } /* end class JGraphFrame */
