@@ -11,6 +11,7 @@ import java.util.List;
 import org.jfree.ui.RefineryUtilities;
 import org.ssu.ml.base.UiGlobals;
 import org.ssu.ml.presentation.JGridHistogramFrame;
+import org.ssu.ml.presentation.JGridHistogramPanel;
 import org.tigris.gef.base.Cmd;
 import org.tigris.gef.base.Editor;
 import org.tigris.gef.base.LayerGrid;
@@ -78,10 +79,32 @@ public class CmdGridHistogram extends Cmd {
         for(int count = 0 ; count < result.length ; count++)
         	result_1[count] = (double)result[count];
         
+        UiGlobals.getGridDatas().add(result_1);
+        
         if(result_1.length > 0){
-	        JGridHistogramFrame histoFrame = new JGridHistogramFrame("title", result_1);
-	        histoFrame.setPrecise(100);
-	        histoFrame.drawHistogram();
+        	JGridHistogramFrame histoFrame = new JGridHistogramFrame("title");
+        	
+        	JGridHistogramPanel total = new JGridHistogramPanel("Total");
+        	for(int count = 0 ; count < UiGlobals.getGridDatas().size() ; count++)
+        	{
+        		total.addData(UiGlobals.getGridDatas().get(count));
+        		
+            	//panel.setPrecise(10);
+    	        
+        	}
+        	total.drawHistogram();
+        	histoFrame.add(total, "Total Density");
+        	
+        	for(int count = 0 ; count < UiGlobals.getGridDatas().size() ; count++)
+        	{
+        		JGridHistogramPanel panel = new JGridHistogramPanel("Grid Density - "+count, UiGlobals.getGridDatas().get(count));
+            	panel.drawHistogram();
+            	//panel.setPrecise(10);
+    	        histoFrame.add(panel, "Grid Density - "+count);
+        	}
+        	
+	        
+	        
 	        histoFrame.pack();
 	        
 	        RefineryUtilities.centerFrameOnScreen(histoFrame);

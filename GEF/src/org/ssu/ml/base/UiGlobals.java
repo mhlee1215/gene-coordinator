@@ -1,6 +1,7 @@
 package org.ssu.ml.base;
 
 import java.applet.Applet;
+import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JSlider;
@@ -9,8 +10,18 @@ import org.ssu.ml.ui.NodeRenderManager;
 import org.tigris.gef.base.Globals;
 
 public class UiGlobals extends Globals{
+	private static Vector<double[]> gridDatas = new Vector<double[]>();
+	
 	private static Applet _curApplet = null;
 	
+	public static Vector<double[]> getGridDatas() {
+		return gridDatas;
+	}
+
+	public static void setGridDatas(Vector<double[]> gridDatas) {
+		UiGlobals.gridDatas = gridDatas;
+	}
+
 	private static JSlider _gridSlider = null;
 
 	public static Applet get_curApplet() {

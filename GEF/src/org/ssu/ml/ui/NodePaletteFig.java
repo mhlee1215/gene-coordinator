@@ -87,10 +87,10 @@ public class NodePaletteFig extends ToolBar {
         //add(new CmdSetMode(ModeCreateFigText.class, "Text"));
         
         //add(image1, "Image1", "Image1");
-        add(new CmdZoom(2), "Zoom in", "zoom_in");
-        add(new CmdZoom(0.5), "Zoom out", "zoom_out");
-        add(new CmdGridHistogram(), "Show Grid Histogram", "Grid_Histogram");
-    
+        add(new CmdZoom(2), "Zoom in", "zoom_in", ToolBar.BUTTON_TYPE_LEFT);
+        add(new CmdZoom(0.5), "Zoom out", "zoom_out", ToolBar.BUTTON_TYPE_CENTER);
+        add(new CmdGridHistogram(), "Grid Histo", "Grid_Histogram", ToolBar.BUTTON_TYPE_RIGHT);
+        
         
     }
 } /* end class PaletteFig */

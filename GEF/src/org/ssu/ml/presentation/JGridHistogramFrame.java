@@ -46,21 +46,19 @@ import org.tigris.gef.ui.*;
  * status bar.
  */
 
-public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable, ChangeListener{
+public class JGridHistogramFrame extends JFrame implements Cloneable{
 	
 	Vector<double[]> datas = new Vector<double[]>();
-	double data[];            
+	        
 	int precise = 10;
 	int beanCurValue = 10;
 	JPanel _histogram;
 
     private static final long serialVersionUID = -8167010467922210977L;
     /** The toolbar (shown at top of window). */
-    private ToolBar _toolbar = new PaletteFig();
-    
-    /** A statusbar (shown at bottom ow window). */
-    private JLabel _statusbar = new JLabel(" ");
-    private JPanel _mainPanel = new JPanel(new BorderLayout());
+
+    //private JTabbedPaneWithCloseIcons  _mainPanel = new JTabbedPaneWithCloseIcons();
+    private JTabbedPane  _mainPanel = new JTabbedPane();
 
     HistogramDataset histogramdataset = new HistogramDataset();
     Dimension drawingSize = null;
@@ -68,12 +66,18 @@ public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable
      * Contruct a new JGraphFrame with the title "untitled" and a new
      * DefaultGraphModel.
      */
-    public JGridHistogramFrame(String title) {
-        super(title);
-        setContentPane(_mainPanel);
-        //add(_mainPanel, BorderLayout.CENTER);
-        setUpToolbar();
-       
+	public JGridHistogramFrame(String title) {
+		super(title);
+		setContentPane(_mainPanel);
+		_mainPanel.setUI(new CloseableTabbedPaneUI());
+		_mainPanel.setFont(
+			    new Font("Lucida Grande", Font.PLAIN, 11)
+			);
+		// add(_mainPanel, BorderLayout.CENTER);
+
+
+
+
     }
 
     public JGridHistogramFrame(String title, double[] data) {
@@ -82,8 +86,10 @@ public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable
         datas.add(data);
     }
     
-    public void addData(double[] data){
-    	datas.add(data);
+    public void addPanel(JGridHistogramPanel panel, String title)
+    {
+    	_mainPanel.addTab(title, panel);
+    	
     }
     
     public int getPrecise() {
@@ -104,167 +110,28 @@ public class JGridHistogramFrame extends JFrame implements IStatusBar, Cloneable
     
 
 
-    public ToolBar getToolBar() {
-        return _toolbar;
-    }
-
-    public void setToolBar(ToolBar tb) {
-        _toolbar = tb;
-        _mainPanel.add(_toolbar, BorderLayout.NORTH);
-    }
-
-
-    public void setUpToolbar()
-    {
-    	_toolbar = new ToolBar();
-    	
-    	int beanMax = 100;
-		int beanMin = 1;
-		beanCurValue = 10;
-		JSlider beanResizer = new JSlider(JSlider.VERTICAL,
-				beanMin, beanMax, beanCurValue);
-		beanResizer.setName("beanResizer");
-		beanResizer.setBackground(Color.white);
-		Font font = new Font("Dialog.plain", 0, 10);
-		
-		JLabel minLabel = new JLabel("1");
-		minLabel.setFont(font);
-		JLabel maxLabel = new JLabel("100");
-		maxLabel.setFont(font);
-		Hashtable<Integer, JLabel> labelTable = 
-            new Hashtable<Integer, JLabel>();
-		labelTable.put(new Integer( beanMin ),
-				minLabel );
-		labelTable.put(new Integer( beanMax ),
-				maxLabel );
-		beanResizer.setLabelTable(labelTable);
-		beanResizer.setPaintLabels(false);
-		//gridResizer.setFont(font);
-        beanResizer.setPaintLabels(true);
-        beanResizer.setMajorTickSpacing(10);
-        beanResizer.addChangeListener(this);
-       // beanResizer.setPaintTicks(true);
-        beanResizer.setMinorTickSpacing(5);
-        
-        
-        //BorderFactory a;
-        //beanResizer.setBorder(
-                //BorderFactory.createEmptyBorder(0,0,0,0)
-                //BorderFactory.createLineBorder(Color.black, 1)
-        		
-        //        BorderFactory.createTitledBorder("Number of Bean")
-        //        );
-		_toolbar.add(beanResizer);
-    	
-    	 add(_toolbar, BorderLayout.WEST);
-    }
-
-    // //////////////////////////////////////////////////////////////
-    // IStatusListener implementation
-
-    /** Show a message in the statusbar. */
-    public void showStatus(String msg) {
-        if (_statusbar != null)
-            _statusbar.setText(msg);
-    }
     
-    public void drawHistogram()
-    {
-    	_histogram = createPanel();
-    	_histogram.setPreferredSize(new Dimension(700, 270));
-        _mainPanel.add(_histogram);
-        //this.remove
-    }
     
-    private static IntervalXYDataset createDataset(double data[])
-    {
-    	return createDataset(data, 10);
-    }
     
-    private static IntervalXYDataset createDataset(double data[], int precise){
-    	HistogramDataset histogramdataset = new HistogramDataset();
-    	return addDataset(histogramdataset, data, precise);
-    }
-    
-	private static IntervalXYDataset addDataset(HistogramDataset histogramdataset, double data[], int precise) {	
-		histogramdataset.addSeries("Grid Density", data, precise);
-		return histogramdataset;
-	}
+
 	
-	private static JFreeChart createChart(IntervalXYDataset intervalxydataset)
-	{
-	     JFreeChart jfreechart = ChartFactory.createHistogram("Grid Density", "Density", "Frequency", intervalxydataset, PlotOrientation.VERTICAL, true, true, false);
-	     
-	     XYPlot xyplot = (XYPlot)jfreechart.getPlot();
-	     xyplot.setForegroundAlpha(0.3F);
-
-	     return jfreechart;
-	}
-	
-	public JPanel createPanel() {
-		System.out.println("create Panel, precise : " + precise);
-		for(int count = 0 ; count < datas.size() ; count++)
-		{
-			histogramdataset = (HistogramDataset) addDataset(histogramdataset, datas.get(count), precise);	
-		}
-		
-		JFreeChart jfreechart = createChart(histogramdataset);
-		XYPlot plot = jfreechart.getXYPlot();
-		//jfreechart.get
-		//XYItemRenderer renderer = plot.getRenderer();
-		//renderer.set
-		//BarRenderer renderer = (BarRenderer)plot.getRenderer();
-		//renderer.set
-		return new ChartPanel(jfreechart);
-	}
-
-	public void clean()
-	{
-		histogramdataset = new HistogramDataset();
-	}
     public static void main(String[] argv)
     {
     	double data[] = {1, 2, 3, 2, 1, 4, 5, 3, 1, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
     	double data1[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
-    	JGridHistogramFrame _jgf = new JGridHistogramFrame("title", data);
-    	_jgf.addData(data1);
-        _jgf.drawHistogram();
-        _jgf.pack();
-        RefineryUtilities.centerFrameOnScreen(_jgf);
-        _jgf.setVisible(true);
+    	JGridHistogramPanel panel1 = new JGridHistogramPanel("title", data);
+    	JGridHistogramPanel panel2 = new JGridHistogramPanel("title", data1);
+    	JGridHistogramFrame frame = new JGridHistogramFrame("frame");
+    	panel1.drawHistogram();
+    	panel2.drawHistogram();
+    	frame.add(panel1, "panel1");
+    	frame.add(panel2, "panel2");
+       // _jgf.drawHistogram();
+    	frame.pack();
+        RefineryUtilities.centerFrameOnScreen(frame);
+        frame.setVisible(true);
         
     }
 
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		Object source = e.getSource();
-		if(source instanceof JSlider)
-		{
-			JSlider slider = (JSlider)source;
-			String sliderName = slider.getName();
-			if(sliderName != null){
-				if (sliderName.equals("beanResizer")) {
 
-					if (beanCurValue != slider.getValue()) {
-						beanCurValue = slider.getValue();
-						
-						precise = beanCurValue;
-						clean();
-						_mainPanel.remove(_histogram);
-						_histogram = createPanel();
-				        _mainPanel.add(_histogram);
-				        _histogram.revalidate();
-					}
-				}
-			}
-		}
-		
-	}
-	
-	public void paint(Graphics g)
-	{
-		super.paint(g);
-		System.out.println("Iam a repaint");
-		
-	}
 } /* end class JGraphFrame */

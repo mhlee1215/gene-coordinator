@@ -38,6 +38,13 @@ import java.beans.PropertyChangeListener;
 import java.util.Vector;
 
 public class ToolBar extends JToolBar implements MouseListener {
+	
+	public static final int BUTTON_TYPE_LEFT = 0;
+	public static final int BUTTON_TYPE_CENTER = 1;
+	public static final int BUTTON_TYPE_RIGHT = 2;
+	public static final int BUTTON_TYPE_NONE = 3;
+	public static final int BUTTON_TYPE_HELP = 3;
+	
     protected Vector _lockable = new Vector();
     protected Vector _modeButtons = new Vector();
     private static final Color selectedBack = new Color(153, 153, 153);
@@ -61,12 +68,19 @@ public class ToolBar extends JToolBar implements MouseListener {
     }
 
     public JButton add(Action a, String name, String iconResourceStr) {
+    	return add(a, name, iconResourceStr, BUTTON_TYPE_NONE);
+    }
+    
+    public JButton add(Action a, String name, String iconResourceStr, int buttonType) {
         Icon icon = ResourceLoader.lookupIconResource(iconResourceStr, name);
         // System.out.println(icon);
-        return add(a, name, icon);
+        return add(a, name, icon, buttonType);
     }
 
     public JButton add(Action a, String name, Icon icon) {
+    	return add(a, name, icon, BUTTON_TYPE_NONE);
+    }
+    public JButton add(Action a, String name, Icon icon, int buttonType) {
         // JButton b = new JButton(icon);
         // if (a instanceof CmdSetMode || a instanceof CmdCreateNode)
         // _modeButtons.addElement(b);
@@ -88,8 +102,40 @@ public class ToolBar extends JToolBar implements MouseListener {
 
         JButton b = super.add(a);
         b.setName(null);
-        b.setText(null);
+        b.setText(name);
         b.setIcon(icon);
+        b.setVerticalTextPosition(SwingConstants.BOTTOM);
+        b.setHorizontalTextPosition(SwingConstants.CENTER);
+        b.setMargin(new Insets(4, 0, 0, 0));
+        b.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
+        b.setFocusable(false);
+        /*
+        if(buttonType == BUTTON_TYPE_LEFT)
+        {
+        	b.putClientProperty(
+        			   "Quaqua.Button.style", "toggleWest"
+        			);
+        }
+        else if(buttonType == BUTTON_TYPE_CENTER)
+        {
+        	b.putClientProperty(
+     			   "Quaqua.Button.style", "toggleCenter"
+     			);
+        }
+        else if(buttonType == BUTTON_TYPE_RIGHT)
+        {
+        	b.putClientProperty(
+     			   "Quaqua.Button.style", "toggleEast"
+     			);
+        }
+        else if(buttonType == BUTTON_TYPE_HELP)
+        {
+        	b.putClientProperty(
+        			   "JButton.buttonType", "help"
+        			);
+        }
+        */
+        //b.setPreferredSize(new Dimension(50, 50));
         b.setBackground(Color.white);
         b.setToolTipText(name + " ");
         if (a instanceof CmdSetMode || a instanceof CmdCreateNode)

@@ -54,6 +54,9 @@ import org.tigris.gef.undo.UndoAction;
 import org.tigris.gef.util.Localizer;
 import org.tigris.gef.util.ResourceLoader;
 
+
+import ch.randelshofer.quaqua.QuaquaManager;
+
 public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 	public static final int _PADDING = 100;
@@ -91,25 +94,27 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		Localizer.addLocale(Locale.getDefault());
 		Localizer.switchCurrentLocale(Locale.getDefault());
 		ResourceLoader.addResourceExtension("gif");
+		ResourceLoader.addResourceExtension("png");
 		ResourceLoader.addResourceLocation("/org/tigris/gef/Images");
 		System.out.println("constructur");
 
 		setSize(500, 500);
 
-		
-		System.setProperty(
-	            "Quaqua.tabLayoutPolicy","wrap"
-	         );
 		try {
+			
+			System.setProperty("Quaqua.tabLayoutPolicy", "wrap");
+			// configure the class loader of the UIManager.
+			UIManager.put("ClassLoader", getClass().getClassLoader());
 			// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			UIManager.setLookAndFeel(
-	                  "ch.randelshofer.quaqua.QuaquaLookAndFeel"
-	              );
+			UIManager
+					.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+					
+		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		UiGlobals.set_curApplet(this);
 
 	}
@@ -218,7 +223,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		Container content = getContentPane();
 		setUpMenus();
 		content.setLayout(new BorderLayout());
-		content.add(_menubar, BorderLayout.NORTH);
+		//content.add(_menubar, BorderLayout.NORTH);
 		_graphPanel.add(_graph, BorderLayout.CENTER);
 		_graphPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 
