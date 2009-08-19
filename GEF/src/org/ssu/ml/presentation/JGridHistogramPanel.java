@@ -196,6 +196,7 @@ public class JGridHistogramPanel extends JPanel implements IStatusBar, Cloneable
     }
     
 	private static IntervalXYDataset addDataset(HistogramDataset histogramdataset, double data[], int precise) {	
+		System.out.println(data);
 		histogramdataset.addSeries("Grid Density", data, precise);
 		return histogramdataset;
 	}

@@ -25,8 +25,7 @@
 </head>
 <body onLoad="" topMargin="1" leftMargin="1" scroll="no">
 
-<form name="workflow">
-<!--<script src="/js/workflow.js"></script>-->
+<form name="coordinator">
 <applet onLoad="" name="coordinator" code="org.ssu.ml.presentation.CoordinatorApplet"
 archive="
 	coordinator.jar, 
@@ -36,7 +35,7 @@ archive="
 	netscape.jar" MAYSCRIPT height="100%" width="100%" >
 <param name=id value=<%=id%> />
 <param name=fileName value=<%=fileName%>></param>
-<param name-prescaled value=<%=prescaled%>></param>
+<param name=prescaled value=<%=prescaled%>></param>
 
 </applet>	
 

@@ -5,12 +5,10 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.Random;
 
-import org.ssu.ml.base.DoublePair;
-
-public class CNodeData {
-	float[] locxArry = null;
-	float[] locyArry = null;
-	String[] pointerName = null;
+public class CEdgeData {
+	float[] weight = null;
+	String[] srcName = null;
+	String[] destName = null;
 	int[] groups = null;
 	
 	
@@ -29,7 +27,7 @@ public class CNodeData {
 		if(index >= pointCount)
 			result = "Index over the last index.";
 		else
-			result = pointerName[index]+" ["+locxArry[index]+", "+locyArry[index]+"]";
+			result = srcName[index]+", "+destName[index]+" ["+weight[index]+"]";
 		return result;
 	}
 	
@@ -59,25 +57,25 @@ public class CNodeData {
 
 	public void init(int pointCount)
 	{
-		locxArry = new float[pointCount];
-    	locyArry = new float[pointCount];
-    	pointerName = new String[pointCount];
+		weight = new float[pointCount];    	
+    	srcName = new String[pointCount];
+    	destName = new String[pointCount];
     	groups = new int[pointCount];
 	}
-	
+
 	public void init()
 	{
-		locxArry = new float[pointCount];
-    	locyArry = new float[pointCount];
-    	pointerName = new String[pointCount];
+		weight = new float[pointCount];    	
+    	srcName = new String[pointCount];
+    	destName = new String[pointCount];
     	groups = new int[pointCount];
 	}
 	
-	public int insertItem(String name, float locx, float locy)
+	public int insertItem(String srcName, String destName, float weight)
 	{
-		locxArry[itemNum] = locx;
-		locyArry[itemNum] = locy;
-		pointerName[itemNum] = name;
+		this.srcName[itemNum] = srcName;
+		this.destName[itemNum] = destName;
+		this.weight[itemNum] = weight;
 		
 		Random random = new Random();		//need more work.
 		groups[itemNum] = random.nextInt(5);
@@ -86,31 +84,20 @@ public class CNodeData {
 		return itemNum;
 	}
 	
-	public float[] getLocxArry() {
-		return locxArry;
-	}
-	public void setLocxArry(float[] locxArry) {
-		this.locxArry = locxArry;
-	}
-	public float[] getLocyArry() {
-		return locyArry;
-	}
-	public void setLocyArry(float[] locyArry) {
-		this.locyArry = locyArry;
-	}
+	
 	public String[] getPointerNames() {
-		return pointerName;
+		return srcName;
 	}
 	public void setPointerNames(String[] pointerName) {
-		this.pointerName = pointerName;
+		this.srcName = pointerName;
 	}
 	
 	public String getPointerName(int index){
-		return pointerName[index];
+		return srcName[index];
 	}
 	
 	public void setPointerName(int index, String name){
-		this.pointerName[index] = name;
+		this.srcName[index] = name;
 	}
 	
 	public int getPointCount() {
@@ -140,6 +127,46 @@ public class CNodeData {
 //		return Color.black;
 //	}
 	
+	public float[] getWeight() {
+		return weight;
+	}
+
+	public void setWeight(float[] weight) {
+		this.weight = weight;
+	}
+
+	public String[] getSrcName() {
+		return srcName;
+	}
+
+	public void setSrcName(String[] srcName) {
+		this.srcName = srcName;
+	}
+
+	public String[] getDestName() {
+		return destName;
+	}
+
+	public void setDestName(String[] destName) {
+		this.destName = destName;
+	}
+
+	public int[] getGroups() {
+		return groups;
+	}
+
+	public void setGroups(int[] groups) {
+		this.groups = groups;
+	}
+
+	public int getGroupNum() {
+		return groupNum;
+	}
+
+	public void setGroupNum(int groupNum) {
+		this.groupNum = groupNum;
+	}
+
 	public Color getColor(int index)
 	{
 		int group = groups[index];
@@ -151,16 +178,5 @@ public class CNodeData {
 		return Color.black;
 	} 
 	
-	public HashMap<String, DoublePair> getHashMap()
-	{
-		HashMap<String, DoublePair> result = new HashMap<String, DoublePair>();
-		for(int count = 0 ; count < itemNum ; count++)
-		{
-			DoublePair point = new DoublePair(locxArry[count], locyArry[count]);
-			
-			result.put(pointerName[count], point);
-		}
-		return result;
-	}
-	
+
 }

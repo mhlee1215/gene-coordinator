@@ -33,6 +33,7 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.ssu.ml.base.UiGlobals;
+import org.ssu.ml.ui.CEdgeData;
 import org.ssu.ml.ui.CNodeData;
 import org.ssu.ml.ui.NodeLoadingProgressBar;
 import org.ssu.ml.ui.NodePaletteFig;
@@ -55,7 +56,6 @@ import org.tigris.gef.util.Localizer;
 import org.tigris.gef.util.ResourceLoader;
 
 
-import ch.randelshofer.quaqua.QuaquaManager;
 
 public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
@@ -70,9 +70,12 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 	String id = null;
 	String coordFileName = "";
+	String edgeFileName = "";
 	int pre_scaled = 1;
 
-	CNodeData data = new CNodeData();
+	CNodeData nodeData = new CNodeData();
+	CEdgeData edgeData = new CEdgeData();
+	
 	Editor editor = null;
 
 	private ToolBar _toolbar = null;
@@ -102,17 +105,20 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 		try {
 			
-			System.setProperty("Quaqua.tabLayoutPolicy", "wrap");
+			//QuaquaManager.setProperty("Quaqua.tabLayoutPolicy", "wrap");
 			// configure the class loader of the UIManager.
-			UIManager.put("ClassLoader", getClass().getClassLoader());
+			//UIManager.put("ClassLoader", getClass().getClassLoader());
 			// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			UIManager
-					.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-					
+			//UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+			try {
+				  UIManager.setLookAndFeel(
+				    UIManager.getSystemLookAndFeelClassName());
+				} catch (Exception e) {
+				}	
 		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 		UiGlobals.set_curApplet(this);
@@ -129,17 +135,28 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		else
 			pre_scaled = Integer.parseInt(getParameter("prescaled"));
 
-		coordFileName = this.getParameter("fileName");
+		coordFileName = this.getParameter("fileName") + ".coord";
+		edgeFileName = this.getParameter("fileName") + ".edges";
+		
 		if (coordFileName != null) {
-			System.out.println("read file name : " + coordFileName);
-			int lineCount = readCoordData(coordFileName);
-			System.out.println("read file line count : " + lineCount);
+			if(!coordFileName.equals("null")){
+				System.out.println("read file name : " + coordFileName);
+				int lineCount = readCoordData(coordFileName);
+				System.out.println("read ciird file line count : " + lineCount);
+				
+				if(lineCount <= 0) makeRandomData(5000, 300, 300);
+				
+				//lineCount = readEdgeData(edgeFileName);
+				//System.out.println("read edge file line count : " + lineCount);
+			}
+			else
+				makeRandomData(5000, 300, 300);
 		} else {
 			makeRandomData(5000, 300, 300);
 		}
 
 		NodeRenderManager nodeRenderManager = new NodeRenderManager(_graph);
-		nodeRenderManager.init(data, _width, _height);
+		nodeRenderManager.init(nodeData, edgeData, _width, _height);
 		nodeRenderManager.drawNodes(pre_scaled);
 		
 		UiGlobals.setNodeRenderManager(nodeRenderManager);
@@ -463,14 +480,19 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 				lineCount++;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.err.println("Can not found file named : "+filename);
+			return -1;		//do not found
 		}
 		return lineCount;
 	}
 
 	public int readCoordData(String filename) {
-		data.setPointCount(getFileLineCount(filename));
-		data.init();
+		int totalCount = getFileLineCount(filename);
+		if(totalCount <= 0) return -1;
+		
+		nodeData.setPointCount(totalCount);
+		nodeData.init();
 
 		int lineCount = 0;
 		try {
@@ -479,7 +501,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 			String sep = "\0";
 			String[] seps = { "\t", ",", ".", " " };
 			while ((str = br.readLine()) != null
-					&& lineCount < data.getPointCount()) {
+					&& lineCount < nodeData.getPointCount()) {
 				if (lineCount == 0) {
 					// Find Separator
 					for (int count = 0; count < seps.length; count++) {
@@ -492,11 +514,48 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 				String[] subStrs = str.split(sep);
 
-				data.insertItem(subStrs[0], Float.parseFloat(subStrs[1]), Float
+				nodeData.insertItem(subStrs[0], Float.parseFloat(subStrs[1]), Float
 						.parseFloat(subStrs[2]));
 
 				lineCount++;
 
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return lineCount;
+	}
+	
+	public int readEdgeData(String filename) {
+		int totalCount = getFileLineCount(filename);
+		if(totalCount <= 0) return -1;
+		
+		edgeData.setPointCount(totalCount);
+		edgeData.init();
+
+		int lineCount = 0;
+		try {
+			BufferedReader br = getInputReader(filename);
+			String str = null;
+			String sep = "\0";
+			String[] seps = { "\t", ",", ".", " " };
+			while ((str = br.readLine()) != null
+					&& lineCount < edgeData.getPointCount()) {
+				if (lineCount == 0) {
+					// Find Separator
+					for (int count = 0; count < seps.length; count++) {
+						if (str.contains(seps[count])) {
+							sep = seps[count];
+							break;
+						}
+					}
+				}
+
+				String[] subStrs = str.split(sep);
+				edgeData.insertItem(subStrs[0], subStrs[1], Float.parseFloat(subStrs[2]));
+
+				lineCount++;
+System.out.println("line count : "+lineCount++);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -508,11 +567,11 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		// data.
 		Random random = new Random();
 
-		data.setPointCount(size);
-		data.init();
+		nodeData.setPointCount(size);
+		nodeData.init();
 
 		for (int count = 0; count < size; count++) {
-			data.insertItem("random_" + count, random.nextInt(maxWidth), random
+			nodeData.insertItem("random_" + count, random.nextInt(maxWidth), random
 					.nextInt(maxHeight));
 		}
 		return size;

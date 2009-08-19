@@ -10,7 +10,8 @@ import org.tigris.gef.graph.presentation.JGraph;
 public class NodeRenderManager {
 
 	private JGraph graph = null;
-	private CNodeData data = null;
+	private CNodeData nodeData = null;
+	private CEdgeData edgeData = null;
 	private int width = 0;
 	private int height = 0;
 	public static final int _PADDING = 50;
@@ -22,9 +23,15 @@ public class NodeRenderManager {
 	
 	public void init(CNodeData data, int width, int height)
 	{
-		this.data = data;
+		this.nodeData = data;
 		this.width = width;
 		this.height = height;
+	}
+	
+	public void init(CNodeData data, CEdgeData edgeData, int width, int height)
+	{
+		init(data, width, height);
+		this.edgeData = edgeData;
 	}
 	
 	public void drawNodes(int pre_scaled)
@@ -40,10 +47,10 @@ public class NodeRenderManager {
 		if(removeExistedNodes)
 			editor.getLayerManager().getActiveLayer().removeAll();
 		
-		float minLocx = Utils.minValue(data.getLocxArry());
-		float minLocy = Utils.minValue(data.getLocyArry());
-		float maxLocx = Utils.maxValue(data.getLocxArry());
-		float maxLocy = Utils.maxValue(data.getLocyArry());
+		float minLocx = Utils.minValue(nodeData.getLocxArry());
+		float minLocy = Utils.minValue(nodeData.getLocyArry());
+		float maxLocx = Utils.maxValue(nodeData.getLocxArry());
+		float maxLocy = Utils.maxValue(nodeData.getLocyArry());
 
 		width = (int) maxLocx - (int) minLocx + _PADDING;
 		height = (int) maxLocy - (int) minLocy + _PADDING;
@@ -60,7 +67,7 @@ public class NodeRenderManager {
 		// int pre_scaled = 2;
 		editor.setScale(1.0 / scale);
 
-		data.setPre_scale(scale);
+		nodeData.setPre_scale(scale);
 		
 		
 		int drawingSizeX = (int)(width*scale);
@@ -82,7 +89,7 @@ public class NodeRenderManager {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				// createAndShowGUI();
-				new NodeLoadingProgressBar(data, graph);
+				new NodeLoadingProgressBar(nodeData, graph);
 			}
 		});
 		

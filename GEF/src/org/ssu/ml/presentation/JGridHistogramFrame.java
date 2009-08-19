@@ -69,12 +69,15 @@ public class JGridHistogramFrame extends JFrame implements Cloneable{
 	public JGridHistogramFrame(String title) {
 		super(title);
 		setContentPane(_mainPanel);
-		_mainPanel.setUI(new CloseableTabbedPaneUI());
+		
+		//_mainPanel.setUI(new CloseableTabbedPaneUI());
 		_mainPanel.setFont(
 			    new Font("Lucida Grande", Font.PLAIN, 11)
 			);
 		// add(_mainPanel, BorderLayout.CENTER);
 
+		//com.sun.java.swing.plaf.windows
+		//com.sun.java.swing.plaf.windows.WindowsLookAndFeel api
 
 
 

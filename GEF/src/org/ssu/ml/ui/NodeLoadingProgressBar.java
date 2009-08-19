@@ -35,6 +35,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import org.ssu.ml.base.DoublePair;
 import org.ssu.ml.base.NodeDescriptor;
 import org.ssu.ml.base.UiGlobals;
 import org.tigris.gef.base.Editor;
@@ -43,10 +44,12 @@ import org.tigris.gef.graph.presentation.DefaultGraphModel;
 import org.tigris.gef.graph.presentation.JGraph;
 import org.tigris.gef.presentation.Fig;
 import org.tigris.gef.presentation.FigCircle;
+import org.tigris.gef.presentation.FigLine;
 import org.tigris.gef.presentation.FigNode;
 import org.tigris.gef.presentation.FigRect;
 
 import java.beans.*;
+import java.util.HashMap;
 import java.util.Random;
 
 import org.ssu.ml.presentation.FigCustomNode;
@@ -61,16 +64,17 @@ public class NodeLoadingProgressBar extends JPanel
     private JButton stopButton;
     private JButton cancelButton;
     private JTextArea taskOutput;
-    private Task task;
+    private NodeTask task;
     
     private int max_work = 50000;
     private int cur_work = 0;
     
     private JFrame frame = null;
     private JGraph _graph = null;
-    private CNodeData data;
+    private CNodeData nodeData;
+    private CEdgeData edgeData;
 
-    class Task extends SwingWorker<Void, Void> {
+    class NodeTask extends SwingWorker<Void, Void> {
     	boolean progressFlag = true;
     	CNodeData data = null;
     	float minLocx = 0;
@@ -82,7 +86,7 @@ public class NodeLoadingProgressBar extends JPanel
     	JFrame frame = null; 
     	
 
-    	public Task(CNodeData data, JFrame frame, JGraph graph)
+    	public NodeTask(CNodeData data, JFrame frame, JGraph graph)
     	{
     		this.data = data;
     		this.frame = frame;
@@ -113,29 +117,18 @@ public class NodeLoadingProgressBar extends JPanel
             	int locx = (int)((data.getLocxArry()[count]+Math.abs(minLocx))*data.getPre_scale()) + data.getPadding()/2;
             	int locy = (int)((data.getLocyArry()[count]+Math.abs(minLocy))*data.getPre_scale()) + data.getPadding()/2;
             	
-            	//System.out.println(locx+", "+locy);
-            	//FigCircle rect = new FigCircle(locx, locy, 1, 1);
+
             	NodeDescriptor desc = new NodeDescriptor();
             	desc.setName(data.getPointerName(count));
             	desc.setGroup(data.getGroup(count));
             	FigCustomNode rect = new FigCustomNode(locx, locy, 1, 1, desc);
             	
             	rect.setLineColor(data.getColor(count));
-            	//CustomNode rect = new CustomNode();
-            	
-            	//rect.setLocation(locx, locy);
-            	//rect.setSize(1, 1);
-            	//rect.setResizable(false);
-            	//rect.setMovable(false);
+
             	rect.setLocked(true);
-            	//FigText rect = new FigText(locx, locy, 1, 1);
-            	//rect.setSize(10, 10);
-            	//rect.setText("count "+count);
-            	//editor.getGraphModel();
-            	//rect.initialize(null);
-            	//dgm.addNode(rect);
+
             	editor.add(rect);
-            	//_p.advance();
+
             	cur_work++;
             	if(cur_work%1000 == 0) UiGlobals.setStatusbarText(" Node Rendering... "+cur_work+"/"+max_work);//System.out.println("cur_work! : "+cur_work);
             	
@@ -146,6 +139,42 @@ public class NodeLoadingProgressBar extends JPanel
                 if(!progressFlag) break;
                 
             }
+        	
+        	
+        	HashMap<String, DoublePair> nodeLocMap = nodeData.getHashMap();
+        	
+        	System.out.println(edgeData.getPointCount()+", "+progressFlag);
+        	int count = 0;
+        	String[] srcNames = edgeData.getSrcName();
+        	String[] destNames = edgeData.getDestName();
+        	for(int count1 = cur_work ; (count1 < cur_work + edgeData.getPointCount()) && progressFlag ; count1++, count++)
+        	{
+        		
+        		System.out.println("line render : "+count);
+        		DoublePair srcLoc = nodeLocMap.get(srcNames[count]);
+        		DoublePair destLoc = nodeLocMap.get(destNames[count]);
+        		
+        		int srcLocx = (int)((srcLoc.x+Math.abs(minLocx))*data.getPre_scale()) + data.getPadding()/2;
+            	int srcLocy = (int)((srcLoc.y+Math.abs(minLocy))*data.getPre_scale()) + data.getPadding()/2;
+            	
+            	int destLocx = (int)((destLoc.x+Math.abs(minLocx))*data.getPre_scale()) + data.getPadding()/2;
+            	int destLocy = (int)((destLoc.y+Math.abs(minLocy))*data.getPre_scale()) + data.getPadding()/2;
+
+            	NodeDescriptor desc = new NodeDescriptor();
+            	desc.setName(data.getPointerName(count));
+            	desc.setGroup(data.getGroup(count));
+            	
+            	FigLine line = new FigLine(srcLocx, srcLocy, destLocx, destLocy, Color.blue);
+            	
+            	cur_work++;
+            	if(cur_work%1000 == 0) UiGlobals.setStatusbarText(" Node Rendering... "+cur_work+"/"+max_work);//System.out.println("cur_work! : "+cur_work);
+            	
+            	if(cur_work%100 == 0 ) changeProgress();
+            	
+                if(cur_work == max_work) break;
+                
+                if(!progressFlag) break;
+        	}
                 
                 
             
@@ -172,12 +201,20 @@ public class NodeLoadingProgressBar extends JPanel
         }
     }
 
-    public NodeLoadingProgressBar(CNodeData data, JGraph editor) {
+    public NodeLoadingProgressBar(CNodeData nodeData, JGraph editor) {
+    	this(nodeData, null, editor);
+    }
+    
+    public NodeLoadingProgressBar(CNodeData nodeData, CEdgeData edgeData, JGraph editor) {
         super(new BorderLayout());
 
         this._graph = editor;
-        this.max_work = data.getPointCount();
-        this.data = data;
+        
+        this.nodeData = nodeData;
+        this.max_work = nodeData.getPointCount();
+        
+        this.edgeData = edgeData;
+        if(edgeData != null) max_work = nodeData.getPointCount();
         //Create the demo's UI.
         startButton = new JButton("Start");
         startButton.setActionCommand("start");
@@ -230,7 +267,7 @@ public class NodeLoadingProgressBar extends JPanel
         startButton.setEnabled(false);
         //Instances of javax.swing.SwingWorker are not reusuable, so
         //we create new instances as needed.
-        task = new Task(data, frame, this._graph);
+        task = new NodeTask(nodeData, frame, this._graph);
         //task.addPropertyChangeListener(this);
         task.execute();
     }
@@ -242,7 +279,7 @@ public class NodeLoadingProgressBar extends JPanel
     	Object s = evt.getSource();
     	
     	if(s == startButton){
-    		task = new Task(data, frame, this._graph);
+    		task = new NodeTask(nodeData, frame, this._graph);
     		task.execute();
     		System.out.println("execute?");
     	}

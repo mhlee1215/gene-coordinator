@@ -110,4 +110,15 @@ public class FigCustomNode extends FigRect {
 
         return popUpActions;
     }
+    
+    /** Paint this FigRect */
+    public void paint(Graphics g) {
+    	//g.draw
+        drawRect(g, isFilled(), getFillColor(), getLineWidth(), getLineColor(), getX(), getY(), getWidth(),
+                getHeight(), getDashed(), _dashes, _dashPeriod);
+    }
+    
+    
+    
+    
 } /* end class FigCircle */

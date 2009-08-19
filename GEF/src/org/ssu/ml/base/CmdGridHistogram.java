@@ -8,6 +8,8 @@ package org.ssu.ml.base;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.JFrame;
+
 import org.jfree.ui.RefineryUtilities;
 import org.ssu.ml.base.UiGlobals;
 import org.ssu.ml.presentation.JGridHistogramFrame;
@@ -107,7 +109,7 @@ public class CmdGridHistogram extends Cmd {
 	        
 	        histoFrame.pack();
 	        
-	        RefineryUtilities.centerFrameOnScreen(histoFrame);
+	        //RefineryUtilities.centerFrameOnScreen(histoFrame);
 	        histoFrame.setVisible(true);
         }
         else
