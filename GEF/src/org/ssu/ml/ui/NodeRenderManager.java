@@ -59,8 +59,7 @@ public class NodeRenderManager {
 		double scale = Math.pow(2, pre_scaled - 1);
 
 		
-		System.out.println("pre_scaled : " + pre_scaled + ", real scale : "
-				+ scale);
+		System.out.println("pre_scaled : " + pre_scaled + ", real scale : "+ scale);
 		
 
 		
@@ -85,11 +84,13 @@ public class NodeRenderManager {
 		map.put("thick", (int) scale);
 		grid.adjust(map);
 
+		
 		//int maxNodeNum = data.getPointCount();
+		
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				// createAndShowGUI();
-				new NodeLoadingProgressBar(nodeData, graph);
+				new NodeLoadingProgressBar(nodeData, edgeData, graph);
 			}
 		});
 		

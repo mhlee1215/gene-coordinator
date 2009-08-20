@@ -166,6 +166,10 @@ public class NodeLoadingProgressBar extends JPanel
             	
             	FigLine line = new FigLine(srcLocx, srcLocy, destLocx, destLocy, Color.blue);
             	
+            	line.setLineColor(Color.blue);
+
+            	editor.add(line);
+            	
             	cur_work++;
             	if(cur_work%1000 == 0) UiGlobals.setStatusbarText(" Node Rendering... "+cur_work+"/"+max_work);//System.out.println("cur_work! : "+cur_work);
             	

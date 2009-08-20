@@ -139,20 +139,25 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		edgeFileName = this.getParameter("fileName") + ".edges";
 		
 		if (coordFileName != null) {
-			if(!coordFileName.equals("null")){
+			
+			if( coordFileName.indexOf("null") > 0){
+				makeRandomData(5000, 300, 300);
+				makeRandomEdgeData(5000, 300, 300);
+			}
+			else{
 				System.out.println("read file name : " + coordFileName);
 				int lineCount = readCoordData(coordFileName);
 				System.out.println("read ciird file line count : " + lineCount);
 				
+				
 				if(lineCount <= 0) makeRandomData(5000, 300, 300);
 				
-				//lineCount = readEdgeData(edgeFileName);
-				//System.out.println("read edge file line count : " + lineCount);
+				lineCount = readEdgeData(edgeFileName);
+				System.out.println("read edge file line count : " + lineCount);
 			}
-			else
-				makeRandomData(5000, 300, 300);
 		} else {
 			makeRandomData(5000, 300, 300);
+			makeRandomEdgeData(5000, 300, 300);
 		}
 
 		NodeRenderManager nodeRenderManager = new NodeRenderManager(_graph);
@@ -555,7 +560,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 				edgeData.insertItem(subStrs[0], subStrs[1], Float.parseFloat(subStrs[2]));
 
 				lineCount++;
-System.out.println("line count : "+lineCount++);
+				if(lineCount == 5000) break;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -573,6 +578,19 @@ System.out.println("line count : "+lineCount++);
 		for (int count = 0; count < size; count++) {
 			nodeData.insertItem("random_" + count, random.nextInt(maxWidth), random
 					.nextInt(maxHeight));
+		}
+		return size;
+	}
+	
+	public int makeRandomEdgeData(int size, int maxWidth, int maxHeight) {
+		// data.
+		Random random = new Random();
+
+		edgeData.setPointCount(size);
+		edgeData.init();
+
+		for (int count = 0; count < size; count++) {
+			edgeData.insertItem("random_" + random.nextInt(10), "random_" + random.nextInt(10), random.nextFloat());
 		}
 		return size;
 	}
