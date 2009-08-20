@@ -109,32 +109,7 @@ public class ToolBar extends JToolBar implements MouseListener {
         b.setMargin(new Insets(4, 0, 0, 0));
         b.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
         b.setFocusable(false);
-        /*
-        if(buttonType == BUTTON_TYPE_LEFT)
-        {
-        	b.putClientProperty(
-        			   "Quaqua.Button.style", "toggleWest"
-        			);
-        }
-        else if(buttonType == BUTTON_TYPE_CENTER)
-        {
-        	b.putClientProperty(
-     			   "Quaqua.Button.style", "toggleCenter"
-     			);
-        }
-        else if(buttonType == BUTTON_TYPE_RIGHT)
-        {
-        	b.putClientProperty(
-     			   "Quaqua.Button.style", "toggleEast"
-     			);
-        }
-        else if(buttonType == BUTTON_TYPE_HELP)
-        {
-        	b.putClientProperty(
-        			   "JButton.buttonType", "help"
-        			);
-        }
-        */
+       
         //b.setPreferredSize(new Dimension(50, 50));
         b.setBackground(Color.white);
         b.setToolTipText(name + " ");
