@@ -77,7 +77,7 @@ public class LayerGrid extends Layer {
     private transient Image _stamp = null;
 
     /** The size of the image stamp. */
-    private int _stampWidth = 128, _stampHeight = 128;
+    private int _stampWidth = 100, _stampHeight = 100;
 
     /** The color of the grid lines or dots. */
     protected Color _color = new Color(180, 180, 180); // Color.gray;
@@ -344,6 +344,7 @@ public class LayerGrid extends Layer {
         m = map.get("spacing");
         if (m instanceof Integer)
             _spacing = ((Integer) m).intValue();
+        
 
         m = map.get("paintLines");
         if (m instanceof Boolean)
@@ -365,6 +366,22 @@ public class LayerGrid extends Layer {
         if (m instanceof Integer)
             _thick = ((Integer) m).intValue();
 
+        m = map.get("spacing_include_stamp");
+        if (m instanceof Integer){
+            _spacing = ((Integer) m).intValue();
+            _stampWidth = _spacing*10;
+            _stampHeight = _spacing*10;
+        }
+        
+        m = map.get("stampWidth");
+        if (m instanceof Integer)
+            _stampWidth = ((Integer) m).intValue();
+        
+        m = map.get("stampHeight");
+        if (m instanceof Integer)
+            _stampHeight = ((Integer) m).intValue();
+        
+        
         refreshEditors();
     }
 
@@ -377,6 +394,8 @@ public class LayerGrid extends Layer {
     	map.put("Color", _color);
     	map.put("bgColor", _bgColor);
     	map.put("thick", _thick);
+    	map.put("stampWidth", _stampWidth);
+    	map.put("stampHeight", _stampHeight);
     	return map;
     }
     

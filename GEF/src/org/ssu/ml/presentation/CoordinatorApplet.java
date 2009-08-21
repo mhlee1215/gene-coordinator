@@ -73,8 +73,8 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 	String edgeFileName = "";
 	int pre_scaled = 1;
 
-	CNodeData nodeData = new CNodeData();
-	CEdgeData edgeData = new CEdgeData();
+	
+	
 	
 	Editor editor = null;
 
@@ -134,37 +134,17 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 			pre_scaled = 1;
 		else
 			pre_scaled = Integer.parseInt(getParameter("prescaled"));
-
-		coordFileName = this.getParameter("fileName") + ".coord";
-		edgeFileName = this.getParameter("fileName") + ".edges";
 		
-		if (coordFileName != null) {
-			
-			if( coordFileName.indexOf("null") > 0){
-				makeRandomData(5000, 300, 300);
-				makeRandomEdgeData(5000, 300, 300);
-			}
-			else{
-				System.out.println("read file name : " + coordFileName);
-				int lineCount = readCoordData(coordFileName);
-				System.out.println("read ciird file line count : " + lineCount);
-				
-				
-				if(lineCount <= 0) makeRandomData(5000, 300, 300);
-				
-				lineCount = readEdgeData(edgeFileName);
-				System.out.println("read edge file line count : " + lineCount);
-			}
-		} else {
-			makeRandomData(5000, 300, 300);
-			makeRandomEdgeData(5000, 300, 300);
-		}
-
+		
+		
+	
 		NodeRenderManager nodeRenderManager = new NodeRenderManager(_graph);
-		nodeRenderManager.init(nodeData, edgeData, _width, _height);
-		nodeRenderManager.drawNodes(pre_scaled);
+		nodeRenderManager.init(_width, _height);
+		nodeRenderManager.drawNodes(true);
 		
 		UiGlobals.setNodeRenderManager(nodeRenderManager);
+		UiGlobals.setPre_scaled(pre_scaled);
+		UiGlobals.setFileName(this.getParameter("fileName"));
 		
 	}
 	
@@ -236,7 +216,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("Color", Color.LIGHT_GRAY);
 		map.put("bgColor", Color.white);
-		// map.put("spacing", (int)Math.pow(2, 7));
+		map.put("spacing_include_stamp", (int)UiGlobals.getDefault_grid_spacing());
 		map.put("paintLines", true);
 		map.put("paintDots", false);
 
@@ -453,146 +433,12 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		super.stop();
 	}
 
-	public BufferedReader getInputReader(String filename) {
-		BufferedReader br = null;
-		;
-		try {
-			URL testServlet = new URL(filename);
-			HttpURLConnection servletConnection = (HttpURLConnection) testServlet
-					.openConnection();
-			servletConnection.setDoInput(true);
-			servletConnection.setDoOutput(true);
-			servletConnection.setUseCaches(false);
-			servletConnection.setDefaultUseCaches(false);
-			servletConnection.setRequestProperty("Kind", "Read");
-			InputStream is = new BufferedInputStream(servletConnection
-					.getInputStream());
-
-			br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return br;
-	}
-
-	public int getFileLineCount(String filename) {
-		int lineCount = 0;
-		try {
-			BufferedReader br = getInputReader(filename);
-			String str = null;
-			StringBuffer sb = new StringBuffer();
-			while ((str = br.readLine()) != null) {
-				lineCount++;
-			}
-		} catch (Exception e) {
-			//e.printStackTrace();
-			System.err.println("Can not found file named : "+filename);
-			return -1;		//do not found
-		}
-		return lineCount;
-	}
-
-	public int readCoordData(String filename) {
-		int totalCount = getFileLineCount(filename);
-		if(totalCount <= 0) return -1;
-		
-		nodeData.setPointCount(totalCount);
-		nodeData.init();
-
-		int lineCount = 0;
-		try {
-			BufferedReader br = getInputReader(filename);
-			String str = null;
-			String sep = "\0";
-			String[] seps = { "\t", ",", ".", " " };
-			while ((str = br.readLine()) != null
-					&& lineCount < nodeData.getPointCount()) {
-				if (lineCount == 0) {
-					// Find Separator
-					for (int count = 0; count < seps.length; count++) {
-						if (str.contains(seps[count])) {
-							sep = seps[count];
-							break;
-						}
-					}
-				}
-
-				String[] subStrs = str.split(sep);
-
-				nodeData.insertItem(subStrs[0], Float.parseFloat(subStrs[1]), Float
-						.parseFloat(subStrs[2]));
-
-				lineCount++;
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return lineCount;
-	}
 	
-	public int readEdgeData(String filename) {
-		int totalCount = getFileLineCount(filename);
-		if(totalCount <= 0) return -1;
-		
-		edgeData.setPointCount(totalCount);
-		edgeData.init();
-
-		int lineCount = 0;
-		try {
-			BufferedReader br = getInputReader(filename);
-			String str = null;
-			String sep = "\0";
-			String[] seps = { "\t", ",", ".", " " };
-			while ((str = br.readLine()) != null
-					&& lineCount < edgeData.getPointCount()) {
-				if (lineCount == 0) {
-					// Find Separator
-					for (int count = 0; count < seps.length; count++) {
-						if (str.contains(seps[count])) {
-							sep = seps[count];
-							break;
-						}
-					}
-				}
-
-				String[] subStrs = str.split(sep);
-				edgeData.insertItem(subStrs[0], subStrs[1], Float.parseFloat(subStrs[2]));
-
-				lineCount++;
-				if(lineCount == 5000) break;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return lineCount;
-	}
-
-	public int makeRandomData(int size, int maxWidth, int maxHeight) {
-		// data.
-		Random random = new Random();
-
-		nodeData.setPointCount(size);
-		nodeData.init();
-
-		for (int count = 0; count < size; count++) {
-			nodeData.insertItem("random_" + count, random.nextInt(maxWidth), random
-					.nextInt(maxHeight));
-		}
-		return size;
-	}
 	
-	public int makeRandomEdgeData(int size, int maxWidth, int maxHeight) {
-		// data.
-		Random random = new Random();
+	
 
-		edgeData.setPointCount(size);
-		edgeData.init();
-
-		for (int count = 0; count < size; count++) {
-			edgeData.insertItem("random_" + random.nextInt(10), "random_" + random.nextInt(10), random.nextFloat());
-		}
-		return size;
-	}
+	
+	
+	
 
 }

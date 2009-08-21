@@ -4,40 +4,38 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Vector;
 
 public class CEdgeData {
-	float[] weight = null;
-	String[] srcName = null;
-	String[] destName = null;
-	int[] groups = null;
+	public static int DEFAULT_SIZE = 5000;
+	Vector<Float> weight = null;
+	Vector<String> srcName = null;
+	Vector<String> destName = null;
+	Vector<Integer> groups = null;
 	
 	
 	int groupNum = 0;
-	
-	int pointCount = 0;
-	int itemNum = 0;
-	
 	double pre_scale = 1;
 	int padding = 10;
+	
+	public CEdgeData(){
+		weight = new Vector<Float>(DEFAULT_SIZE);
+		srcName = new Vector<String>(DEFAULT_SIZE);
+		destName = new Vector<String>(DEFAULT_SIZE);
+		groups = new Vector<Integer>(DEFAULT_SIZE);
+	}
 	
 	public String toString(int index)
 	{
 		String result = "";
 		
-		if(index >= pointCount)
+		if(index >= size())
 			result = "Index over the last index.";
 		else
-			result = srcName[index]+", "+destName[index]+" ["+weight[index]+"]";
+			result = srcName.get(index)+", "+destName.get(index)+" ["+weight.get(index)+"]";
 		return result;
 	}
 	
-	public int getItemNum() {
-		return itemNum;
-	}
-
-	public void setItemNum(int itemNum) {
-		this.itemNum = itemNum;
-	}
 
 	public double getPre_scale() {
 		return pre_scale;
@@ -55,109 +53,61 @@ public class CEdgeData {
 		this.padding = padding;
 	}
 
-	public void init(int pointCount)
-	{
-		weight = new float[pointCount];    	
-    	srcName = new String[pointCount];
-    	destName = new String[pointCount];
-    	groups = new int[pointCount];
-	}
-
-	public void init()
-	{
-		weight = new float[pointCount];    	
-    	srcName = new String[pointCount];
-    	destName = new String[pointCount];
-    	groups = new int[pointCount];
-	}
 	
-	public int insertItem(String srcName, String destName, float weight)
+	public void insertItem(String srcName, String destName, float weight)
 	{
-		this.srcName[itemNum] = srcName;
-		this.destName[itemNum] = destName;
-		this.weight[itemNum] = weight;
+		this.srcName.add(srcName);
+		this.destName.add(destName);
+		this.weight.add(weight);
 		
 		Random random = new Random();		//need more work.
-		groups[itemNum] = random.nextInt(5);
-		itemNum++;
-		
-		return itemNum;
+		groups.add(random.nextInt(5));
+
 	}
 	
 	
-	public String[] getPointerNames() {
-		return srcName;
-	}
-	public void setPointerNames(String[] pointerName) {
-		this.srcName = pointerName;
-	}
 	
-	public String getPointerName(int index){
-		return srcName[index];
+
+	public static int getDEFAULT_SIZE() {
+		return DEFAULT_SIZE;
 	}
-	
-	public void setPointerName(int index, String name){
-		this.srcName[index] = name;
+
+	public static void setDEFAULT_SIZE(int dEFAULTSIZE) {
+		DEFAULT_SIZE = dEFAULTSIZE;
 	}
-	
-	public int getPointCount() {
-		return pointCount;
-	}
-	public void setPointCount(int pointCount) {
-		this.pointCount = pointCount;
-	}
-	
-	public void setGroup(int index, int group)
-	{
-		this.groups[index] = group;
-	}
-	
-	public int getGroup(int index)
-	{
-		return groups[index];
-	}
-	
-//	public static Color getColor(int group)
-//	{
-//		if(group == 0) return Color.yellow;
-//		else if(group == 1) return Color.green;
-//		else if(group == 2) return Color.red;
-//		else if(group == 3) return Color.blue;
-//		else if(group == 3) return Color.magenta;
-//		return Color.black;
-//	}
-	
-	public float[] getWeight() {
+
+	public Vector<Float> getWeight() {
 		return weight;
 	}
 
-	public void setWeight(float[] weight) {
+	public void setWeight(Vector<Float> weight) {
 		this.weight = weight;
 	}
 
-	public String[] getSrcName() {
+	public Vector<String> getSrcName() {
 		return srcName;
 	}
 
-	public void setSrcName(String[] srcName) {
+	public void setSrcName(Vector<String> srcName) {
 		this.srcName = srcName;
 	}
 
-	public String[] getDestName() {
+	public Vector<String> getDestName() {
 		return destName;
 	}
 
-	public void setDestName(String[] destName) {
+	public void setDestName(Vector<String> destName) {
 		this.destName = destName;
 	}
 
-	public int[] getGroups() {
+	public Vector<Integer> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(int[] groups) {
+	public void setGroups(Vector<Integer> groups) {
 		this.groups = groups;
 	}
+
 
 	public int getGroupNum() {
 		return groupNum;
@@ -169,7 +119,7 @@ public class CEdgeData {
 
 	public Color getColor(int index)
 	{
-		int group = groups[index];
+		int group = groups.get(index);
 		if(group == 0) return Color.yellow;
 		else if(group == 1) return Color.green;
 		else if(group == 2) return Color.red;
@@ -178,5 +128,22 @@ public class CEdgeData {
 		return Color.black;
 	} 
 	
+	public String[] getSrcNameArry(){
+		String[] result = new String[srcName.size()];
+		for(int count = 0 ; count < srcName.size() ; count++)
+			result[count] = srcName.get(count);
+		return result;
+	}
+	
+	public String[] getDestNameArry(){
+		String[] result = new String[destName.size()];
+		for(int count = 0 ; count < destName.size() ; count++)
+			result[count] = destName.get(count);
+		return result;
+	}
+	
+	public int size(){
+		return srcName.size();
+	}
 
 }
