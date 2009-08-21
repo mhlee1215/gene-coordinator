@@ -37,7 +37,7 @@ import javax.swing.*;
 import java.beans.*;
 import java.util.Random;
 
-public class NodeLoadProgressBar extends JPanel
+public class NodeLoadProgressBar_ extends JPanel
                               implements ActionListener, 
                                          PropertyChangeListener {
 
@@ -49,9 +49,9 @@ public class NodeLoadProgressBar extends JPanel
     private int progressMax;
 
     class Task extends SwingWorker<Void, Void> {
-    	NodeLoadProgressBar frame = null;
+    	NodeLoadProgressBar_ frame = null;
     	boolean doFlag = true;
-    	public Task(NodeLoadProgressBar panel)
+    	public Task(NodeLoadProgressBar_ panel)
     	{
     		frame = panel;
     	}
@@ -100,7 +100,7 @@ public class NodeLoadProgressBar extends JPanel
         }
     }
 
-    public NodeLoadProgressBar(JFrame frame, int progressMax) {
+    public NodeLoadProgressBar_(JFrame frame, int progressMax) {
         super(new BorderLayout());
         this.frame = frame;
         this.progressMax = progressMax;
@@ -178,7 +178,7 @@ public class NodeLoadProgressBar extends JPanel
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
-        JComponent newContentPane = new NodeLoadProgressBar(frame, 20000);
+        JComponent newContentPane = new NodeLoadProgressBar_(frame, 20000);
         newContentPane.setOpaque(true); //content panes must be opaque
         frame.setContentPane(newContentPane);
 

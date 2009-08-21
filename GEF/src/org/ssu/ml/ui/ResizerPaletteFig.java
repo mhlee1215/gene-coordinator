@@ -111,9 +111,9 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 		// add(image1, "Image1", "Image1");
 		//add(new CmdZoom(2), "Zoom in", "zoom_in");
 		//add(new CmdZoom(0.5), "Zoom out", "zoom_out");
-		int gridMax = 10;
+		int gridMax = 200;
 		int gridMin = 1;
-		gridCurValue = 5;
+		gridCurValue = UiGlobals.getDefault_grid_spacing();
 		JSlider gridResizer = new JSlider(JSlider.VERTICAL,
 				gridMin, gridMax, gridCurValue);
 		gridResizer.setName("gridResizer");
@@ -191,14 +191,15 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 
 					if (gridCurValue != slider.getValue()) {
 						gridCurValue = slider.getValue();
-						int scale = (int)Math.pow(2, slider.getValue());
+						int scale = slider.getValue();
 						
 						Editor editor = UiGlobals.curEditor();
 						LayerGrid grid = (LayerGrid) editor.getLayerManager()
 								.findLayerNamed("Grid");
 						HashMap map = new HashMap();
 						double defaultSpace = (int) Math.pow(2, 3);
-						map.put("spacing", (int) (scale));
+						map.put("spacing_include_stamp", (int) (scale));
+						
 						grid.adjust(map);
 					}
 				}
@@ -210,7 +211,8 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 						
 						UiGlobals.get_scaleSlider().setEnabled(false);
 						NodeRenderManager manager = UiGlobals.getNodeRenderManager();
-						manager.drawNodes(scaleCurValue);
+						UiGlobals.setPre_scaled(scaleCurValue);
+						manager.drawNodes(true);
 					}
 				}
 			}

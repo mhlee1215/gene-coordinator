@@ -11,9 +11,38 @@ import org.tigris.gef.base.Globals;
 
 public class UiGlobals extends Globals{
 	private static Vector<double[]> gridDatas = new Vector<double[]>();
-	
 	private static Applet _curApplet = null;
+	private static String fileName = "";
+	private static int default_grid_spacing = 20;
+	private static int drawingSizeX;
+	private static int drawingSizeY;
+	private static int pre_scaled;
 	
+	
+	public static int getPre_scaled() {
+		return pre_scaled;
+	}
+
+	public static void setPre_scaled(int preScaled) {
+		pre_scaled = preScaled;
+	}
+
+	public static String getFileName() {
+		return fileName;
+	}
+
+	public static void setFileName(String fileName) {
+		UiGlobals.fileName = fileName;
+	}
+	
+	public static int getDefault_grid_spacing() {
+		return default_grid_spacing;
+	}
+
+	public static void setDefault_grid_spacing(int defaultGridSpacing) {
+		default_grid_spacing = defaultGridSpacing;
+	}
+
 	public static Vector<double[]> getGridDatas() {
 		return gridDatas;
 	}
@@ -76,8 +105,7 @@ public class UiGlobals extends Globals{
 		UiGlobals.nodeRenderManager = nodeRenderManager;
 	}
 	
-	static int drawingSizeX;
-	static int drawingSizeY;
+
 
 	public static int getDrawingSizeX() {
 		return drawingSizeX;

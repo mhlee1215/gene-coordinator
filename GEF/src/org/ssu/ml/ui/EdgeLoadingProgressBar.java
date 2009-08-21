@@ -39,7 +39,6 @@ import org.ssu.ml.base.DoublePair;
 import org.ssu.ml.base.NodeDescriptor;
 import org.ssu.ml.base.UiGlobals;
 import org.tigris.gef.base.Editor;
-import org.tigris.gef.base.LayerGrid;
 import org.tigris.gef.demo.SampleNode;
 import org.tigris.gef.graph.presentation.DefaultGraphModel;
 import org.tigris.gef.graph.presentation.JGraph;
@@ -57,18 +56,19 @@ import java.util.Random;
 import org.ssu.ml.presentation.FigCustomNode;
 
 
-public class NodeLoadingProgressBar extends JPanel
+public class EdgeLoadingProgressBar extends JPanel
                               implements ActionListener, 
                                          PropertyChangeListener {
 
 	private final static int STATUS_STARTED = 0;
 	private final static int STATUS_STOPPED = 1;
 	private final static int STATUS_CANCELED = 2;
+	private final static int STATUS_FINISHED = 3;
 	
 	private int status;
-	private int pre_scaled;
 	
 	private CNodeData nodeData = null;
+	private CEdgeData edgeData = null;
 	
     private JProgressBar progressBar;
     private JButton startButton;
@@ -81,8 +81,8 @@ public class NodeLoadingProgressBar extends JPanel
     private int cur_work = 0;
     
     private JFrame frame = null;
-    private JGraph graph = null;
-  
+    private JGraph _graph = null;
+
 
     class NodeTask extends SwingWorker<Void, Void> {
     	boolean progressFlag = true;
@@ -120,7 +120,7 @@ public class NodeLoadingProgressBar extends JPanel
          
 
         	
-           
+            
             Editor editor = _graph.getEditor();
             
             float[] locxArry = data.getLocxArry();
@@ -155,7 +155,52 @@ public class NodeLoadingProgressBar extends JPanel
             }
         	
         	
+        	HashMap<String, DoublePair> nodeLocMap = nodeData.getHashMap();
         	
+        	
+        	System.out.println(edgeData.size()+", "+progressFlag);
+        	String[] srcNames = edgeData.getSrcNameArry();
+        	String[] destNames = edgeData.getDestNameArry();
+        	cur_work = 0;
+        	max_work = edgeData.size();
+        	
+        	progressBar.setMaximum(max_work);
+        	progressBar.setMinimum(0);
+        	progressBar.setValue(50);
+        	
+        	for(int count = cur_work ; count < max_work && progressFlag ; count++)
+        	{
+        		
+
+        		DoublePair srcLoc = nodeLocMap.get(srcNames[count]);
+        		DoublePair destLoc = nodeLocMap.get(destNames[count]);
+        		int srcLocx = (int)((srcLoc.x+Math.abs(minLocx))*data.getPre_scale()) + data.getPadding()/2;
+            	int srcLocy = (int)((srcLoc.y+Math.abs(minLocy))*data.getPre_scale()) + data.getPadding()/2;
+            	int destLocx = (int)((destLoc.x+Math.abs(minLocx))*data.getPre_scale()) + data.getPadding()/2;
+            	int destLocy = (int)((destLoc.y+Math.abs(minLocy))*data.getPre_scale()) + data.getPadding()/2;
+            	
+            	NodeDescriptor desc = new NodeDescriptor();
+            	desc.setName(data.getPointerName(count));
+            	desc.setGroup(data.getGroup(count));
+            	
+            	FigLine line = new FigLine(srcLocx, srcLocy, destLocx, destLocy, Color.blue);
+            	
+            	line.setLineColor(Color.blue);
+
+            	editor.add(line);
+            	
+            	cur_work++;
+            	if(cur_work%1000 == 0) UiGlobals.setStatusbarText(" Edge Rendering... "+cur_work+"/"+max_work);//System.out.println("cur_work! : "+cur_work);
+            	
+            	if(cur_work%100 == 0 ) changeProgress();
+            	
+                if(cur_work == max_work) break;
+
+                if(!progressFlag) break;
+        	}
+                
+            System.out.println("FINISH!!");    
+            status = STATUS_FINISHED;
             return null;
         }
         public void stop(){
@@ -173,20 +218,28 @@ public class NodeLoadingProgressBar extends JPanel
             //taskOutput.append("Node Rendering Finish!\n");
             
             System.out.println("status : "+status);
-            if(status == STATUS_CANCELED || status == STATUS_STARTED)
+            if(status == STATUS_CANCELED || status == STATUS_FINISHED)
             	frame.setVisible(false);
             
             UiGlobals.setStatusbarText(" Node render is completed.");
             
         }
     }
+
+    public EdgeLoadingProgressBar(CNodeData nodeData, JGraph editor) {
+    	this(nodeData, null, editor);
+    }
     
-    public NodeLoadingProgressBar(JGraph graph) {
+    public EdgeLoadingProgressBar(CNodeData nodeData, CEdgeData edgeData, JGraph editor) {
         super(new BorderLayout());
 
-        this.pre_scaled = UiGlobals.getPre_scaled();
-        this.graph = graph;
-                
+        this._graph = editor;
+        
+        this.nodeData = nodeData;
+        this.max_work = nodeData.size();
+        
+        this.edgeData = edgeData;
+        if(edgeData != null) max_work = nodeData.size();
         //Create the demo's UI.
         startButton = new JButton("Start");
         startButton.setActionCommand("start");
@@ -238,7 +291,7 @@ public class NodeLoadingProgressBar extends JPanel
         startButton.setEnabled(false);
         //Instances of javax.swing.SwingWorker are not reusuable, so
         //we create new instances as needed.
-        task = new NodeTask(nodeData, frame, this.graph);
+        task = new NodeTask(nodeData, frame, this._graph);
         //task.addPropertyChangeListener(this);
         status = STATUS_STARTED;
         task.execute();
@@ -251,7 +304,7 @@ public class NodeLoadingProgressBar extends JPanel
     	Object s = evt.getSource();
     	
     	if(s == startButton){
-    		task = new NodeTask(nodeData, frame, this.graph);
+    		task = new NodeTask(nodeData, frame, this._graph);
     		status = STATUS_STARTED;
     		task.execute();
     		System.out.println("execute?");
@@ -287,15 +340,17 @@ public class NodeLoadingProgressBar extends JPanel
         //            "%s\n", data.toString(cur_work)));
     }
     
-    public int readCoordData(String filename) {
+    public int readEdgeData(String filename) {
 		//int totalCount = getFileLineCount(filename);
 		//if(totalCount <= 0) return -1;
 		
-		
+		//edgeData.setPointCount(totalCount);
+		//edgeData.init();
 
 		int lineCount = 0;
 		try {
 			BufferedReader br = Utils.getInputReader(filename);
+			
 			String str = null;
 			String sep = "\0";
 			String[] seps = { "\t", ",", ".", " " };
@@ -311,12 +366,13 @@ public class NodeLoadingProgressBar extends JPanel
 				}
 
 				String[] subStrs = str.split(sep);
+				
+				if(Float.parseFloat(subStrs[2]) < 0.8) continue;
+				edgeData.insertItem(subStrs[0], subStrs[1], Float.parseFloat(subStrs[2]));
 
-				nodeData.insertItem(subStrs[0], Float.parseFloat(subStrs[1]), Float
-						.parseFloat(subStrs[2]));
-
+				if(lineCount%100 == 0) System.out.println("read edge.. : "+lineCount);
 				lineCount++;
-
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -324,59 +380,13 @@ public class NodeLoadingProgressBar extends JPanel
 		return lineCount;
 	}
     
-    public int makeRandomData(int size, int maxWidth, int maxHeight) {
+    public int makeRandomEdgeData(int size, int maxWidth, int maxHeight) {
 		// data.
 		Random random = new Random();
 
 		for (int count = 0; count < size; count++) {
-			nodeData.insertItem("random_" + count, random.nextInt(maxWidth), random
-					.nextInt(maxHeight));
+			edgeData.insertItem("random_" + random.nextInt(10), "random_" + random.nextInt(10), random.nextFloat());
 		}
 		return size;
 	}
-    
-    public void init()
-    {
-    	Editor editor = graph.getEditor();
-    	
-    	float minLocx = Utils.minValue(nodeData.getLocxArry());
-		float minLocy = Utils.minValue(nodeData.getLocyArry());
-		float maxLocx = Utils.maxValue(nodeData.getLocxArry());
-		float maxLocy = Utils.maxValue(nodeData.getLocyArry());
-
-		int width, height;
-		
-		width = (int) maxLocx - (int) minLocx + NodeRenderManager._PADDING;
-		height = (int) maxLocy - (int) minLocy + NodeRenderManager._PADDING;
-		
-
-		double scale = Math.pow(2, pre_scaled - 1);
-
-		
-		System.out.println("pre_scaled : " + pre_scaled + ", real scale : "+ scale);
-		
-
-		
-		// int pre_scaled = 2;
-		editor.setScale(1.0 / scale);
-
-		nodeData.setPre_scale(scale);
-		
-		
-		int drawingSizeX = (int)(width*scale);
-		int drawingSizeY = (int)(height*scale);
-		graph.setDrawingSize(drawingSizeX, drawingSizeY);
-		UiGlobals.setDrawingSizeX(drawingSizeX);
-		UiGlobals.setDrawingSizeY(drawingSizeY);
-
-		LayerGrid grid = (LayerGrid) editor.getLayerManager().findLayerNamed(
-				"Grid");
-		HashMap<String, Object> map = new HashMap<String, Object>();
-
-		map.put("spacing_include_stamp", (int)UiGlobals.getDefault_grid_spacing());
-		map.put("thick", (int) scale);
-		grid.adjust(map);
-		
-		UiGlobals.setStatusbarText(" resolution : x "+scale);
-    }
 }
