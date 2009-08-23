@@ -107,7 +107,7 @@ public class ToolBar extends JToolBar implements MouseListener {
         b.setVerticalTextPosition(SwingConstants.BOTTOM);
         b.setHorizontalTextPosition(SwingConstants.CENTER);
         b.setMargin(new Insets(4, 0, 0, 0));
-        b.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
+        //b.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
         b.setFocusable(false);
        
         //b.setPreferredSize(new Dimension(50, 50));

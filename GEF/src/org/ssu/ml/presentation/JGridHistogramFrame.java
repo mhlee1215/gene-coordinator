@@ -39,6 +39,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.ui.RefineryUtilities;
+import org.ssu.ml.ui.GridPaletteFig;
 import org.tigris.gef.ui.*;
 
 /**
@@ -55,10 +56,11 @@ public class JGridHistogramFrame extends JFrame implements Cloneable{
 	JPanel _histogram;
 
     private static final long serialVersionUID = -8167010467922210977L;
-    /** The toolbar (shown at top of window). */
+
 
     //private JTabbedPaneWithCloseIcons  _mainPanel = new JTabbedPaneWithCloseIcons();
     private JTabbedPane  _mainPanel = new JTabbedPane();
+    private ToolBar _toolbar = new GridPaletteFig();
 
     HistogramDataset histogramdataset = new HistogramDataset();
     Dimension drawingSize = null;
@@ -68,12 +70,12 @@ public class JGridHistogramFrame extends JFrame implements Cloneable{
      */
 	public JGridHistogramFrame(String title) {
 		super(title);
-		setContentPane(_mainPanel);
+		setLayout(new BorderLayout());
+		//setContentPane(_mainPanel);
+		add(_mainPanel, BorderLayout.CENTER);
+		setToolBar(_toolbar);
 		
 		//_mainPanel.setUI(new CloseableTabbedPaneUI());
-		_mainPanel.setFont(
-			    new Font("Lucida Grande", Font.PLAIN, 11)
-			);
 		// add(_mainPanel, BorderLayout.CENTER);
 
 		//com.sun.java.swing.plaf.windows
@@ -83,13 +85,23 @@ public class JGridHistogramFrame extends JFrame implements Cloneable{
 
     }
 
+	
+	public ToolBar getToolBar() {
+        return _toolbar;
+    }
+
+    public void setToolBar(ToolBar tb) {
+        _toolbar = tb;
+        add(_toolbar, BorderLayout.NORTH);
+    }
+
     public JGridHistogramFrame(String title, double[] data) {
         this(title);
         //this.data = data;
         datas.add(data);
     }
     
-    public void addPanel(JGridHistogramPanel panel, String title)
+    public void addPanel(JGridPanel panel, String title)
     {
     	_mainPanel.addTab(title, panel);
     	
@@ -120,15 +132,20 @@ public class JGridHistogramFrame extends JFrame implements Cloneable{
 	
     public static void main(String[] argv)
     {
-    	double data[] = {1, 2, 3, 2, 1, 4, 5, 3, 1, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
+    	double data[] = {1, 2, 3, 2, 1, 4, 100, 50, 1, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
     	double data1[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
+    	JGridChartPanel char1 = new JGridChartPanel("title");
+    	char1.addData(data, "data1");
+    	char1.addData(data1, "data2");
     	JGridHistogramPanel panel1 = new JGridHistogramPanel("title", data);
     	JGridHistogramPanel panel2 = new JGridHistogramPanel("title", data1);
     	JGridHistogramFrame frame = new JGridHistogramFrame("frame");
+    	char1.drawHistogram();
     	panel1.drawHistogram();
     	panel2.drawHistogram();
-    	frame.add(panel1, "panel1");
-    	frame.add(panel2, "panel2");
+    	frame.addPanel(char1, "chart1");
+    	frame.addPanel(panel1, "panel1");
+    	frame.addPanel(panel2, "panel2");
        // _jgf.drawHistogram();
     	frame.pack();
         RefineryUtilities.centerFrameOnScreen(frame);

@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 
 import org.jfree.ui.RefineryUtilities;
 import org.ssu.ml.base.UiGlobals;
+import org.ssu.ml.presentation.JGridChartPanel;
 import org.ssu.ml.presentation.JGridHistogramFrame;
 import org.ssu.ml.presentation.JGridHistogramPanel;
 import org.tigris.gef.base.Cmd;
@@ -62,6 +63,9 @@ public class CmdGridHistogram extends Cmd {
         int drawingSizeX = UiGlobals.getDrawingSizeX();
         int drawingSizeY = UiGlobals.getDrawingSizeY();
         
+        System.out.println("interval_space : "+interval_space);
+        System.out.println("drawingSizeX : "+drawingSizeX);
+        System.out.println("drawingSizeY : "+drawingSizeY);
         CGridHistogramData histoData = new CGridHistogramData(drawingSizeX, drawingSizeY, interval_space);
         
         for(int count = 0 ; count < nodes.size() ; count++)
@@ -82,27 +86,28 @@ public class CmdGridHistogram extends Cmd {
         	result_1[count] = (double)result[count];
         
         UiGlobals.getGridDatas().add(result_1);
+        UiGlobals.getGridCategories().add("d"+interval_space);
         
         if(result_1.length > 0){
         	JGridHistogramFrame histoFrame = new JGridHistogramFrame("title");
         	
-        	JGridHistogramPanel total = new JGridHistogramPanel("Total");
+        	JGridChartPanel total = new JGridChartPanel("Total");
         	for(int count = 0 ; count < UiGlobals.getGridDatas().size() ; count++)
         	{
-        		total.addData(UiGlobals.getGridDatas().get(count));
+        		total.addData(UiGlobals.getGridDatas().get(count), UiGlobals.getGridCategories().get(count));
         		
             	//panel.setPrecise(10);
     	        
         	}
         	total.drawHistogram();
-        	histoFrame.add(total, "Total Density");
+        	histoFrame.addPanel(total, "Total Density");
         	
         	for(int count = 0 ; count < UiGlobals.getGridDatas().size() ; count++)
         	{
         		JGridHistogramPanel panel = new JGridHistogramPanel("Grid Density - "+count, UiGlobals.getGridDatas().get(count));
             	panel.drawHistogram();
             	//panel.setPrecise(10);
-    	        histoFrame.add(panel, "Grid Density - "+count);
+    	        histoFrame.addPanel(panel, "Grid Density - "+count);
         	}
         	
 	        

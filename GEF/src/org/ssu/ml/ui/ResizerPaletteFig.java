@@ -39,7 +39,11 @@ import java.util.Hashtable;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -87,6 +91,10 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 	
 	private int gridCurValue = 0;
 	private int scaleCurValue = 0;
+	
+	JSpinner gridSpinner = null;
+	JSlider gridResizer = null;
+	JSlider scaleResizer = null;
 
 	public ResizerPaletteFig() {
 		defineButtons();
@@ -102,9 +110,9 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 	public void defineButtons() {
 		this.setBackground(Color.white);
 		this.setForeground(Color.white);
-		this.setLayout(new GridLayout(4, 1));
+		//this.setLayout(new GridLayout(4, 1));
 		//this.setLayout(new FlowLayout());
-		//this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		// add(new CmdSetMode(ModeCreateFigLine.class, "Line"));
 		// add(new CmdSetMode(ModeCreateFigText.class, "Text")	);
 
@@ -114,16 +122,16 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 		int gridMax = 200;
 		int gridMin = 1;
 		gridCurValue = UiGlobals.getDefault_grid_spacing();
-		JSlider gridResizer = new JSlider(JSlider.VERTICAL,
+		gridResizer = new JSlider(JSlider.VERTICAL,
 				gridMin, gridMax, gridCurValue);
 		gridResizer.setName("gridResizer");
 		gridResizer.setBackground(Color.white);
-		Font font = new Font("Dialog.plain", 0, 10);
+		//Font font = new Font("Dialog.plain", 0, 10);
 		
 		JLabel minLabel = new JLabel("Min");
-		minLabel.setFont(font);
+		//minLabel.setFont(font);
 		JLabel maxLabel = new JLabel("Max");
-		maxLabel.setFont(font);
+		//maxLabel.setFont(font);
 		Hashtable<Integer, JLabel> labelTable = 
             new Hashtable<Integer, JLabel>();
 		labelTable.put(new Integer( gridMin ),
@@ -132,12 +140,12 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 				maxLabel );
 		gridResizer.setLabelTable(labelTable);
 		
-		//gridResizer.setFont(font);
+		//gridResizer.setPreferredSize(new Dimension(50, 150));
         gridResizer.setPaintLabels(true);
         gridResizer.setMajorTickSpacing(1);
         gridResizer.addChangeListener(this);
         //gridResizer.setPaintTicks(true);
-        BorderFactory a;
+        //BorderFactory a;
         
         
         gridResizer.setBorder(
@@ -146,13 +154,35 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
         		
                 BorderFactory.createTitledBorder("Grid")
                 );
+        
 		add(gridResizer);
 		UiGlobals.set_gridSlider(gridResizer);
+		
+		
+		SpinnerModel model =
+	        new SpinnerNumberModel(gridCurValue, 	//initial value
+	        						gridMin , 		//min
+	                                gridMax , 		//max
+	                                1);       		//step
+
+		gridSpinner = new JSpinner();
+		gridSpinner.setName("gridSpinner");
+		
+		gridSpinner.setModel(model);
+		add(gridSpinner);
+		gridSpinner.addChangeListener(this);
+		
+		
+		
+		JPanel panel = new JPanel();
+		
+		
+		
 		
 		int scaleMin = 1;
 		int scaleMax = 4;
 		scaleCurValue = scaleMin;
-		JSlider scaleResizer = new JSlider(JSlider.VERTICAL,
+		scaleResizer = new JSlider(JSlider.VERTICAL,
 				scaleMin, scaleMax, scaleCurValue);
 		scaleResizer.setName("scaleResizer");
 		scaleResizer.setBackground(Color.white);
@@ -173,7 +203,8 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
                 );
 		add(scaleResizer);
 		scaleResizer.setEnabled(false);
-
+		
+	
 		UiGlobals.set_scaleSlider(scaleResizer);
 	}
 
@@ -192,15 +223,9 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 					if (gridCurValue != slider.getValue()) {
 						gridCurValue = slider.getValue();
 						int scale = slider.getValue();
+						gridSpinner.setValue(scale);
+						gridResize(scale);
 						
-						Editor editor = UiGlobals.curEditor();
-						LayerGrid grid = (LayerGrid) editor.getLayerManager()
-								.findLayerNamed("Grid");
-						HashMap map = new HashMap();
-						double defaultSpace = (int) Math.pow(2, 3);
-						map.put("spacing_include_stamp", (int) (scale));
-						
-						grid.adjust(map);
 					}
 				}
 				else if(sliderName.equals("scaleResizer"))
@@ -217,7 +242,36 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 				}
 			}
 		}
+		else if(source instanceof JSpinner)
+		{
+			JSpinner spinner = (JSpinner)source;
+			String spinnerName = spinner.getName();
+			System.out.println("gridSpinner");
+			if(spinnerName.equals("gridSpinner")){
+				if (gridCurValue != (Integer)spinner.getValue()) {
+					gridCurValue = (Integer)spinner.getValue();
+					int scale = (Integer)spinner.getValue();
+					gridResizer.setValue(scale);
+					gridResize(scale);
+					
+				}
+			}
+			
+		}
+		
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void gridResize(int scale)
+	{
+		Editor editor = UiGlobals.curEditor();
+		LayerGrid grid = (LayerGrid) editor.getLayerManager()
+				.findLayerNamed("Grid");
+		HashMap map = new HashMap();
+		double defaultSpace = (int) Math.pow(2, 3);
+		map.put("spacing_include_stamp", (int) (scale));
+		
+		grid.adjust(map);
 	}
 } /* end class PaletteFig */

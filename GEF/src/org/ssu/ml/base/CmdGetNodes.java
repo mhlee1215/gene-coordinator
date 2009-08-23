@@ -60,8 +60,9 @@ public class CmdGetNodes extends Cmd {
         	Object desc = node.getOwner();
         	if(desc instanceof NodeDescriptor)
         	{
+        		
         		NodeDescriptor nodeDesc = (NodeDescriptor)desc;
-        		System.out.println("name : "+nodeDesc.getName());
+        		System.out.println("name : "+nodeDesc.getName()+", "+node.getLocation());
         		if(count == 0)
         			nodeStr = nodeDesc.getName();
         		else if(count < 100)

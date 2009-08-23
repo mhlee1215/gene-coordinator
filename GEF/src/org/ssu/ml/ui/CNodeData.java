@@ -15,6 +15,11 @@ public class CNodeData {
 	Vector<String> pointerName = null;
 	Vector<Integer> groups = null;
 	
+	float minXValue = 100000000;
+	float maxXValue = -10000000;
+	float minYValue = 100000000;
+	float maxYValue = -10000000;
+	
 	
 	int groupNum = 0;
 	double pre_scale = 1;
@@ -61,6 +66,11 @@ public class CNodeData {
 		locyVector.add(locy);
 		pointerName.add(name);
 		
+		if(locx < minXValue) minXValue = locx;
+		else if(locx > maxXValue) maxXValue = locx;
+		if(locy < minYValue) minYValue = locy;
+		else if(locy > maxYValue) maxYValue = locy;
+		
 		Random random = new Random();		//need more work.
 		groups.add(random.nextInt(5));	
 	}
@@ -75,6 +85,38 @@ public class CNodeData {
 //		return Color.black;
 //	}
 	
+	public float getMinXValue() {
+		return minXValue;
+	}
+
+	public void setMinXValue(float minXValue) {
+		this.minXValue = minXValue;
+	}
+
+	public float getMaxXValue() {
+		return maxXValue;
+	}
+
+	public void setMaxXValue(float maxXValue) {
+		this.maxXValue = maxXValue;
+	}
+
+	public float getMinYValue() {
+		return minYValue;
+	}
+
+	public void setMinYValue(float minYValue) {
+		this.minYValue = minYValue;
+	}
+
+	public float getMaxYValue() {
+		return maxYValue;
+	}
+
+	public void setMaxYValue(float maxYValue) {
+		this.maxYValue = maxYValue;
+	}
+
 	public Color getColor(int index)
 	{
 		int group = groups.get(index);

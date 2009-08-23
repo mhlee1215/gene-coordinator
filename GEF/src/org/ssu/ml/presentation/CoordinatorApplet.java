@@ -3,6 +3,7 @@ package org.ssu.ml.presentation;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.io.BufferedInputStream;
@@ -203,6 +204,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 	}
 
 	public void init(JGraph jg) {
+		setDefaultFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		this.setToolBar(new NodePaletteFig()); // needs-more-work
 		this.setWestToolBar(new ResizerPaletteFig());
 		_graph = jg;
@@ -431,6 +433,35 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 	public void stop() {
 		// TODO Auto-generated method stub
 		super.stop();
+	}
+	
+	public void setDefaultFont(Font font)
+	{
+		
+			String[] applyList = {
+				"RadioButtonMenuItem.font",
+				"CheckBoxMenuItem.font",
+				"RadioButton.font",
+				"ToolBar.font",
+				"ProgressBar.font",
+				"Menu.font",
+				"Button.font",
+				"TitledBorder.font",
+				"ComboBox.font",
+				"ToggleButton.font",
+				"TabbedPane.font",
+				"List.font",
+				"MenuBar.font",
+				"MenuItem.font",
+				"CheckBox.font",
+				"Label.font",
+			};
+			
+			int nSize = applyList.length;
+			for( int i=0; i < nSize; i++ ){
+				UIManager.put(applyList[i], font);
+			}
+			
 	}
 
 	

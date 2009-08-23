@@ -86,7 +86,7 @@ public class NodeLoadingProgressBar extends JPanel
 
     class NodeTask extends SwingWorker<Void, Void> {
     	boolean progressFlag = true;
-    	CNodeData data = null;
+    	CNodeData nodeData = null;
     	float minLocx = 0;
     	float minLocy = 0;
     	float maxLocx = 0;
@@ -96,16 +96,16 @@ public class NodeLoadingProgressBar extends JPanel
     	JFrame frame = null; 
     	
 
-    	public NodeTask(CNodeData data, JFrame frame, JGraph graph)
+    	public NodeTask(CNodeData nodeData, JFrame frame, JGraph graph)
     	{
-    		this.data = data;
+    		this.nodeData = nodeData;
     		this.frame = frame;
     		this._graph = graph;
     		
-    		minLocx = Utils.minValue(data.getLocxArry());
-        	minLocy = Utils.minValue(data.getLocyArry());
-        	maxLocx = Utils.maxValue(data.getLocxArry());
-        	maxLocy = Utils.maxValue(data.getLocyArry());
+    		minLocx = nodeData.getMinXValue();
+        	minLocy = nodeData.getMinYValue();
+        	maxLocx = nodeData.getMaxXValue();
+        	maxLocy = nodeData.getMaxYValue();
     	}
         /*
          * Main task. Executed in background thread.
@@ -123,21 +123,21 @@ public class NodeLoadingProgressBar extends JPanel
            
             Editor editor = _graph.getEditor();
             
-            float[] locxArry = data.getLocxArry();
-            float[] locyArry = data.getLocyArry();
+            float[] locxArry = nodeData.getLocxArry();
+            float[] locyArry = nodeData.getLocyArry();
             
-            max_work = data.size();
+            max_work = nodeData.size();
         	for(int count = cur_work ; count < max_work ; count++){
-            	int locx = (int)((locxArry[count]+Math.abs(minLocx))*data.getPre_scale()) + data.getPadding()/2;
-            	int locy = (int)((locyArry[count]+Math.abs(minLocy))*data.getPre_scale()) + data.getPadding()/2;
+            	int locx = (int)((locxArry[count]+Math.abs(minLocx))*nodeData.getPre_scale()) + nodeData.getPadding()/2;
+            	int locy = (int)((locyArry[count]+Math.abs(minLocy))*nodeData.getPre_scale()) + nodeData.getPadding()/2;
             	
 
             	NodeDescriptor desc = new NodeDescriptor();
-            	desc.setName(data.getPointerName(count));
-            	desc.setGroup(data.getGroup(count));
+            	desc.setName(nodeData.getPointerName(count));
+            	desc.setGroup(nodeData.getGroup(count));
             	FigCustomNode rect = new FigCustomNode(locx, locy, 1, 1, desc);
             	
-            	rect.setLineColor(data.getColor(count));
+            	rect.setLineColor(nodeData.getColor(count));
 
             	rect.setLocked(true);
 
@@ -183,9 +183,16 @@ public class NodeLoadingProgressBar extends JPanel
     
     public NodeLoadingProgressBar(JGraph graph) {
         super(new BorderLayout());
-
-        this.pre_scaled = UiGlobals.getPre_scaled();
+        nodeData = new CNodeData();
+        
         this.graph = graph;
+        this.pre_scaled = UiGlobals.getPre_scaled();
+      
+        readCoordData();
+        init();
+
+        
+        
                 
         //Create the demo's UI.
         startButton = new JButton("Start");
@@ -280,22 +287,30 @@ public class NodeLoadingProgressBar extends JPanel
     
     public void changeProgress(){
     	//progressBar.setIndeterminate(false);
-    	System.out.println("progress : "+(float)cur_work*100/max_work);
+    	//System.out.println("progress : "+(float)cur_work*100/max_work);
     	progressBar.setValue((int)((float)cur_work*100/max_work));
         progressBar.setString(cur_work+"/"+max_work);
         //taskOutput.append(String.format(
         //            "%s\n", data.toString(cur_work)));
     }
     
-    public int readCoordData(String filename) {
+    
+    
+    public int readCoordData() {
 		//int totalCount = getFileLineCount(filename);
 		//if(totalCount <= 0) return -1;
 		
-		
+		String filename = UiGlobals.getFileName()+".coord";
 
 		int lineCount = 0;
 		try {
 			BufferedReader br = Utils.getInputReader(filename);
+			
+			if(br == null){
+				makeRandomData(5000, 300, 300);
+				return 0;
+			}
+			
 			String str = null;
 			String sep = "\0";
 			String[] seps = { "\t", ",", ".", " " };
@@ -358,6 +373,7 @@ public class NodeLoadingProgressBar extends JPanel
 
 		
 		// int pre_scaled = 2;
+		System.out.println(pre_scaled+", "+scale);
 		editor.setScale(1.0 / scale);
 
 		nodeData.setPre_scale(scale);
@@ -373,7 +389,7 @@ public class NodeLoadingProgressBar extends JPanel
 				"Grid");
 		HashMap<String, Object> map = new HashMap<String, Object>();
 
-		map.put("spacing_include_stamp", (int)UiGlobals.getDefault_grid_spacing());
+		map.put("spacing_include_stamp", (int)(UiGlobals.getDefault_grid_spacing()*scale));
 		map.put("thick", (int) scale);
 		grid.adjust(map);
 		
