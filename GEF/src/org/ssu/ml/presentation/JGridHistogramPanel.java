@@ -46,7 +46,7 @@ import org.tigris.gef.ui.*;
  * status bar.
  */
 
-public class JGridHistogramPanel extends JPanel implements IStatusBar, Cloneable, ChangeListener{
+public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Cloneable, ChangeListener{
 	
 	Vector<double[]> datas = new Vector<double[]>();
 	double data[];            
@@ -161,9 +161,9 @@ public class JGridHistogramPanel extends JPanel implements IStatusBar, Cloneable
         //        );
 		_toolbar.add(beanResizer);
 		
-		JButton saveBtn = new JButton();
-		saveBtn.setText("save");
-		_toolbar.add(saveBtn);
+		//JButton saveBtn = new JButton();
+		//saveBtn.setText("save");
+		//_toolbar.add(saveBtn);
     	
 		_mainPanel.add(_toolbar, BorderLayout.WEST);
     }
@@ -206,7 +206,7 @@ public class JGridHistogramPanel extends JPanel implements IStatusBar, Cloneable
 	     JFreeChart jfreechart = ChartFactory.createHistogram("Grid Density", "Density", "Frequency", intervalxydataset, PlotOrientation.VERTICAL, true, true, false);
 	     
 	     XYPlot xyplot = (XYPlot)jfreechart.getPlot();
-	     xyplot.setForegroundAlpha(0.3F);
+	     xyplot.setForegroundAlpha(0.6F);
 
 	     return jfreechart;
 	}

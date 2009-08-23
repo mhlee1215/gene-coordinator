@@ -96,6 +96,7 @@ public class Utils {
 			br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 		return br;
 	}

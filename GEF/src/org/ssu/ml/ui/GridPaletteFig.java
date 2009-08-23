@@ -62,14 +62,14 @@ import org.tigris.gef.ui.ToolBar;
  * @see ModeCreateFigPoly
  */
 
-public class NodePaletteFig extends ToolBar {
+public class GridPaletteFig extends ToolBar {
 
     /**
      * 
      */
     private static final long serialVersionUID = 304194274216578087L;
 
-    public NodePaletteFig() {
+    public GridPaletteFig() {
         defineButtons();
     }
 
@@ -87,10 +87,8 @@ public class NodePaletteFig extends ToolBar {
         //add(new CmdSetMode(ModeCreateFigText.class, "Text"));
         
         //add(image1, "Image1", "Image1");
-        add(new CmdZoom(1.25), "Zoom in", "zoom_in", ToolBar.BUTTON_TYPE_LEFT);
-        add(new CmdZoom(0.8), "Zoom out", "zoom_out", ToolBar.BUTTON_TYPE_CENTER);
-        this.addSeparator();
-        add(new CmdGridHistogram(), "Grid Histo", "Grid_histogram", ToolBar.BUTTON_TYPE_RIGHT);
+        add(new CmdZoom(1.25), "Save", "Save1");
+        
         
         
     }

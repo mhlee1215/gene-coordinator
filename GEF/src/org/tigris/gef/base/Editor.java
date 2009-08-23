@@ -453,6 +453,7 @@ public class Editor implements Serializable, MouseListener,
 
     /** Add a Fig to the diagram being edited. */
     public void add(Fig f) {
+    	
         if (LOG.isDebugEnabled())
             LOG.debug("Adding fig " + f);
         getLayerManager().add(f);

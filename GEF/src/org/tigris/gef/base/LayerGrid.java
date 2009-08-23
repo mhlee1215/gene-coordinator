@@ -188,6 +188,7 @@ public class LayerGrid extends Layer {
         }
 
         Rectangle clip = g.getClipBounds();
+        
         if (clip != null) {
             int x = clip.x / _spacing * _spacing;
             int y = clip.y / _spacing * _spacing;
@@ -195,8 +196,10 @@ public class LayerGrid extends Layer {
             int right = clip.x + clip.width;
 
             if (_stamp != null) {
+            	//x -= 10;
                 while (x <= right) {
                     y = clip.y / _spacing * _spacing;
+                   // y -= 10;
                     while (y <= bot) {
                         g.drawImage(_stamp, x, y, null);
                         y += _stampHeight;

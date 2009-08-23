@@ -11,6 +11,7 @@ import org.tigris.gef.base.Globals;
 
 public class UiGlobals extends Globals{
 	private static Vector<double[]> gridDatas = new Vector<double[]>();
+	private static Vector<String> gridCategories = new Vector<String>();
 	private static Applet _curApplet = null;
 	private static String fileName = "";
 	private static int default_grid_spacing = 20;
@@ -18,6 +19,13 @@ public class UiGlobals extends Globals{
 	private static int drawingSizeY;
 	private static int pre_scaled;
 	
+	public static Vector<String> getGridCategories() {
+		return gridCategories;
+	}
+
+	public static void setGridCategories(Vector<String> gridCategories) {
+		UiGlobals.gridCategories = gridCategories;
+	}
 	
 	public static int getPre_scaled() {
 		return pre_scaled;

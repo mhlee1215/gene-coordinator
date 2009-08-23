@@ -94,8 +94,8 @@ public class BarChartDemo1 extends ApplicationFrame {
         String series3 = "Third";
 
         // column keys...
-        String category1 = "Category 1";
-        String category2 = "Category 2";
+        String category1 = "Category 2";
+        String category2 = "Category 1";
         String category3 = "Category 3";
         String category4 = "Category 4";
         String category5 = "Category 5";
