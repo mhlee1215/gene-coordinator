@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import org.jfree.ui.RefineryUtilities;
 import org.ssu.ml.base.UiGlobals;
 import org.ssu.ml.presentation.JGridChartPanel;
-import org.ssu.ml.presentation.JGridHistogramFrame;
+import org.ssu.ml.presentation.JGridTabbedFrame;
 import org.ssu.ml.presentation.JGridHistogramPanel;
 import org.tigris.gef.base.Cmd;
 import org.tigris.gef.base.Editor;
@@ -89,7 +89,7 @@ public class CmdGridHistogram extends Cmd {
         UiGlobals.getGridCategories().add("d"+interval_space);
         
         if(result_1.length > 0){
-        	JGridHistogramFrame histoFrame = new JGridHistogramFrame("title");
+        	JGridTabbedFrame histoFrame = new JGridTabbedFrame("title");
         	
         	JGridChartPanel total = new JGridChartPanel("Total");
         	for(int count = 0 ; count < UiGlobals.getGridDatas().size() ; count++)

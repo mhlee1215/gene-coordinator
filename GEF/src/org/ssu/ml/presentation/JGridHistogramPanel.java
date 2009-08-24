@@ -48,6 +48,7 @@ import org.tigris.gef.ui.*;
 
 public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Cloneable, ChangeListener{
 	
+	
 	Vector<double[]> datas = new Vector<double[]>();
 	double data[];            
 	int precise = 10;
@@ -56,12 +57,10 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
 
     private static final long serialVersionUID = -8167010467922210977L;
     /** The toolbar (shown at top of window). */
-    private ToolBar _toolbar = new PaletteFig();
     
     /** A statusbar (shown at bottom ow window). */
-    private JLabel _statusbar = new JLabel(" ");
-    private JPanel _mainPanel = new JPanel(new BorderLayout());
     
+    ToolBar sideToolbar = new ToolBar();
 
     HistogramDataset histogramdataset = new HistogramDataset();
     Dimension drawingSize = null;
@@ -71,61 +70,17 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
      */
 	public JGridHistogramPanel(String title) {
 		super();
-		add(_mainPanel);
-		// add(_mainPanel, BorderLayout.CENTER);
-		setUpToolbar();
-
-		System.out.println("hi!");
-
-
+		setUpSideToolbar();
     }
-
-    public JGridHistogramPanel(String title, double[] data) {
-        this(title);
-        //this.data = data;
-        datas.add(data);
-    }
-    
-    public void addData(double[] data){
-    	datas.add(data);
-    }
-    
-    public int getPrecise() {
-		return precise;
-	}
-
-	public void setPrecise(int precise) {
-		this.precise = precise;
-	}
-
-
-    // //////////////////////////////////////////////////////////////
-    // Cloneable implementation
-
-    public Object clone() {
-        return null; // needs-more-work
-    }
-    
-
-
-    public ToolBar getToolBar() {
-        return _toolbar;
-    }
-
-    public void setToolBar(ToolBar tb) {
-        _toolbar = tb;
-        _mainPanel.add(_toolbar, BorderLayout.NORTH);
-    }
-
-
-    public void setUpToolbar()
+	
+	public void setUpSideToolbar()
     {
-    	_toolbar = new ToolBar();
+    	sideToolbar = new ToolBar();
     	
     	int beanMax = 100;
 		int beanMin = 1;
 		beanCurValue = 10;
-		_toolbar.setLayout(new GridLayout(2, 1));
+		//sideToolbar.setLayout(new GridLayout(2, 1));
 		JSlider beanResizer = new JSlider(JSlider.VERTICAL,
 				beanMin, beanMax, beanCurValue);
 		beanResizer.setName("beanResizer");
@@ -159,29 +114,47 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
         		
         //        BorderFactory.createTitledBorder("Number of Bean")
         //        );
-		_toolbar.add(beanResizer);
+		sideToolbar.add(beanResizer);
 		
 		//JButton saveBtn = new JButton();
 		//saveBtn.setText("save");
-		//_toolbar.add(saveBtn);
+		//sideToolbar.add(saveBtn);
     	
-		_mainPanel.add(_toolbar, BorderLayout.WEST);
+		mainPanel.add(sideToolbar, BorderLayout.WEST);
     }
+
+    public JGridHistogramPanel(String title, double[] data) {
+        this(title);
+        //this.data = data;
+        datas.add(data);
+    }
+    
+    public void addData(double[] data){
+    	datas.add(data);
+    }
+    
+    public int getPrecise() {
+		return precise;
+	}
+
+	public void setPrecise(int precise) {
+		this.precise = precise;
+	}
+
 
     // //////////////////////////////////////////////////////////////
-    // IStatusListener implementation
+    // Cloneable implementation
 
-    /** Show a message in the statusbar. */
-    public void showStatus(String msg) {
-        if (_statusbar != null)
-            _statusbar.setText(msg);
+    public Object clone() {
+        return null; // needs-more-work
     }
+
     
     public void drawHistogram()
     {
     	_histogram = createPanel();
     	//_histogram.setPreferredSize(new Dimension(700, 270));
-        _mainPanel.add(_histogram, BorderLayout.CENTER);
+        mainPanel.add(_histogram, BorderLayout.CENTER);
         //this.remove
     }
     
@@ -219,6 +192,7 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
 		}
 		
 		JFreeChart jfreechart = createChart(histogramdataset);
+		chart = jfreechart;
 		XYPlot plot = jfreechart.getXYPlot();
 		//jfreechart.get
 		//XYItemRenderer renderer = plot.getRenderer();
@@ -261,11 +235,14 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
 						
 						precise = beanCurValue;
 						clean();
-						_mainPanel.remove(_histogram);
+						mainPanel.remove(_histogram);
 						_histogram = createPanel();
-				        _mainPanel.add(_histogram);
+				        mainPanel.add(_histogram);
 				        _histogram.revalidate();
+				        
+				        this.showStatus("Bean number : [" + beanCurValue + "]");
 					}
+					
 				}
 			}
 		}

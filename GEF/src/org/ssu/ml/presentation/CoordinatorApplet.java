@@ -100,6 +100,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		ResourceLoader.addResourceExtension("gif");
 		ResourceLoader.addResourceExtension("png");
 		ResourceLoader.addResourceLocation("/org/tigris/gef/Images");
+		
 		System.out.println("constructur");
 
 		setSize(500, 500);
@@ -128,6 +129,11 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 	private void jbInit() throws Exception {
 
+		try{
+			System.out.println("this.getCodeBase() : "+this.getCodeBase());
+		}catch(Exception e){
+			System.out.println("Executed in local!");
+		}
 		// paths.setCodebase(this.getCodeBase().toString());
 		// this.
 

@@ -47,7 +47,7 @@ import org.tigris.gef.ui.*;
  * status bar.
  */
 
-public class JGridHistogramFrame extends JFrame implements Cloneable{
+public class JGridTabbedFrame extends JFrame implements Cloneable{
 	
 	Vector<double[]> datas = new Vector<double[]>();
 	        
@@ -59,43 +59,15 @@ public class JGridHistogramFrame extends JFrame implements Cloneable{
 
 
     //private JTabbedPaneWithCloseIcons  _mainPanel = new JTabbedPaneWithCloseIcons();
-    private JTabbedPane  _mainPanel = new JTabbedPane();
-    private ToolBar _toolbar = new GridPaletteFig();
-
-    HistogramDataset histogramdataset = new HistogramDataset();
-    Dimension drawingSize = null;
-    /**
-     * Contruct a new JGraphFrame with the title "untitled" and a new
-     * DefaultGraphModel.
-     */
-	public JGridHistogramFrame(String title) {
+    private JTabbedPane  tabbedPane = new JTabbedPane();
+    
+	public JGridTabbedFrame(String title) {
 		super(title);
 		setLayout(new BorderLayout());
-		//setContentPane(_mainPanel);
-		add(_mainPanel, BorderLayout.CENTER);
-		setToolBar(_toolbar);
-		
-		//_mainPanel.setUI(new CloseableTabbedPaneUI());
-		// add(_mainPanel, BorderLayout.CENTER);
-
-		//com.sun.java.swing.plaf.windows
-		//com.sun.java.swing.plaf.windows.WindowsLookAndFeel api
-
-
-
+		add(tabbedPane, BorderLayout.CENTER);
     }
 
-	
-	public ToolBar getToolBar() {
-        return _toolbar;
-    }
-
-    public void setToolBar(ToolBar tb) {
-        _toolbar = tb;
-        add(_toolbar, BorderLayout.NORTH);
-    }
-
-    public JGridHistogramFrame(String title, double[] data) {
+    public JGridTabbedFrame(String title, double[] data) {
         this(title);
         //this.data = data;
         datas.add(data);
@@ -103,7 +75,7 @@ public class JGridHistogramFrame extends JFrame implements Cloneable{
     
     public void addPanel(JGridPanel panel, String title)
     {
-    	_mainPanel.addTab(title, panel);
+    	tabbedPane.addTab(title, panel);
     	
     }
     
@@ -122,14 +94,7 @@ public class JGridHistogramFrame extends JFrame implements Cloneable{
     public Object clone() {
         return null; // needs-more-work
     }
-    
 
-
-    
-    
-    
-
-	
     public static void main(String[] argv)
     {
     	double data[] = {1, 2, 3, 2, 1, 4, 100, 50, 1, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
@@ -139,7 +104,7 @@ public class JGridHistogramFrame extends JFrame implements Cloneable{
     	char1.addData(data1, "data2");
     	JGridHistogramPanel panel1 = new JGridHistogramPanel("title", data);
     	JGridHistogramPanel panel2 = new JGridHistogramPanel("title", data1);
-    	JGridHistogramFrame frame = new JGridHistogramFrame("frame");
+    	JGridTabbedFrame frame = new JGridTabbedFrame("frame");
     	char1.drawHistogram();
     	panel1.drawHistogram();
     	panel2.drawHistogram();

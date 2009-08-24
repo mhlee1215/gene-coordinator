@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.jfree.ui.RefineryUtilities;
 import org.ssu.ml.base.UiGlobals;
-import org.ssu.ml.presentation.JGridHistogramFrame;
+import org.ssu.ml.presentation.JGridTabbedFrame;
 import org.tigris.gef.base.Cmd;
 import org.tigris.gef.base.Editor;
 import org.tigris.gef.base.LayerGrid;

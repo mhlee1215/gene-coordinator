@@ -28,16 +28,19 @@
 
 package org.ssu.ml.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.util.HashMap;
 import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -175,6 +178,27 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 		
 		
 		JPanel panel = new JPanel();
+		panel.setPreferredSize(new Dimension(50, 60));
+		panel.setLayout(new BorderLayout());
+		JButton buttonUp = new JButton("¡ã");
+		buttonUp.setPreferredSize(new Dimension(20, 20));
+		buttonUp.setMargin(new Insets(0, 0, 0, 0));
+		panel.add(buttonUp, BorderLayout.NORTH);
+		JButton buttonDown = new JButton("¡å");
+		buttonDown.setPreferredSize(new Dimension(20, 20));
+		buttonDown.setMargin(new Insets(0, 0, 0, 0));
+		panel.add(buttonDown, BorderLayout.SOUTH);
+		JButton buttonLeft = new JButton("¢¸");
+		buttonLeft.setPreferredSize(new Dimension(30, 20));
+		buttonLeft.setMargin(new Insets(0, 0, 0, 0));
+		panel.add(buttonLeft, BorderLayout.WEST);
+		JButton buttonRight = new JButton("¢º");
+		buttonRight.setPreferredSize(new Dimension(30, 20));
+		buttonRight.setMargin(new Insets(0, 0, 0, 0));
+		panel.add(buttonRight, BorderLayout.EAST);
+		
+		
+		add(panel);
 		
 		
 		

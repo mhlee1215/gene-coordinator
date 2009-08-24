@@ -1,13 +1,25 @@
 package org.ssu.ml.ui;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.jfree.chart.JFreeChart;
+
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGEncodeParam;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 
 
@@ -100,5 +112,30 @@ public class Utils {
 		}
 		return br;
 	}
+	
+	public static void saveToFile(JFreeChart chart, String aFileName,
+			int width, int height, double quality)
+			throws FileNotFoundException, IOException {
+		BufferedImage img = draw(chart, width, height);
+		FileOutputStream fos = new FileOutputStream(aFileName);
+		JPEGImageEncoder encoder2 = JPEGCodec.createJPEGEncoder(fos);
+		JPEGEncodeParam param2 = encoder2.getDefaultJPEGEncodeParam(img);
+		param2.setQuality((float) quality, true);
+		encoder2.encode(img, param2);
+		fos.close();
+	}
+	
+	protected static BufferedImage draw(JFreeChart chart, int width, int height)
+    {
+        BufferedImage img =
+        new BufferedImage(width , height,
+        BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = img.createGraphics();
+                       
+        chart.draw(g2, new Rectangle2D.Double(0, 0, width, height));
+ 
+        g2.dispose();
+        return img;
+    }
 	
 }
