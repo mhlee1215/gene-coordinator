@@ -68,14 +68,11 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	int minimum_interval = 5;
 	
 	JPanel _chart;
+	
+	ToolBar sideToolbar;
 
     private static final long serialVersionUID = -8167010467922210977L;
-    /** The toolbar (shown at top of window). */
-    private ToolBar _toolbar = new PaletteFig();
     
-    /** A statusbar (shown at bottom ow window). */
-    private JLabel _statusbar = new JLabel(" ");
-    private JPanel _mainPanel = new JPanel(new BorderLayout());
     
 
     DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
@@ -86,14 +83,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
      */
 	public JGridChartPanel(String title) {
 		super();
-		add(_mainPanel);
-		// add(_mainPanel, BorderLayout.CENTER);
-		setUpToolbar();
-		setStatusBar();
-
-		System.out.println("hi!");
-
-
+		setUpSideToolbar();
     }
 
     public JGridChartPanel(String title, double[] data, String category) {
@@ -120,30 +110,19 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
     
 
 
-    public ToolBar getToolBar() {
-        return _toolbar;
-    }
-
-    public void setToolBar(ToolBar tb) {
-        _toolbar = tb;
-        _mainPanel.add(_toolbar, BorderLayout.NORTH);
-    }
     
-    public void setStatusBar(){
-    	_mainPanel.add(_statusbar, BorderLayout.SOUTH);
-    }
 
-
-    public void setUpToolbar()
+    public void setUpSideToolbar()
     {
-    	_toolbar = new ToolBar();
+    	sideToolbar = new ToolBar();
     	
     	
 		maxCurValue = 50;
 		minCurValue = 10;
-		_toolbar.setLayout(new GridLayout(2, 1));
+		sideToolbar.setLayout(new GridLayout(2, 1));
 		
 		{
+			
 			maxRanger = new JSlider(JSlider.VERTICAL,
 					rangeMin+minimum_interval, rangeMax, maxCurValue);
 			maxRanger.setName("maxRanger");
@@ -165,7 +144,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	        maxRanger.addChangeListener(this);
 	        maxRanger.setPaintTicks(true);
 	        maxRanger.setMinorTickSpacing(5);
-	        _toolbar.add(maxRanger);
+	        sideToolbar.add(maxRanger);
 		}
         
 		{
@@ -193,27 +172,23 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	        minRanger.setPaintTicks(true);
 	        minRanger.setMinorTickSpacing(5);
 	        
-			_toolbar.add(minRanger);
+			sideToolbar.add(minRanger);
 			
 		}
     	
-		_mainPanel.add(_toolbar, BorderLayout.WEST);
+		mainPanel.add(sideToolbar, BorderLayout.WEST);
     }
+
 
     // //////////////////////////////////////////////////////////////
     // IStatusListener implementation
 
-    /** Show a message in the statusbar. */
-    public void showStatus(String msg) {
-        if (_statusbar != null)
-            _statusbar.setText(msg);
-    }
     
     public void drawHistogram()
     {
     	_chart = createPanel();
     	//_histogram.setPreferredSize(new Dimension(700, 270));
-        _mainPanel.add(_chart, BorderLayout.CENTER);
+    	mainPanel.add(_chart, BorderLayout.CENTER);
         //this.remove
     }
     
@@ -260,7 +235,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	             true,                     // tooltips?
 	             false                     // URLs?
 	         );
-	     
+	   
 	     //XYPlot xyplot = (XYPlot)jfreechart.getPlot();
 	     //xyplot.setForegroundAlpha(0.3F);
 
@@ -275,12 +250,13 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 		}
 		
 		JFreeChart jfreechart = createChart(categoryDataset);
-		//XYPlot plot = jfreechart.getXYPlot();
+		chart = jfreechart;
+		//	XYPlot plot = jfreechart.getXYPlot();
 		//jfreechart.get
 		//XYItemRenderer renderer = plot.getRenderer();
 		//renderer.set
 		//BarRenderer renderer = (BarRenderer)plot.getRenderer();
-		//renderer.set
+		//renderer.set		
 		return new ChartPanel(jfreechart);
 	}
 
@@ -305,42 +281,40 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		Object source = e.getSource();
-		if(source instanceof JSlider)
-		{
-			JSlider slider = (JSlider)source;
+		if (source instanceof JSlider) {
+			JSlider slider = (JSlider) source;
 			String sliderName = slider.getName();
-			if(sliderName != null){
+			if (sliderName != null) {
 				if (sliderName.equals("maxRanger")) {
 
 					if (maxCurValue != slider.getValue()) {
 						maxCurValue = slider.getValue();
-						
-						
-						if(maxCurValue - minimum_interval < minCurValue){
+
+						if (maxCurValue - minimum_interval < minCurValue) {
 							minCurValue = maxCurValue - minimum_interval;
 							minRanger.setValue(minCurValue);
 						}
 					}
-				}else if (sliderName.equals("minRanger")) {
+				} else if (sliderName.equals("minRanger")) {
 
 					if (minCurValue != slider.getValue()) {
 						minCurValue = slider.getValue();
-						
-						
-						if(maxCurValue < minCurValue + minimum_interval){
+
+						if (maxCurValue < minCurValue + minimum_interval) {
 							maxCurValue = minCurValue + minimum_interval;
 							maxRanger.setValue(maxCurValue);
 						}
 					}
 				}
 				clean();
-				_mainPanel.remove(_chart);
+				mainPanel.remove(_chart);
 				_chart = createPanel();
-		        _mainPanel.add(_chart);
-		        _chart.revalidate();
-		        
-		        this.showStatus("Range : ["+maxCurValue+" to "+minCurValue+"]");
-					
+				mainPanel.add(_chart);
+				_chart.revalidate();
+
+				this.showStatus("Good range : [" + maxCurValue + " to "
+						+ minCurValue + "]");
+
 			}
 		}
 		
