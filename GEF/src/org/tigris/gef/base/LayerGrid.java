@@ -54,6 +54,8 @@ public class LayerGrid extends Layer {
 
     private static final long serialVersionUID = 4363123625161512763L;
 
+    private int xOffset = 0;
+    private int yOffset = 0;
     /** The spacing between the lines. */
     private int _spacing = 16;
     
@@ -196,10 +198,10 @@ public class LayerGrid extends Layer {
             int right = clip.x + clip.width;
 
             if (_stamp != null) {
-            	//x -= 10;
+            	x += xOffset;
                 while (x <= right) {
                     y = clip.y / _spacing * _spacing;
-                   // y -= 10;
+                    y += yOffset;
                     while (y <= bot) {
                         g.drawImage(_stamp, x, y, null);
                         y += _stampHeight;
@@ -384,6 +386,20 @@ public class LayerGrid extends Layer {
         if (m instanceof Integer)
             _stampHeight = ((Integer) m).intValue();
         
+        m = map.get("xOffset");
+        if (m instanceof Integer){
+            xOffset += ((Integer) m).intValue();
+            if(xOffset > 0 )
+            	xOffset -= _spacing;
+        }
+        
+        m = map.get("yOffset");
+        if (m instanceof Integer){
+        	yOffset += ((Integer) m).intValue();
+        	if(yOffset > 0 )
+        		yOffset -= _spacing;
+        }
+        
         
         refreshEditors();
     }
@@ -399,6 +415,8 @@ public class LayerGrid extends Layer {
     	map.put("thick", _thick);
     	map.put("stampWidth", _stampWidth);
     	map.put("stampHeight", _stampHeight);
+    	map.put("xOffset", xOffset);
+    	map.put("yOffset", yOffset);
     	return map;
     }
     

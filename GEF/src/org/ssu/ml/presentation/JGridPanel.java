@@ -21,9 +21,7 @@ import org.ssu.ml.base.CmdSaveChart;
 import org.ssu.ml.ui.GridPaletteFig;
 import org.tigris.gef.ui.ToolBar;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+
 
 public class JGridPanel extends JPanel {
 	JFreeChart chart;

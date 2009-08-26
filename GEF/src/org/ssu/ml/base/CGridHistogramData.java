@@ -12,8 +12,8 @@ public class CGridHistogramData {
 	public CGridHistogramData(int width, int height, int spacing)
 	{
 		gSpacing = spacing;
-		gWidth = (int)Math.ceil((double)width/spacing);
-		gHeight = (int)Math.ceil((double)height/spacing);
+		gWidth = (int)Math.ceil((double)width/spacing)+1;
+		gHeight = (int)Math.ceil((double)height/spacing)+1;
 		gBean = new int[gWidth][gHeight];
 		for(int count = 0 ; count < gWidth ; count++)
 			for(int count1 = 0 ; count1 < gHeight ; count1++)

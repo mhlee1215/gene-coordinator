@@ -35,6 +35,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -85,7 +87,7 @@ import org.tigris.gef.ui.ToolBar;
  * @see ModeCreateFigPoly
  */
 
-public class ResizerPaletteFig extends ToolBar implements ChangeListener{
+public class ResizerPaletteFig extends ToolBar implements ChangeListener, ActionListener{
 
 	/**
      * 
@@ -143,7 +145,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 				maxLabel );
 		gridResizer.setLabelTable(labelTable);
 		
-		//gridResizer.setPreferredSize(new Dimension(50, 150));
+		gridResizer.setPreferredSize(new Dimension(50, 500));
         gridResizer.setPaintLabels(true);
         gridResizer.setMajorTickSpacing(1);
         gridResizer.addChangeListener(this);
@@ -180,20 +182,31 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(50, 60));
 		panel.setLayout(new BorderLayout());
-		JButton buttonUp = new JButton("¡ã");
+		JButton buttonUp = new JButton("^");
+		buttonUp.setActionCommand("gridUp");
+		buttonUp.addActionListener(this);
 		buttonUp.setPreferredSize(new Dimension(20, 20));
 		buttonUp.setMargin(new Insets(0, 0, 0, 0));
 		panel.add(buttonUp, BorderLayout.NORTH);
-		JButton buttonDown = new JButton("¡å");
+		
+		JButton buttonDown = new JButton("v");
+		buttonDown.setActionCommand("gridDown");
+		buttonDown.addActionListener(this);
 		buttonDown.setPreferredSize(new Dimension(20, 20));
 		buttonDown.setMargin(new Insets(0, 0, 0, 0));
 		panel.add(buttonDown, BorderLayout.SOUTH);
-		JButton buttonLeft = new JButton("¢¸");
-		buttonLeft.setPreferredSize(new Dimension(30, 20));
+		
+		JButton buttonLeft = new JButton("<");
+		buttonLeft.setActionCommand("gridLeft");
+		buttonLeft.addActionListener(this);
+		buttonLeft.setPreferredSize(new Dimension(28, 20));
 		buttonLeft.setMargin(new Insets(0, 0, 0, 0));
 		panel.add(buttonLeft, BorderLayout.WEST);
-		JButton buttonRight = new JButton("¢º");
-		buttonRight.setPreferredSize(new Dimension(30, 20));
+		
+		JButton buttonRight = new JButton(">");
+		buttonRight.setActionCommand("gridRight");
+		buttonRight.addActionListener(this);
+		buttonRight.setPreferredSize(new Dimension(28, 20));
 		buttonRight.setMargin(new Insets(0, 0, 0, 0));
 		panel.add(buttonRight, BorderLayout.EAST);
 		
@@ -219,7 +232,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 		scaleResizer.setLabelTable(scaleLableTable);
         scaleResizer.setPaintLabels(true);
         scaleResizer.addChangeListener(this);
-        
+        scaleResizer.setPreferredSize(new Dimension(50, 500));
         scaleResizer.setBorder(
                 //BorderFactory.createEmptyBorder(0,0,0,0)
                 //BorderFactory.createLineBorder(Color.black, 1)
@@ -297,5 +310,37 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener{
 		map.put("spacing_include_stamp", (int) (scale));
 		
 		grid.adjust(map);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object s = e.getSource();
+		if(s instanceof JButton){
+			JButton button = (JButton)s;
+			
+			Editor editor = UiGlobals.curEditor();
+			LayerGrid grid = (LayerGrid) editor.getLayerManager()
+					.findLayerNamed("Grid");
+			HashMap params = grid.getParameters();
+			int spacing = (Integer)params.get("spacing");
+			
+			double moveSize = .1; 
+			int distence = (int)(spacing*moveSize);
+			if(distence == 0) distence = 1;
+	
+			
+			HashMap map = new HashMap();	
+			if(button.getActionCommand().equals("gridUp")){
+				map.put("yOffset", -distence);
+			}else if(button.getActionCommand().equals("gridDown")){
+				map.put("yOffset", distence);
+			}else if(button.getActionCommand().equals("gridLeft")){
+				map.put("xOffset", -distence);
+			}else if(button.getActionCommand().equals("gridRight")){
+				map.put("xOffset", +distence);
+			}
+			
+			grid.adjust(map);
+		}
 	}
 } /* end class PaletteFig */
