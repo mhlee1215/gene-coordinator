@@ -32,7 +32,8 @@ archive="
 	commons-logging.jar,
 	jcommon-1.0.16.jar,
 	jfreechart-1.0.13.jar,
-	netscape.jar" MAYSCRIPT height="100%" width="100%" >
+	netscape.jar,
+	httpclient-4.0.jar" MAYSCRIPT height="100%" width="100%" >
 <param name=id value=<%=id%> />
 <param name=fileName value=<%=fileName%>></param>
 <param name=prescaled value=<%=prescaled%>></param>
