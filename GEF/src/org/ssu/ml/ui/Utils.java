@@ -27,9 +27,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.jfree.chart.JFreeChart;
 import org.ssu.ml.base.UiGlobals;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 
 

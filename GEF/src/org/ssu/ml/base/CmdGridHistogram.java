@@ -57,6 +57,8 @@ public class CmdGridHistogram extends Cmd {
         LayerGrid grid = (LayerGrid) editor.getLayerManager().findLayerNamed("Grid");
         HashMap map = grid.getParameters();
         int interval_space = (Integer)map.get("spacing");
+        int xOffset = (Integer)map.get("xOffset");
+        int yOffset = (Integer)map.get("yOffset");
         System.out.println("Hi! I'm a GridHistogram Swich!, space : "+interval_space);
         
         List<Fig> nodes = editor.getLayerManager().getActiveLayer().getContents();
@@ -68,17 +70,13 @@ public class CmdGridHistogram extends Cmd {
         System.out.println("drawingSizeY : "+drawingSizeY);
         CGridHistogramData histoData = new CGridHistogramData(drawingSizeX, drawingSizeY, interval_space);
         
+        
+        xOffset = Math.abs(xOffset);
+        yOffset = Math.abs(yOffset);
         for(int count = 0 ; count < nodes.size() ; count++)
         {
         	Fig node = nodes.get(count);
-        	//System.out.println(node.getLocation().x+", "+node.getLocation().y+", "+node.getId());
-        	histoData.addData(node.getLocation().x, node.getLocation().y);
-//        	Object desc = node.getOwner();
-//        	if(desc instanceof NodeDescriptor)
-//        	{
-//        		NodeDescriptor nodeDesc = (NodeDescriptor)desc;
-//        		System.out.println("name : "+nodeDesc.getName());
-//        	}
+        	histoData.addData(node.getLocation().x+xOffset, node.getLocation().y+yOffset);
         }
         Double[] result = histoData.generateHistoData();
         double[] result_1 = new double[result.length];
@@ -86,7 +84,7 @@ public class CmdGridHistogram extends Cmd {
         	result_1[count] = (double)result[count];
         
         UiGlobals.getGridDatas().add(result_1);
-        UiGlobals.getGridCategories().add("d"+interval_space);
+        UiGlobals.getGridCategories().add("d"+interval_space+"x"+xOffset+"y"+yOffset);
         
         if(result_1.length > 0){
         	JGridTabbedFrame histoFrame = new JGridTabbedFrame("title");
