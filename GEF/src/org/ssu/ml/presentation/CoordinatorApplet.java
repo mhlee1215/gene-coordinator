@@ -150,7 +150,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		nodeRenderManager.drawNodes(true);
 		
 		UiGlobals.setNodeRenderManager(nodeRenderManager);
-		UiGlobals.setPre_scaled(pre_scaled);
+		//UiGlobals.setPre_scaled(pre_scaled);
 		UiGlobals.setFileName(this.getParameter("fileName"));
 		
 	}

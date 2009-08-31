@@ -48,8 +48,8 @@ public class AnnotationLineRemover implements ActionListener {
         // System.out.println("*************************************"
         // +annotation);
         try {
-            annotation.getAnnotationOwner().getAnnotationStrategy()
-                    .getAnnotationProperties(annotation).removeLine();
+           // annotation.getAnnotationOwner().getAnnotationStrategy()
+           //         .getAnnotationProperties(annotation).removeLine();
         } catch (Exception ex) {
         }
     }

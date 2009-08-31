@@ -78,20 +78,6 @@ public abstract class Fig implements GraphicElement, Cloneable,
     /** The smallest size that the user can drag this Fig. */
     public final int MIN_SIZE = 4;
 
-    /** The size of the dashes drawn when the Fig is dashed. */
-    private static final String[] DASHED_CHOICES = { "Solid", "Dashed",
-            "LongDashed", "Dotted", "DotDash" };
-    private static final float[][] DASH_ARRAYS = { null, { 5.0f, 5.0f },
-            { 15.0f, 5.0f }, { 3.0f, 10.0f }, { 3.0f, 6.0f, 10.0f, 6.0f } }; // opaque,
-                                                                                // transparent,
-                                                                                // [opaque,
-                                                                                // transparent]
-    private static final int[] DASH_PERIOD = { 0, 10, 20, 13, 25, }; // the
-                                                                        // sum
-                                                                        // of
-                                                                        // each
-                                                                        // subarray
-
     /**
      * Indicates whether this fig can be moved
      */
@@ -228,7 +214,7 @@ public abstract class Fig implements GraphicElement, Cloneable,
      * Fig.
      */
     public Fig() {
-        an = NoAnnotationStrategy.getInstance();
+        //an = NoAnnotationStrategy.getInstance();
     }
 
     /** Construct a new Fig with the given bounds. */
@@ -286,7 +272,7 @@ public abstract class Fig implements GraphicElement, Cloneable,
 
     // --------------------------------
     // annotation related
-    protected AnnotationStrategy an = NoAnnotationStrategy.getInstance();
+    //protected AnnotationStrategy an = NoAnnotationStrategy.getInstance();
     protected boolean annotationStatus = false;
     protected Fig annotationOwner;
 
@@ -309,17 +295,17 @@ public abstract class Fig implements GraphicElement, Cloneable,
     /**
      * USED BY PGML.tee
      */
-    public AnnotationStrategy getAnnotationStrategy() {
-        return an;
-    }
+//    public AnnotationStrategy getAnnotationStrategy() {
+//        return null;
+//    }
 
     /**
      * Set the AnnotationStrategy for this Fig. using this method will discard
      * the previous AnnotationStrategy
      */
-    public void setAnnotationStrategy(AnnotationStrategy a) {
-        an = a;
-    }
+//    public void setAnnotationStrategy(AnnotationStrategy a) {
+//        //an = a;
+//    }
 
     /**
      * returns true if this fig is an annotation of any other fig
@@ -349,7 +335,7 @@ public abstract class Fig implements GraphicElement, Cloneable,
         if (annotationFig.isAnnotation()
                 && (this == annotationFig.getAnnotationOwner())) {
             Globals.curEditor().remove(annotationFig);
-            getAnnotationStrategy().removeAnnotation(annotationFig);
+            //getAnnotationStrategy().removeAnnotation(annotationFig);
         }
     }
 
@@ -369,27 +355,27 @@ public abstract class Fig implements GraphicElement, Cloneable,
                     .getSelectionManager();
             if (!(selectionManager.containsFig(this.getAnnotationOwner()))
                     && selectionManager.containsFig(this)) {
-                (getAnnotationOwner().an).storeAnnotationPosition(this);
+                //(getAnnotationOwner().an).storeAnnotationPosition(this);
             }
         }
 
         // If this Fig is owner of annotations then move the annotations
         // according to the Fig's own position.
-        if (!(getAnnotationStrategy() instanceof NoAnnotationStrategy)) {
-            getAnnotationStrategy().translateAnnotations(this);
-        }
+//        if (!(getAnnotationStrategy() instanceof NoAnnotationStrategy)) {
+//            getAnnotationStrategy().translateAnnotations(this);
+//        }
     }
 
     /**
      * Updates the positions of the connected annotations.
      */
     final public void updateAnnotationPositions() {
-        Enumeration annotations = getAnnotationStrategy().getAllAnnotations();
-        while (annotations.hasMoreElements()) {
-            Fig annotation = (Fig) annotations.nextElement();
-            getAnnotationStrategy().storeAnnotationPosition(annotation);
-            annotation.endTrans();
-        }
+//        Enumeration annotations = getAnnotationStrategy().getAllAnnotations();
+//        while (annotations.hasMoreElements()) {
+//            Fig annotation = (Fig) annotations.nextElement();
+//            getAnnotationStrategy().storeAnnotationPosition(annotation);
+//            annotation.endTrans();
+//        }
 
         endTrans();
     }
@@ -743,15 +729,15 @@ public abstract class Fig implements GraphicElement, Cloneable,
         visible = false;
 
         // delete all annotations first
-        java.util.Enumeration iter = getAnnotationStrategy()
-                .getAllAnnotations();
-        while (iter.hasMoreElements()) {
-            Fig annotation = (Fig) iter.nextElement();
-            getAnnotationStrategy().getAnnotationProperties(annotation)
-                    .removeLine();
-            removeAnnotation(annotation);
-            annotation.removeFromDiagram();
-        }
+        //java.util.Enumeration iter = getAnnotationStrategy()
+        //        .getAllAnnotations();
+        //while (iter.hasMoreElements()) {
+        //    Fig annotation = (Fig) iter.nextElement();
+          //  getAnnotationStrategy().getAnnotationProperties(annotation)
+          //          .removeLine();
+          //  removeAnnotation(annotation);
+          //  annotation.removeFromDiagram();
+        //}
 
         if (layer != null) {
             Layer oldLayer = layer;
@@ -1052,7 +1038,7 @@ public abstract class Fig implements GraphicElement, Cloneable,
     }
 
     final public String getDashedString() {
-        return (_dashes == null) ? DASHED_CHOICES[0] : DASHED_CHOICES[1];
+        return "Solid";
     }
 
     public Vector getEnclosedFigs() {
@@ -1770,8 +1756,8 @@ public abstract class Fig implements GraphicElement, Cloneable,
     /** Set line to be dashed or not * */
     public void setDashed(boolean now_dashed) {
         if (now_dashed) {
-            _dashes = DASH_ARRAYS[1];
-            _dashPeriod = DASH_PERIOD[1];
+            _dashes = null;
+            _dashPeriod = 0;//DASH_PERIOD[1];
         } else {
             _dashes = null;
         }

@@ -34,6 +34,7 @@ import java.util.Vector;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -122,6 +123,8 @@ public class ModePopup extends FigModifyingModeImpl {
                         popup.add((JMenuItem) a);
                     else if (a instanceof JSeparator)
                         popup.add((JSeparator) a);
+                    else if (a instanceof JLabel)
+                    	popup.add((JLabel) a);
                 }
 
                 popup.show(editor.getJComponent(), me.getX(), me.getY());
