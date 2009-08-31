@@ -55,9 +55,13 @@ import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
 
+import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
 
 import org.ssu.ml.base.CmdGetNodes;
+import org.ssu.ml.base.NodeDescriptor;
 import org.tigris.gef.base.CmdReorder;
 import org.tigris.gef.presentation.FigRect;
 import org.tigris.gef.util.Localizer;
@@ -90,23 +94,38 @@ public class FigCustomNode extends FigRect {
     
     public Vector getPopUpActions(MouseEvent me) {
         Vector popUpActions = new Vector();
-        JMenu orderMenu = new JMenu(Localizer.localize("PresentationGef",
-                "Ordering"));
-        orderMenu.setMnemonic((Localizer.localize("PresentationGef",
-                "OrderingMnemonic")).charAt(0));
-        orderMenu.add(CmdReorder.BringForward);
-        orderMenu.add(CmdReorder.SendBackward);
-        orderMenu.add(CmdReorder.BringToFront);
-        orderMenu.add(CmdReorder.SendToBack);
+        //JMenu orderMenu = new JMenu(Localizer.localize("PresentationGef",
+        //        "Ordering"));
+        //orderMenu.setMnemonic((Localizer.localize("PresentationGef",
+        //        "OrderingMnemonic")).charAt(0));
+        //orderMenu.add(CmdReorder.BringForward);
+        //orderMenu.add(CmdReorder.SendBackward);
+        //orderMenu.add(CmdReorder.BringToFront);
+        //orderMenu.add(CmdReorder.SendToBack);
+        NodeDescriptor desc = (NodeDescriptor)this.getOwner();
+        //JLabel name = new JLabel("<html><body style=\"background-color: #000000\"><h2>&nbsp;&nbsp;<font color=#ffffdd><span >"+desc.getName()+"</span></font></h2></body></html>");
+        JLabel name = new JLabel(desc.getName());
+        name.setOpaque(true);
+        name.setBackground(Color.black);
+        //name.setForeground(Color.black);
+        name.setFocusable(false);
+        
+        //name.set
+        
         JMenu getMenu = new JMenu(Localizer.localize("PresentationGef",
         "Get selected Node"));
-        getMenu.add(new CmdGetNodes());
-        JMenu getClustering = new JMenu(Localizer.localize("PresentationGef",
-        "Clustering"));
         
-        popUpActions.addElement(orderMenu);
+        getMenu.add(new CmdGetNodes());
+        //JMenu getClustering = new JMenu(Localizer.localize("PresentationGef",
+        //"Clustering"));
+        
+        
+        
+        //popUpActions.addElement(orderMenu);
+        popUpActions.addElement(name);
+        popUpActions.addElement(new JSeparator());
         popUpActions.addElement(getMenu);
-        popUpActions.addElement(getClustering);
+        //popUpActions.addElement(getClustering);
 
         return popUpActions;
     }
@@ -114,8 +133,12 @@ public class FigCustomNode extends FigRect {
     /** Paint this FigRect */
     public void paint(Graphics g) {
     	//g.draw
-        drawRect(g, isFilled(), getFillColor(), getLineWidth(), getLineColor(), getX(), getY(), getWidth(),
-                getHeight(), getDashed(), _dashes, _dashPeriod);
+       // drawRect(g, isFilled(), getFillColor(), getLineWidth(), getLineColor(), getX(), getY(), getWidth(),
+        //        getHeight(), getDashed(), _dashes, _dashPeriod);
+    	Color old = g.getColor();
+    	g.setColor(getLineColor());
+    	g.fillOval(getX(), getY(), getWidth(), getHeight());
+    	g.setColor(old);
     }
     
     

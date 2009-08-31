@@ -17,7 +17,7 @@ public class UiGlobals extends Globals{
 	private static int default_grid_spacing = 20;
 	private static int drawingSizeX;
 	private static int drawingSizeY;
-	private static int pre_scaled;
+	private static int pre_scaled = 4;
 	
 	public static Vector<String> getGridCategories() {
 		return gridCategories;

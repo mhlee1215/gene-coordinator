@@ -216,8 +216,8 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		
 		
 		
-		int scaleMin = 1;
-		int scaleMax = 4;
+		int scaleMin = UiGlobals.getPre_scaled();
+		int scaleMax = 12;
 		scaleCurValue = scaleMin;
 		scaleResizer = new JSlider(JSlider.VERTICAL,
 				scaleMin, scaleMax, scaleCurValue);

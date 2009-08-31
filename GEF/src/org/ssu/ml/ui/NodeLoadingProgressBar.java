@@ -135,7 +135,7 @@ public class NodeLoadingProgressBar extends JPanel
             	NodeDescriptor desc = new NodeDescriptor();
             	desc.setName(nodeData.getPointerName(count));
             	desc.setGroup(nodeData.getGroup(count));
-            	FigCustomNode rect = new FigCustomNode(locx, locy, 1, 1, desc);
+            	FigCustomNode rect = new FigCustomNode(locx, locy, 7, 7, desc);
             	
             	rect.setLineColor(nodeData.getColor(count));
 
@@ -307,7 +307,7 @@ public class NodeLoadingProgressBar extends JPanel
 			BufferedReader br = Utils.getInputReader(filename);
 			
 			if(br == null){
-				makeRandomData(5000, 300, 300);
+				makeRandomData(50, 300, 300);
 				return 0;
 			}
 			
@@ -365,7 +365,7 @@ public class NodeLoadingProgressBar extends JPanel
 		height = (int) maxLocy - (int) minLocy + NodeRenderManager._PADDING;
 		
 
-		double scale = Math.pow(2, pre_scaled - 1);
+		double scale = pre_scaled;//Math.pow(2, pre_scaled - 1);
 
 		
 		System.out.println("pre_scaled : " + pre_scaled + ", real scale : "+ scale);
