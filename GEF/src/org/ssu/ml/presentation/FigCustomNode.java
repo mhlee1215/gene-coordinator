@@ -48,11 +48,13 @@ package org.ssu.ml.presentation;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JLabel;
@@ -62,7 +64,10 @@ import javax.swing.JSeparator;
 
 import org.ssu.ml.base.CmdGetNodes;
 import org.ssu.ml.base.NodeDescriptor;
+import org.ssu.ml.base.UiGlobals;
 import org.tigris.gef.base.CmdReorder;
+import org.tigris.gef.base.Editor;
+import org.tigris.gef.presentation.Fig;
 import org.tigris.gef.presentation.FigRect;
 import org.tigris.gef.util.Localizer;
 
@@ -94,20 +99,48 @@ public class FigCustomNode extends FigRect {
     
     public Vector getPopUpActions(MouseEvent me) {
         Vector popUpActions = new Vector();
-        //JMenu orderMenu = new JMenu(Localizer.localize("PresentationGef",
-        //        "Ordering"));
-        //orderMenu.setMnemonic((Localizer.localize("PresentationGef",
-        //        "OrderingMnemonic")).charAt(0));
-        //orderMenu.add(CmdReorder.BringForward);
-        //orderMenu.add(CmdReorder.SendBackward);
-        //orderMenu.add(CmdReorder.BringToFront);
-        //orderMenu.add(CmdReorder.SendToBack);
+        
+        Editor editor = UiGlobals.curEditor();
+        List<Fig> list = editor.getSelectionManager().getSelectedFigs();
+        String nodeStr = "";
+        String prefix = "<html><body style=\"background-color: #ffffdd\"><h3><font color=#000000><span >";
+        String postfix = "</span></font></h3></body></html>";
+     
+        int nodeCount = 0;
+        
+        for(int count = 0 ; count < list.size() ; count++)
+        {
+        	Fig node = list.get(count);
+
+        	Object desc = node.getOwner();
+        	if(desc instanceof NodeDescriptor)
+        	{
+        		
+        		NodeDescriptor nodeDesc = (NodeDescriptor)desc;
+        		System.out.println("name : "+nodeDesc.getName()+", "+node.getLocation());
+        		if(count == 0)
+        			nodeStr = nodeDesc.getName();
+        		else if(count < 6)
+        			nodeStr += "<br>&nbsp;"+nodeDesc.getName();
+        		else {
+        			nodeStr += "<br>&nbsp;...<br>&nbsp;...<br>&nbsp;Total "+list.size()+" nodes";
+        			break;
+        		}
+        		nodeCount++;
+        	}
+        }
+        
+        
+        
         NodeDescriptor desc = (NodeDescriptor)this.getOwner();
-        //JLabel name = new JLabel("<html><body style=\"background-color: #000000\"><h2>&nbsp;&nbsp;<font color=#ffffdd><span >"+desc.getName()+"</span></font></h2></body></html>");
-        JLabel name = new JLabel(desc.getName());
+        JLabel name = new JLabel(prefix+nodeStr+postfix);
+        if(nodeCount > 5)
+        	name.setPreferredSize(new Dimension(120, (nodeCount+2)*24));
+        else
+        	name.setPreferredSize(new Dimension(120, (nodeCount)*24));
+        name.setToolTipText(desc.getName());
         name.setOpaque(true);
-        name.setBackground(Color.black);
-        //name.setForeground(Color.black);
+        name.setBackground(new Color(255, 255, 221));
         name.setFocusable(false);
         
         //name.set
@@ -116,8 +149,7 @@ public class FigCustomNode extends FigRect {
         "Get selected Node"));
         
         getMenu.add(new CmdGetNodes());
-        //JMenu getClustering = new JMenu(Localizer.localize("PresentationGef",
-        //"Clustering"));
+
         
         
         
@@ -135,6 +167,8 @@ public class FigCustomNode extends FigRect {
     	//g.draw
        // drawRect(g, isFilled(), getFillColor(), getLineWidth(), getLineColor(), getX(), getY(), getWidth(),
         //        getHeight(), getDashed(), _dashes, _dashPeriod);
+    	
+    	
     	Color old = g.getColor();
     	g.setColor(getLineColor());
     	g.fillOval(getX(), getY(), getWidth(), getHeight());

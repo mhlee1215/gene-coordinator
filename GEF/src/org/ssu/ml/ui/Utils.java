@@ -143,9 +143,10 @@ public class Utils {
 	
 	public static void SendImageToJsp(int[] pixels, String filename, int width, int height)
 	{
-		//String url = UiGlobals.getApplet().getCodeBase().toString();
-		//HttpClient httpClient = new DefaultHttpClient();
-		//HttpGet httpGet = new HttpGet(url+"writeImage.jsp");
+		String url = UiGlobals.getApplet().getCodeBase().toString();
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet(url+"writeImage.jsp");
+	
 		
 		try{
 			System.out.println(pixels.toString());

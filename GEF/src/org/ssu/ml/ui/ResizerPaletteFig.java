@@ -42,9 +42,15 @@ import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
@@ -100,6 +106,13 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 	JSpinner gridSpinner = null;
 	JSlider gridResizer = null;
 	JSlider scaleResizer = null;
+	
+	
+	JMenu scaleMenu;
+	String scalePrefix = "Scale x";
+	int scaleMin = 1;
+	int initScale = 4;
+	int scaleMax = 9;
 
 	public ResizerPaletteFig() {
 		defineButtons();
@@ -124,6 +137,26 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		// add(image1, "Image1", "Image1");
 		//add(new CmdZoom(2), "Zoom in", "zoom_in");
 		//add(new CmdZoom(0.5), "Zoom out", "zoom_out");
+		scaleMenu = new JMenu(scalePrefix+initScale);
+		scaleMenu.setToolTipText("<html><h3>Manupulation of scale</h3><br>The Scale means that total resolution of white plane. <br>If scale value become higher, then total size of white <br>plane become larger. However, when you chanege scale, <br>the plane you will see is same as before. <br>This is because the white plane is fit to your monitor.</html>");
+		ButtonGroup group = new ButtonGroup();
+		for(int count = scaleMin ; count < scaleMax ; count++){
+			JRadioButtonMenuItem item = new JRadioButtonMenuItem(scalePrefix+count);
+			item.setName(scalePrefix+count);
+			item.addActionListener(this);
+			group.add(item);
+			scaleMenu.add(item);
+			if(count == initScale)
+				item.setSelected(true);
+		}
+		JMenuBar scaleMenuBar = new JMenuBar();
+		//scaleMenuBar.setComponentOrientation()
+		scaleMenuBar.add(scaleMenu);
+		scaleMenuBar.setPreferredSize(new Dimension(50, 50));
+		add(scaleMenuBar);
+		
+		
+		
 		int gridMax = 200;
 		int gridMin = 1;
 		gridCurValue = UiGlobals.getDefault_grid_spacing();
@@ -180,35 +213,39 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		
 		
 		JPanel panel = new JPanel();
-		panel.setPreferredSize(new Dimension(50, 60));
-		panel.setLayout(new BorderLayout());
+		panel.setPreferredSize(new Dimension(50, 80));
+		panel.setLayout(null);
 		JButton buttonUp = new JButton("^");
 		buttonUp.setActionCommand("gridUp");
 		buttonUp.addActionListener(this);
 		buttonUp.setPreferredSize(new Dimension(20, 20));
 		buttonUp.setMargin(new Insets(0, 0, 0, 0));
-		panel.add(buttonUp, BorderLayout.NORTH);
+		buttonUp.setBounds(16, 0, 20, 20);
+		panel.add(buttonUp);
 		
 		JButton buttonDown = new JButton("v");
 		buttonDown.setActionCommand("gridDown");
 		buttonDown.addActionListener(this);
 		buttonDown.setPreferredSize(new Dimension(20, 20));
 		buttonDown.setMargin(new Insets(0, 0, 0, 0));
-		panel.add(buttonDown, BorderLayout.SOUTH);
+		buttonDown.setBounds(16, 40, 20, 20);
+		panel.add(buttonDown);
 		
 		JButton buttonLeft = new JButton("<");
 		buttonLeft.setActionCommand("gridLeft");
 		buttonLeft.addActionListener(this);
 		buttonLeft.setPreferredSize(new Dimension(28, 20));
 		buttonLeft.setMargin(new Insets(0, 0, 0, 0));
-		panel.add(buttonLeft, BorderLayout.WEST);
+		buttonLeft.setBounds(0, 20, 20, 20);
+		panel.add(buttonLeft);
 		
 		JButton buttonRight = new JButton(">");
 		buttonRight.setActionCommand("gridRight");
 		buttonRight.addActionListener(this);
 		buttonRight.setPreferredSize(new Dimension(28, 20));
 		buttonRight.setMargin(new Insets(0, 0, 0, 0));
-		panel.add(buttonRight, BorderLayout.EAST);
+		buttonRight.setBounds(32, 20, 20, 20);
+		panel.add(buttonRight);
 		
 		
 		add(panel);
@@ -232,16 +269,17 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		scaleResizer.setLabelTable(scaleLableTable);
         scaleResizer.setPaintLabels(true);
         scaleResizer.addChangeListener(this);
-        scaleResizer.setPreferredSize(new Dimension(50, 500));
+        //scaleResizer.setPreferredSize(new Dimension(50, 500));
         scaleResizer.setBorder(
                 //BorderFactory.createEmptyBorder(0,0,0,0)
                 //BorderFactory.createLineBorder(Color.black, 1)
                 BorderFactory.createTitledBorder("Scale")
                 );
-		add(scaleResizer);
+		//add(scaleResizer);
 		scaleResizer.setEnabled(false);
 		
-	
+		
+		
 		UiGlobals.set_scaleSlider(scaleResizer);
 	}
 
@@ -341,6 +379,21 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 			}
 			
 			grid.adjust(map);
+		}
+		else if(s instanceof JRadioButtonMenuItem){
+			JRadioButtonMenuItem item = (JRadioButtonMenuItem)s;
+			for(int count = scaleMin ; count < scaleMax ; count++){
+				if(item.getName().equals(scalePrefix+count)){
+					scaleMenu.setText(scalePrefix+count);
+					item.setSelected(true);
+					
+					//UiGlobals.get_scaleSlider().setEnabled(false);
+					NodeRenderManager manager = UiGlobals.getNodeRenderManager();
+					UiGlobals.setPre_scaled(count);
+					manager.drawNodes(true);
+					
+				}
+			}
 		}
 	}
 } /* end class PaletteFig */

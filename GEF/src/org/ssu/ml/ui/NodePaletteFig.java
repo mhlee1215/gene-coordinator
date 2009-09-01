@@ -29,8 +29,12 @@
 package org.ssu.ml.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.JTextField;
 
 import org.ssu.ml.base.CmdGridHistogram;
+import org.ssu.ml.base.CmdShowAbout;
 import org.tigris.gef.base.CmdSetMode;
 import org.tigris.gef.base.CmdZoom;
 import org.tigris.gef.base.ModeBroom;
@@ -91,7 +95,10 @@ public class NodePaletteFig extends ToolBar {
         add(new CmdZoom(0.8), "Zoom out", "zoom_out", ToolBar.BUTTON_TYPE_CENTER);
         this.addSeparator();
         add(new CmdGridHistogram(), "Grid Histo", "Grid_histogram", ToolBar.BUTTON_TYPE_RIGHT);
+        add(new CmdShowAbout(), "Show About", "about", ToolBar.BUTTON_TYPE_RIGHT);
         
-        
+        JTextField searchField = new JTextField();
+        searchField.setPreferredSize(new Dimension(200, 30));
+        //add(searchField);
     }
 } /* end class PaletteFig */
