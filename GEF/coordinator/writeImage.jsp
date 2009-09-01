@@ -7,6 +7,7 @@
 <%@ page import="java.awt.Toolkit" %>
 <%@ page import="java.awt.image.MemoryImageSource" %>
 <%@ page import="com.sun.image.codec.jpeg.*" %>
+<%@ page import="javax.imageio.*"%>
 
 <%! 
 	private Image getImageFromArray(int[] pixels, int width, int height) {
@@ -36,8 +37,16 @@
 	int quality;
 	
 	out.println(fullPath);
-	ServletOutputStream sos = response.getOutputStream();
-	JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(sos);
+	
+	try {
+	    BufferedImage bi = null; // retrieve image
+	    File outputfile = new File("saved.png");
+	    ImageIO.write(bi, "png", outputfile);
+	} catch (Exception e) {
+	   
+	}
+	//ServletOutputStream sos = response.getOutputStream();
+	//JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(sos);
 	//FileOutputStream fos = new FileOutputStream(aFileName);
 	// ChartUtilities.writeChartAsPNG(fos, chart, 400, 400);
 	/*
