@@ -30,7 +30,7 @@
 
 			<sftp action="put" remotedir="${ftp.home.dir}/coordinator" verbose="true">
 				<fileset dir="${local.dist}/coordinator" >
-					<include name="*.*" />
+					<include name="coordinator.*" />
 				</fileset>
 			</sftp>
 		</ssh>

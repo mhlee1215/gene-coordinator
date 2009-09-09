@@ -45,6 +45,7 @@
 <% 
 	final String ENV_ROOT_PATH = "/home/mhlee/public/server/ROOT/";
 	final String ENV_DATA_PATH = ENV_ROOT_PATH+"data/";
+	final String ENV_LOG_PATH = ENV_ROOT_PATH+"logs/";
 	
 
 %>
