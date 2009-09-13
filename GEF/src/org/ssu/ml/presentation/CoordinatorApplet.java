@@ -210,7 +210,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 	}
 
 	public void init(JGraph jg) {
-		setDefaultFont(new Font("Lucida Grande", Font.PLAIN, 10));
+		setDefaultFont(UiGlobals.getNormalFont());
 		this.setToolBar(new NodePaletteFig()); // needs-more-work
 		this.setWestToolBar(new ResizerPaletteFig());
 		_graph = jg;

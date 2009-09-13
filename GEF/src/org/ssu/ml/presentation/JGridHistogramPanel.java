@@ -34,11 +34,25 @@ import javax.swing.event.ChangeListener;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.IntervalMarker;
+import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarPainter;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
+import org.jfree.chart.renderer.xy.XYBarPainter;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.IntervalXYDataset;
+import org.jfree.ui.Layer;
+import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RefineryUtilities;
+import org.jfree.ui.TextAnchor;
+import org.ssu.ml.base.UiGlobals;
 import org.tigris.gef.ui.*;
 
 /**
@@ -177,10 +191,6 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
 	private static JFreeChart createChart(IntervalXYDataset intervalxydataset)
 	{
 	     JFreeChart jfreechart = ChartFactory.createHistogram("Grid Density", "Density", "Frequency", intervalxydataset, PlotOrientation.VERTICAL, true, true, false);
-	     
-	     XYPlot xyplot = (XYPlot)jfreechart.getPlot();
-	     xyplot.setForegroundAlpha(0.6F);
-
 	     return jfreechart;
 	}
 	
@@ -194,6 +204,38 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
 		JFreeChart jfreechart = createChart(histogramdataset);
 		chart = jfreechart;
 		XYPlot plot = jfreechart.getXYPlot();
+		
+		plot.setBackgroundPaint(Color.white);
+		plot.setDomainGridlinePaint(Color.blue);
+		Marker target = new IntervalMarker(5,8);
+		
+		target.setPaint(Color.lightGray);
+		target.setLabel("Good Zone");
+		target.setLabelFont(UiGlobals.getTitleFont());
+		target.setLabelAnchor(RectangleAnchor.TOP_LEFT);
+		target.setLabelTextAnchor(TextAnchor.TOP_LEFT);
+		//plot.addRangeMarker(target, Layer.BACKGROUND);
+		plot.addDomainMarker(target, Layer.BACKGROUND);
+		
+		
+		XYBarRenderer renderer = (XYBarRenderer) plot.getRenderer();  // BarRenderer를 구한다.
+		renderer.setSeriesPaint(0, UiGlobals.getConstantColor().getColor(0));
+		XYBarPainter painter = new StandardXYBarPainter();
+		
+		renderer.setBarPainter(painter);
+        renderer.setBaseOutlinePaint(Color.black);
+        renderer.setBaseOutlineStroke(new BasicStroke(2.0f));
+        renderer.setSeriesOutlinePaint(0, Color.black);
+        
+        Stroke stroke = new BasicStroke(3.0f);
+        //renderer.setOutlinePaint(paint)
+        renderer.setOutlineStroke(stroke);
+        renderer.setShadowXOffset(10.0);
+        renderer.setShadowYOffset(10.0);
+        renderer.setDrawBarOutline(true);// (UiGlobals.getConstantColor().getColor(0));
+        //renderer.setSeriesFillPaint(series, paint)
+        //renderer.setSeriesFillPaint(0, UiGlobals.getConstantColor().getColor(1));
+        renderer.setSeriesPaint(0, UiGlobals.getConstantColor().getColor(2));
 		//jfreechart.get
 		//XYItemRenderer renderer = plot.getRenderer();
 		//renderer.set
@@ -208,16 +250,19 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
 	}
     public static void main(String[] argv)
     {
-    	/*
+    	
     	double data[] = {1, 2, 3, 2, 1, 4, 5, 3, 1, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
     	double data1[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
-    	JGridHistogramFrame _jgf = new JGridHistogramFrame("title", data);
-    	_jgf.addData(data1);
+    	JGridHistogramPanel _jgf = new JGridHistogramPanel("title", data);
+    	//_jgf.addData(data1);
         _jgf.drawHistogram();
-        _jgf.pack();
-        RefineryUtilities.centerFrameOnScreen(_jgf);
-        _jgf.setVisible(true);
-        */
+        JFrame frame = new JFrame();
+        
+        frame.add(_jgf);
+        frame.pack();
+
+        frame.setVisible(true);
+        
     }
 
 	@Override

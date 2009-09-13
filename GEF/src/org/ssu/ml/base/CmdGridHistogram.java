@@ -84,6 +84,7 @@ public class CmdGridHistogram extends Cmd {
         	result_1[count] = (double)result[count];
         
         UiGlobals.getGridDatas().add(result_1);
+        
         UiGlobals.getGridCategories().add("d"+interval_space+"x"+xOffset+"y"+yOffset);
         
         if(result_1.length > 0){
@@ -105,7 +106,7 @@ public class CmdGridHistogram extends Cmd {
         		JGridHistogramPanel panel = new JGridHistogramPanel("Grid Density - "+count, UiGlobals.getGridDatas().get(count));
             	panel.drawHistogram();
             	//panel.setPrecise(10);
-    	        histoFrame.addPanel(panel, "Grid Density - "+count);
+    	        histoFrame.addPanel(panel, UiGlobals.getGridCategories().get(count));
         	}
         	
 	        
@@ -114,6 +115,7 @@ public class CmdGridHistogram extends Cmd {
 	        
 	        //RefineryUtilities.centerFrameOnScreen(histoFrame);
 	        histoFrame.setVisible(true);
+	        histoFrame.setResizable(false);
         }
         else
         	System.out.println("No Data Error!");

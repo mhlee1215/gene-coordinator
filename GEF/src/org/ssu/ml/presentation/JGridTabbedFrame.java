@@ -100,6 +100,7 @@ public class JGridTabbedFrame extends JFrame implements Cloneable{
     	double data[] = {1, 2, 3, 2, 1, 4, 100, 50, 1, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
     	double data1[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
     	JGridChartPanel char1 = new JGridChartPanel("title");
+    	
     	char1.addData(data, "data1");
     	char1.addData(data1, "data2");
     	JGridHistogramPanel panel1 = new JGridHistogramPanel("title", data);
@@ -108,6 +109,7 @@ public class JGridTabbedFrame extends JFrame implements Cloneable{
     	char1.drawHistogram();
     	panel1.drawHistogram();
     	panel2.drawHistogram();
+    	
     	frame.addPanel(char1, "chart1");
     	frame.addPanel(panel1, "panel1");
     	frame.addPanel(panel2, "panel2");
