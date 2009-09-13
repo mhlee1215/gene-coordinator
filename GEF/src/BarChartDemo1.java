@@ -1,47 +1,3 @@
-/* ===========================================================
- * JFreeChart : a free chart library for the Java(tm) platform
- * ===========================================================
- *
- * (C) Copyright 2000-2005, by Object Refinery Limited and Contributors.
- *
- * Project Info:  http://www.jfree.org/jfreechart/index.html
- *
- * This library is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation; either version 2.1 of the License, or 
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, 
- * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
- *
- * [Java is a trademark or registered trademark of Sun Microsystems, Inc. 
- * in the United States and other countries.]
- *
- * ------------------
- * BarChartDemo1.java
- * ------------------
- * (C) Copyright 2003-2005, by Object Refinery Limited and Contributors.
- *
- * Original Author:  David Gilbert (for Object Refinery Limited);
- * Contributor(s):   ;
- *
- * $Id: BarChartDemo1.java,v 1.1 2005/03/09 11:44:28 mungady Exp $
- *
- * Changes
- * -------
- * 09-Mar-2005 : Version 1, copied from the demo collection that ships with
- *               the JFreeChart Developer Guide (DG);
- *
- */
-
-
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
@@ -94,8 +50,8 @@ public class BarChartDemo1 extends ApplicationFrame {
         String series3 = "Third";
 
         // column keys...
-        String category1 = "Category 2";
-        String category2 = "Category 1";
+        String category1 = "Category 1";
+        String category2 = "Category 2";
         String category3 = "Category 3";
         String category4 = "Category 4";
         String category5 = "Category 5";
@@ -189,6 +145,8 @@ public class BarChartDemo1 extends ApplicationFrame {
         );
         // OPTIONAL CUSTOMISATION COMPLETED.
         
+        
+        plot.setOrientation(PlotOrientation.VERTICAL);
         return chart;
         
     }

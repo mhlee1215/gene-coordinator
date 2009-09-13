@@ -1,6 +1,7 @@
 package org.ssu.ml.base;
 
 import java.applet.Applet;
+import java.awt.Font;
 import java.util.Vector;
 
 import javax.swing.JLabel;
@@ -10,14 +11,42 @@ import org.ssu.ml.ui.NodeRenderManager;
 import org.tigris.gef.base.Globals;
 
 public class UiGlobals extends Globals{
+	private static Font normalFont = new Font("Lucida Grande", Font.PLAIN, 10);
+	private static Font titleFont = new Font("Lucida Grande", Font.BOLD, 25);
+	private static ColorPool constantColor = new ColorPool();
 	private static Vector<double[]> gridDatas = new Vector<double[]>();
 	private static Vector<String> gridCategories = new Vector<String>();
 	private static Applet _curApplet = null;
 	private static String fileName = "";
 	private static int default_grid_spacing = 20;
+	
+	public static Font getTitleFont() {
+		return titleFont;
+	}
+
+	public static void setTitleFont(Font titleFont) {
+		UiGlobals.titleFont = titleFont;
+	}
+	
+	public static Font getNormalFont() {
+		return normalFont;
+	}
+
+	public static void setNormalFont(Font normalFont) {
+		UiGlobals.normalFont = normalFont;
+	}
+
 	private static int drawingSizeX;
 	private static int drawingSizeY;
 	private static int pre_scaled = 4;
+	
+	public static ColorPool getConstantColor() {
+		return constantColor;
+	}
+
+	public static void setConstantColor(ColorPool constantColor) {
+		UiGlobals.constantColor = constantColor;
+	}
 	
 	public static Vector<String> getGridCategories() {
 		return gridCategories;
