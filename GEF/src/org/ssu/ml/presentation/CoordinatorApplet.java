@@ -103,7 +103,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		
 		System.out.println("constructur");
 
-		setSize(500, 500);
+		setSize(756, 600);
 
 		try {
 			
@@ -123,7 +123,8 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 			//e.printStackTrace();
 		}
 
-		UiGlobals.set_curApplet(this);
+		//UiGlobals.set_curApplet(this);
+		UiGlobals.setApplet(this);
 
 	}
 
