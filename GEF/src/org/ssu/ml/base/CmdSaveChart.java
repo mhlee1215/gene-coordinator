@@ -62,7 +62,6 @@ public class CmdSaveChart extends Cmd {
     	try {
     		//URL path = UiGlobals.getApplet().getCodeBase();
 			saveToFile(gridPanel.getChart(),"/home/mhlee/public/data/"+filename+".jpg",800,600,100);
-			System.out.println("file saved at : /home/mhlee/public/data/"+filename+".jpg");
     	} catch (Exception e) {
     		System.out.println("Download method can be execute only on the web!");
     		e.printStackTrace();
@@ -100,8 +99,7 @@ public class CmdSaveChart extends Cmd {
 		
 		ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		
-		ImageIO.write(img,"jsp", bas);
-		
+		ImageIO.write(img,"jpeg", bas);
 		byte[] data = bas.toByteArray();
 		
 		ByteArrayInputStream bis = new ByteArrayInputStream(data);
@@ -109,12 +107,13 @@ public class CmdSaveChart extends Cmd {
 		
 		
 		
-		String url = "http://localhost:8080/coordinator/wirteImage.jsp";//UiGlobals.getApplet().getCodeBase().toString() + "writeImage.jsp";
+		String url = UiGlobals.getApplet().getCodeBase().toString() + "coordinator/writeImage.jsp";
 		HttpClient httpClient = new HttpClient();
 		System.out.println("code base to Write : "+url);
 		PostMethod postMethod = new PostMethod(url);
 		
 		//Set Inputstream as entity
+		System.out.println("send filename : "+filename);
 		NameValuePair[] requestBody = {
 				new NameValuePair("filename", filename)
 		};
