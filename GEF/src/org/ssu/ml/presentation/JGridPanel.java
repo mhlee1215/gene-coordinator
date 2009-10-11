@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
 
+import org.jdesktop.swingx.JXPanel;
 import org.jfree.chart.JFreeChart;
 import org.ssu.ml.base.CmdSaveChart;
 import org.ssu.ml.ui.GridPaletteFig;
@@ -23,7 +24,7 @@ import org.tigris.gef.ui.ToolBar;
 
 
 
-public class JGridPanel extends JPanel {
+public class JGridPanel extends JXPanel {
 	JFreeChart chart;
 	ToolBar toolbar = new ToolBar();
 	protected JLabel statusbar = new JLabel(" ");

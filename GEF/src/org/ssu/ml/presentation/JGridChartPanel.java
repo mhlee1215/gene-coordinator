@@ -24,14 +24,35 @@
 package org.ssu.ml.presentation;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.NumberFormat;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.jdesktop.swingx.JXFrame;
+import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXRootPane;
+import org.jdesktop.swingx.JXTitledPanel;
+import org.jdesktop.swingx.border.DropShadowBorder;
+import org.jdesktop.swingx.painter.AbstractPainter;
+import org.jdesktop.swingx.painter.CompoundPainter;
+import org.jdesktop.swingx.painter.GlossPainter;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.painter.PinstripePainter;
+import org.jdesktop.swingx.painter.RectanglePainter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -60,12 +81,22 @@ import org.jfree.ui.RefineryUtilities;
 import org.ssu.ml.base.UiGlobals;
 import org.tigris.gef.ui.*;
 
+import etc.Colors;
+import etc.RoundedBorder;
+
 /**
  * A window that displays a toolbar, a connected graph editing pane, and a
  * status bar.
  */
 
-public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable, ChangeListener{
+public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable, ChangeListener, MouseListener{
+	
+	Border selectedBorder = new RoundedBorder(Color.red, true);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.red);
+	Border unselectedBorder = new RoundedBorder(Color.white, false);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.white);
+	Border overedBorder = new RoundedBorder(Color.LIGHT_GRAY, false);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.LIGHT_GRAY);
+	JPanel overedPanel = null;
+	JPanel selectedPanel = null;
+	
 	
 	private static final String SERIES_GOOD = "Good";
 	private static final String SERIES_BIG = "Big";
@@ -84,9 +115,14 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	int minCurValue;
 	int minimum_interval = 5;
 	
-	JPanel _chart;
+	JPanel chartPanel;
 	
-	ToolBar sideToolbar;
+	ToolBar leftSideToolbar;
+	
+	int totalWidth = 0;
+	int totalHeight = 0;
+	int chartWidth = 0;
+	int chartHeight = 0;
 
     private static final long serialVersionUID = -8167010467922210977L;
     
@@ -98,45 +134,29 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
      * Contruct a new JGraphFrame with the title "untitled" and a new
      * DefaultGraphModel.
      */
-	public JGridChartPanel(String title) {
+	public JGridChartPanel(String title, int totalWidth, int toalHeight) {
 		super();
 		setUpSideToolbar();
+		this.totalWidth = totalWidth;
+		this.totalHeight = toalHeight;
     }
 
-    public JGridChartPanel(String title, double[] data, String category) {
-        this(title);
-        //this.data = data;
-        datas.add(data);
-        categories.add(category);
-    }
-    
     public void addData(double[] data, String category){
     	datas.add(data);
     	categories.add(category);
     }
     
-
-
-
-    // //////////////////////////////////////////////////////////////
-    // Cloneable implementation
-
     public Object clone() {
         return null; // needs-more-work
     }
     
-
-
-    
-
     public void setUpSideToolbar()
     {
-    	sideToolbar = new ToolBar();
-    	
+    	leftSideToolbar = new ToolBar();
     	
 		maxCurValue = 50;
 		minCurValue = 10;
-		sideToolbar.setLayout(new GridLayout(2, 1));
+		leftSideToolbar.setLayout(new GridLayout(2, 1));
 		
 		{
 			
@@ -161,7 +181,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	        maxRanger.addChangeListener(this);
 	        maxRanger.setPaintTicks(true);
 	        maxRanger.setMinorTickSpacing(5);
-	        sideToolbar.add(maxRanger);
+	        leftSideToolbar.add(maxRanger);
 		}
         
 		{
@@ -189,11 +209,11 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	        minRanger.setPaintTicks(true);
 	        minRanger.setMinorTickSpacing(5);
 	        
-			sideToolbar.add(minRanger);
+			leftSideToolbar.add(minRanger);
 			
 		}
     	
-		mainPanel.add(sideToolbar, BorderLayout.WEST);
+		mainPanel.add(leftSideToolbar, BorderLayout.WEST);
     }
 
 
@@ -201,19 +221,19 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
     // IStatusListener implementation
 
     
-    public void drawHistogram()
+    public void drawChart()
     {
-    	_chart = createPanel();
+    	chartPanel = createPanel();
     	//_histogram.setPreferredSize(new Dimension(700, 270));
-    	mainPanel.add(_chart, BorderLayout.CENTER);
+    	mainPanel.add(chartPanel, BorderLayout.CENTER);
         //this.remove
     }
     
 	
-	private CategoryDataset addDataset(double data[], String categoryName){
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		return addDataset(dataset, data, categoryName);
-	}
+//	private CategoryDataset addDataset(double data[], String categoryName){
+//		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+//		return addDataset(dataset, data, categoryName);
+//	}
 	
 	private CategoryDataset addDataset(DefaultCategoryDataset categoryDataset, double data[], String categoryName){
 		int overCount = 0;
@@ -239,91 +259,91 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	
 	
 	
-	private static JFreeChart createChart(CategoryDataset categoryDataset)
-	{
-	    
-	     JFreeChart jfreechart = ChartFactory.createBarChart(
-	             "Block size counting for construction of gene sets",         // chart title
-	             "grid space",               // domain axis label
-	             "count",                  // range axis label
-	             categoryDataset,                  // data
-	             PlotOrientation.VERTICAL, // orientation
-	             true,                     // include legend
-	             true,                     // tooltips?
-	             false                     // URLs?
-	         );
-	   
-	     jfreechart.setBackgroundPaint(Color.WHITE);
-	     CategoryPlot plot = jfreechart.getCategoryPlot();  // Ã­Æ®ÀÇ Plot °´Ã¼¸¦ ±¸ÇÑ´Ù.
-	     plot.setBackgroundPaint(Color.white);     // Ã­Æ®ÀÇ Plot ¹è°æ»öÀ» lightGray·Î ¹Ù²Û´Ù.
-	     plot.setRangeGridlinePaint(Color.BLUE);       // ¼öÆò ±×¸®µå¶óÀÎÀÇ »öÀ» BLUE·Î ¹Ù²Û´Ù.
-	     plot.setDomainGridlinesVisible(true);        // ¼öÁ÷ ±×¸®µå¶óÀÎÀ» ¾Èº¸ÀÌ°Ô ÇÑ´Ù.
-	     plot.setDomainGridlinePaint(Color.blue);
-	     plot.setOutlinePaint(Color.blue);	//Â÷Æ® ¿Ü°û¼±
-	     plot.setOutlineVisible(true);
-	     plot.setAnchorValue(10);
-	     
-	     
-	     // 6. ºÀÀ» Ä¿½ºÅÍ¸¶ÀÌÁîÇÏ±â
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();  // BarRenderer¸¦ ±¸ÇÑ´Ù.
-        
-        renderer.setItemMargin(0.05);                 // ºÀ°ú ºÀ»çÀÌÀÇ ¿©¹éÀ» Á¤ÇÑ´Ù.
-        renderer.setDrawBarOutline(true);            // ºÀÀÇ °æ°è¼± Ç¥½Ã¸¦ ¼³Á¤
-        //renderer.setOutlinePaint(Color.red);
-        BarPainter painter = new StandardBarPainter();
-        renderer.setBarPainter(painter);
-        Stroke stroke = new BasicStroke(3.0f);
-        //stroke.
-        
-        
-        renderer.setSeriesOutlinePaint(0, Color.black);
-        renderer.setSeriesOutlinePaint(1, Color.black);
-        renderer.setSeriesOutlinePaint(2, Color.black);
-        renderer.setSeriesOutlineStroke(0, stroke);
-        renderer.setSeriesOutlineStroke(1, stroke);
-        renderer.setSeriesOutlineStroke(2, stroke);
-        renderer.setShadowXOffset(10.0);
-        renderer.setShadowYOffset(10.0);
-        
-        StandardCategoryItemLabelGenerator labelGenerator = new StandardCategoryItemLabelGenerator();
-        renderer.setItemLabelFont(UiGlobals.getNormalFont());
-        renderer.setItemLabelGenerator(labelGenerator);
-        renderer.setItemLabelPaint(Color.black);
-        renderer.setItemLabelsVisible(true);
-        
-        NumberFormat format = NumberFormat.getInstance();
-        String labelFormat = "<html><body style=\"background-color: #ffffdd\"><h1>{0}</h1><br><h2>{1}</h2><br><h3>{2}</h3></body></html>";
-        StandardCategoryToolTipGenerator generator = new StandardCategoryToolTipGenerator(labelFormat, format);
-        //System.out.println(generator.getLabelFormat());
-        
-        renderer.setSeriesToolTipGenerator(0, generator);
-        renderer.setSeriesToolTipGenerator(1, generator);
-        renderer.setSeriesToolTipGenerator(2, generator);
-        
-        // 7.ºÀ»ö±ò ¹Ù²Ù±â
-        
-        GradientPaint gp0 = new GradientPaint(0.0f, 0.0f, new Color(204, 255, 153),  0.0f, 0.0f, new Color(204, 255, 153));
-        GradientPaint gp1 = new GradientPaint(0.0f, 0.0f, Color.green, 0.0f, 0.0f, new Color(0, 64, 0));
-        GradientPaint gp2 = new GradientPaint(0.0f, 0.0f, Color.red,   0.0f, 0.0f, new Color(64, 0, 0));
-        renderer.setSeriesPaint(0, UiGlobals.getConstantColor().getColor(0));
-        renderer.setSeriesPaint(1, UiGlobals.getConstantColor().getColor(1));
-        renderer.setSeriesPaint(2, UiGlobals.getConstantColor().getColor(2));
-        
-        
-	     //XYPlot xyplot = (XYPlot)jfreechart.getPlot();
-	     //xyplot.setForegroundAlpha(0.3F);
-
-	     return jfreechart;
-	}
+//	private static JFreeChart createChart(CategoryDataset categoryDataset)
+//	{
+//	    
+//	     JFreeChart jfreechart = ChartFactory.createBarChart(
+//	             "Block size counting for construction of gene sets",         // chart title
+//	             "grid space",               // domain axis label
+//	             "count",                  // range axis label
+//	             categoryDataset,                  // data
+//	             PlotOrientation.VERTICAL, // orientation
+//	             true,                     // include legend
+//	             true,                     // tooltips?
+//	             false                     // URLs?
+//	         );
+//	   
+//	     jfreechart.setBackgroundPaint(Color.WHITE);
+//	     CategoryPlot plot = jfreechart.getCategoryPlot();  // Ã­Æ®ï¿½ï¿½ Plot ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
+//	     plot.setBackgroundPaint(Color.white);     // Ã­Æ®ï¿½ï¿½ Plot ï¿½ï¿½ï¿½ï¿½; lightGrayï¿½ï¿½ ï¿½Ù²Û´ï¿½.
+//	     plot.setRangeGridlinePaint(Color.BLUE);       // ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½; BLUEï¿½ï¿½ ï¿½Ù²Û´ï¿½.
+//	     plot.setDomainGridlinesVisible(true);        // ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½; ï¿½Èºï¿½ï¿½Ì°ï¿½ ï¿½Ñ´ï¿½.
+//	     plot.setDomainGridlinePaint(Color.blue);
+//	     plot.setOutlinePaint(Color.blue);	//ï¿½ï¿½Æ® ï¿½Ü°ï¿½
+//	     plot.setOutlineVisible(true);
+//	     plot.setAnchorValue(10);
+//	     
+//	     
+//	     // 6. ï¿½ï¿½; Ä¿ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
+//        BarRenderer renderer = (BarRenderer) plot.getRenderer();  // BarRendererï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
+//        
+//        renderer.setItemMargin(0.05);                 // ï¿½0ï¿½ ï¿½;ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½; dï¿½Ñ´ï¿½.
+//        renderer.setDrawBarOutline(true);            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½è¼± Ç¥ï¿½Ã¸ï¿½ ï¿½ï¿½d
+//        //renderer.setOutlinePaint(Color.red);
+//        BarPainter painter = new StandardBarPainter();
+//        renderer.setBarPainter(painter);
+//        Stroke stroke = new BasicStroke(3.0f);
+//        //stroke.
+//        
+//        
+//        renderer.setSeriesOutlinePaint(0, Color.black);
+//        renderer.setSeriesOutlinePaint(1, Color.black);
+//        renderer.setSeriesOutlinePaint(2, Color.black);
+//        renderer.setSeriesOutlineStroke(0, stroke);
+//        renderer.setSeriesOutlineStroke(1, stroke);
+//        renderer.setSeriesOutlineStroke(2, stroke);
+//        renderer.setShadowXOffset(10.0);
+//        renderer.setShadowYOffset(10.0);
+//        
+//        StandardCategoryItemLabelGenerator labelGenerator = new StandardCategoryItemLabelGenerator();
+//        renderer.setItemLabelFont(UiGlobals.getNormalFont());
+//        renderer.setItemLabelGenerator(labelGenerator);
+//        renderer.setItemLabelPaint(Color.black);
+//        renderer.setItemLabelsVisible(true);
+//        
+//        NumberFormat format = NumberFormat.getInstance();
+//        String labelFormat = "<html><body style=\"background-color: #ffffdd\"><h1>{0}</h1><br><h2>{1}</h2><br><h3>{2}</h3></body></html>";
+//        StandardCategoryToolTipGenerator generator = new StandardCategoryToolTipGenerator(labelFormat, format);
+//        //System.out.println(generator.getLabelFormat());
+//        
+//        renderer.setSeriesToolTipGenerator(0, generator);
+//        renderer.setSeriesToolTipGenerator(1, generator);
+//        renderer.setSeriesToolTipGenerator(2, generator);
+//        
+//        // 7.ï¿½;ï¿½ï¿½ ï¿½Ù²Ù±ï¿½
+//        
+//        GradientPaint gp0 = new GradientPaint(0.0f, 0.0f, new Color(204, 255, 153),  0.0f, 0.0f, new Color(204, 255, 153));
+//        GradientPaint gp1 = new GradientPaint(0.0f, 0.0f, Color.green, 0.0f, 0.0f, new Color(0, 64, 0));
+//        GradientPaint gp2 = new GradientPaint(0.0f, 0.0f, Color.red,   0.0f, 0.0f, new Color(64, 0, 0));
+//        renderer.setSeriesPaint(0, UiGlobals.getConstantColor().getColor(0));
+//        renderer.setSeriesPaint(1, UiGlobals.getConstantColor().getColor(1));
+//        renderer.setSeriesPaint(2, UiGlobals.getConstantColor().getColor(2));
+//        
+//        
+//	     //XYPlot xyplot = (XYPlot)jfreechart.getPlot();
+//	     //xyplot.setForegroundAlpha(0.3F);
+//
+//	     return jfreechart;
+//	}
 	
 	public CategoryPlot createCategoryPlot(double[] data, String categori){
 		NumberAxis rangeAxis1 = new NumberAxis(categori);
 		rangeAxis1.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-		CategoryAxis categoryAxis = new CategoryAxis("a");
+		//CategoryAxis categoryAxis = new CategoryAxis("a");
 		
 		BarRenderer renderer = new BarRenderer();
-		renderer.setItemMargin(0.05);                 // ºÀ°ú ºÀ»çÀÌÀÇ ¿©¹éÀ» Á¤ÇÑ´Ù.
-        renderer.setDrawBarOutline(true);            // ºÀÀÇ °æ°è¼± Ç¥½Ã¸¦ ¼³Á¤
+		renderer.setItemMargin(0.05);                 // 
+        renderer.setDrawBarOutline(true);            // 
         //renderer.setOutlinePaint(Color.red);
         BarPainter painter = new StandardBarPainter();
         renderer.setBarPainter(painter);
@@ -355,7 +375,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
         renderer.setSeriesToolTipGenerator(1, generator);
         renderer.setSeriesToolTipGenerator(2, generator);
         
-        // 7.ºÀ»ö±ò ¹Ù²Ù±â
+        // 7.ï¿½;ï¿½ï¿½ ï¿½Ù²Ù±ï¿½
         renderer.setSeriesPaint(0, UiGlobals.getConstantColor().getColor(0));
         renderer.setSeriesPaint(1, UiGlobals.getConstantColor().getColor(1));
         renderer.setSeriesPaint(2, UiGlobals.getConstantColor().getColor(2));
@@ -394,6 +414,13 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	
 	public JPanel createPanel() {
 		//System.out.println("create Panel, precise : " + precise);
+		JXPanel mainPanel = new JXPanel();
+		mainPanel.setBackground(Color.white);
+		GridBagConstraints gbcMain = new GridBagConstraints();  
+		mainPanel.setLayout( new GridBagLayout() );   
+		gbcMain.gridy = 0;  
+		gbcMain.insets = new Insets( 0, 0, 0, 0 );
+		
 		NumberAxis valueAxis = new NumberAxis("Count");
 		CombinedRangeCategoryPlot plot = new CombinedRangeCategoryPlot(valueAxis);
 		//plot.setrange
@@ -402,13 +429,104 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 		{
 			categoryDataset = (DefaultCategoryDataset) addDataset(categoryDataset, datas.get(count), categories.get(count));
 			CategoryPlot cplot = createCategoryPlot(datas.get(count), categories.get(count));
+			JFreeChart plotChart = new JFreeChart(cplot);
+			
+			
+			JXPanel subBorderPanel = new JXPanel();
+			subBorderPanel.setBackground(Color.white);
+			subBorderPanel.setBorder(this.unselectedBorder);
+			
+			JXTitledPanel subTitlePanel = new JXTitledPanel("title");
+			
+			
+			GridBagConstraints gbcBorder = new GridBagConstraints();  
+			subBorderPanel.setLayout( new GridBagLayout() );   
+		    gbcBorder.insets = new Insets(5, 5, 5, 5);
+		    subBorderPanel.add( subTitlePanel, gbcBorder );
+			
+		    
+			
+			
+			
+			int width = 100;
+			int height = 300;
+			Color color1 = Colors.White.color(0.5f);
+			Color color2 = Colors.Gray.color(0.5f);
+			 
+			LinearGradientPaint gradientPaint =
+			     new LinearGradientPaint(6.0f, 6.0f, width, height,
+			                             new float[]{0.0f, 1.0f},
+			                             new Color[]{color1, color2});
+			MattePainter mattePainter = new MattePainter(gradientPaint);
+			
+			MattePainter mp = new MattePainter(Colors.LightBlue.alpha(0.8f));
+			GlossPainter gp = new GlossPainter(Colors.White.alpha(0.8f),
+			                                   GlossPainter.GlossPosition.TOP);
+			PinstripePainter pp = new PinstripePainter(Colors.Gray.alpha(0.8f),
+			                                           45d);
+			//subChartPanel.set
+			RectanglePainter roundRect = new RectanglePainter(
+			        6, 6, 6, 6,   10,10,   true, 
+				Color.GRAY, 3, Color.DARK_GRAY); 
+			roundRect.setAntialiasing(true);
+			subTitlePanel.setTitlePainter(roundRect);
+			subTitlePanel.setBorder(null);
+			RectanglePainter backgroundRoundRect = new RectanglePainter(
+			        6, 6, 6, 6, 10,10,   true, 
+				Color.GRAY, 3, Color.DARK_GRAY); 
+			backgroundRoundRect.setAntialiasing(true);
+			
+			//subTitlePanel.setBackgroundPainter(backgroundRoundRect);
+			
+			
+			//subChartPanel.set
+			//subChartPanel.set
+			//new GradientPainter();
+			//subChartPanel.setTitle("title");
+			subTitlePanel.setBackground(Color.white);
+			subTitlePanel.setForeground(Color.white);
+			//subChartPanel.set
+			//subChartPanel.setLayout(new BorderLayout());
+			plotChart.setBackgroundPaint(Color.gray);
+			
+			JPanel innerChartPanel = new ChartPanel(plotChart);
+			System.out.println("popup size : "+innerChartPanel.getComponentPopupMenu());
+			
+			System.out.println("createPanel size : "+getSize());
+			//innerChartPanel.set
+			
+			innerChartPanel.setPreferredSize(new Dimension(this.totalWidth/datas.size(), getSize().height-130));
+			
+			
+			JRadioButton radio = new JRadioButton();
+			radio.setText("radio");
+			
+			//subChartPanel.add(radio, BorderLayout.NORTH);
+			
+			GridBagConstraints gbc = new GridBagConstraints();  
+			subTitlePanel.setLayout( new GridBagLayout() );   
+		    gbc.gridy = 1;  
+		    gbc.insets = new Insets( 0, 10, 10, 0 );  
+		    subTitlePanel.add( innerChartPanel, gbc );  
+		    //setSize( 500, 500 );  
+			
+			
+		    subTitlePanel.addMouseListener(this);
+		    innerChartPanel.addMouseListener(this);
+			
+			
+			//subChartPanel.add(innerChartPanel, BorderLayout.CENTER);
+			mainPanel.add(subBorderPanel, gbcMain);
+			//mainPanel.add(new JXTitledPanel("title"));
+			//new PlotPanel(cplot);
+			//new ChartPanel(cplot);
 			plot.add(cplot);
 			//cplot.setOrientation(PlotOrientation.VERTICAL);
 			
 			
 	        //cplot.setDomainCrosshairColumnKey(SERIES_GOOD);
-	        cplot.setDomainCrosshairVisible(true);
-			
+	        //cplot.setDomainCrosshairVisible(true);
+			//cplot.set
 		}
 		//plot.setOrientation(PlotOrientation.);
 		//plot.setDomainAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
@@ -421,25 +539,25 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 		//plot.setdomain
 		
 		//JFreeChart jfreechart = createChart(categoryDataset);
-		JFreeChart jfreechart = new JFreeChart(
-	            "Block size counting for construction of gene sets",
-	            UiGlobals.getTitleFont(),
-	            plot,
-	            true
-	        );
+//		JFreeChart jfreechart = new JFreeChart(
+//	            "Block size counting for construction of gene sets",
+//	            UiGlobals.getTitleFont(),
+//	            plot,
+//	            true
+//	        );
 		
 		
-		LegendItemCollection legendCollection = new LegendItemCollection();
-		LegendItem item1 = new LegendItem(SERIES_GOOD, UiGlobals.getConstantColor().getColor(0));
-		//Paint paint = new Paint();
-		//Point paint = new BasicPaint();
-		//item1.set
-		LegendItem item2 = new LegendItem(SERIES_BIG, UiGlobals.getConstantColor().getColor(1));
-		LegendItem item3 = new LegendItem(SERIES_SMALL, UiGlobals.getConstantColor().getColor(2));
-		legendCollection.add(item1);
-		legendCollection.add(item2);
-		legendCollection.add(item3);
-		plot.setFixedLegendItems(legendCollection);
+//		LegendItemCollection legendCollection = new LegendItemCollection();
+//		LegendItem item1 = new LegendItem(SERIES_GOOD, UiGlobals.getConstantColor().getColor(0));
+//		//Paint paint = new Paint();
+//		//Point paint = new BasicPaint();
+//		//item1.set
+//		LegendItem item2 = new LegendItem(SERIES_BIG, UiGlobals.getConstantColor().getColor(1));
+//		LegendItem item3 = new LegendItem(SERIES_SMALL, UiGlobals.getConstantColor().getColor(2));
+//		legendCollection.add(item1);
+//		legendCollection.add(item2);
+//		legendCollection.add(item3);
+//		plot.setFixedLegendItems(legendCollection);
 		
 		//jfreechart.removeLegend();
 		//jfreechart.addLegend(new LegendTitle("aa"));
@@ -458,14 +576,17 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	             false                     // URLs?
 	         );
 	         */
-		chart = jfreechart;
+		//chart = jfreechart;
 		//	XYPlot plot = jfreechart.getXYPlot();
 		//jfreechart.get
 		//XYItemRenderer renderer = plot.getRenderer();
 		//renderer.set
 		//BarRenderer renderer = (BarRenderer)plot.getRenderer();
-		//renderer.set		
-		return new ChartPanel(jfreechart);
+		//renderer.set
+		
+		//return new ChartPanel(jfreechart);
+		return mainPanel;
+		//return new JXTitledPanel("title");
 	}
 
 	public void clean()
@@ -477,14 +598,66 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
     	
     	double data[] = {1, 2, 3, 2, 1, 4, 5, 3, 1, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
     	double data1[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
-    	JGridChartPanel char1 = new JGridChartPanel("title");
+    	double data2[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
+    	double data3[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
+    	JGridChartPanel char1 = new JGridChartPanel("title", 500, 500);
+    	JXFrame frame = new JXFrame();
+    	frame.setVisible(true);
+    	frame.addComponentListener(new ComponentListener(){
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void componentResized(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				JXFrame frame = (JXFrame)e.getComponent();
+				
+				Component[] c = frame.getContentPane().getComponents();
+				if(c.length > 0){
+					JGridChartPanel gcp  = (JGridChartPanel) c[0];
+					gcp.reDraw();
+				}
+			}
+			@Override
+			public void componentShown(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}});
+    	char1.setSize(700, 500);
+    	//char1.setAlpha(.3f);
+    	
+    	
+    	
+    	char1.setBackground(Color.white);
     	char1.addData(data, "data1");
     	char1.addData(data1, "data2");
-    	char1.drawHistogram();
-    	JFrame frame = new JFrame();
-    	frame.add(char1);
+    	char1.addData(data2, "data3");
+    	char1.addData(data3, "datar");
+    	char1.drawChart();
+    	frame.getContentPane().add(char1);
+    	//frame.add(char1);
     	frame.pack();
-    	frame.setVisible(true);
+//    	
+//    	final JDialog dialog = new JDialog(frame, "Child", true);
+//        dialog.setBackground(Color.green);
+//        dialog.setForeground(Color.green);
+//        dialog.setSize(300, 200);
+//        dialog.setLocationRelativeTo(frame);
+//        JXTitledPanel panel = new JXTitledPanel("loading...");
+//        JLabel label = new JLabel("hi");
+//        panel.add(label);
+//        dialog.add(panel);
+//        dialog.setUndecorated(true);
+//        dialog.setVisible(true);
+        System.out.println("load fin!");
     }
 
 	@Override
@@ -516,10 +689,10 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 					}
 				}
 				clean();
-				mainPanel.remove(_chart);
-				_chart = createPanel();
-				mainPanel.add(_chart);
-				_chart.revalidate();
+				mainPanel.remove(chartPanel);
+				chartPanel = createPanel();
+				mainPanel.add(chartPanel);
+				chartPanel.revalidate();
 
 				this.showStatus("Good range : [" + maxCurValue + " to "
 						+ minCurValue + "]");
@@ -529,10 +702,83 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 		
 	}
 	
+	public void reDraw(){
+		clean();
+		mainPanel.remove(chartPanel);
+		chartPanel = createPanel();
+		mainPanel.add(chartPanel);
+		chartPanel.revalidate();
+	}
+	
 	public void paint(Graphics g)
 	{
-		super.paint(g);
-		System.out.println("Iam a repaint");
+		super.paint(g);	
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
-} /* end class JGraphFrame */
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		if( e.getSource() instanceof JXTitledPanel){
+			JXTitledPanel source = (JXTitledPanel)e.getSource();
+			JXPanel shdowPanel = (JXPanel)source.getParent();
+			System.out.println("src : "+source +", selected : "+selectedPanel);
+			if(shdowPanel != selectedPanel){
+				shdowPanel.setBorder(this.overedBorder);
+				//source.setAlpha(.5f);
+			}
+		}else if(e.getSource() instanceof JPanel){
+			JPanel source = (JPanel)e.getSource();
+			e.setSource(source.getParent());
+			mouseEntered(e);
+		}
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		if( e.getSource() instanceof JXTitledPanel){
+			JXTitledPanel source = (JXTitledPanel)e.getSource();
+			JXPanel shdowPanel = (JXPanel)source.getParent();
+			if(shdowPanel != selectedPanel){
+				shdowPanel.setBorder(this.unselectedBorder);
+				//source.setAlpha(1.0f);
+			}
+		}else if(e.getSource() instanceof JPanel){
+			JPanel source = (JPanel)e.getSource();
+			e.setSource(source.getParent());
+			mouseExited(e);
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		if( e.getSource() instanceof JXTitledPanel){
+			JPanel source = (JPanel)e.getSource();
+			JXPanel shdowPanel = (JXPanel)source.getParent();
+			if(selectedPanel != null){
+				selectedPanel.setBorder(this.unselectedBorder);
+			}
+			shdowPanel.setBorder(this.selectedBorder);
+			selectedPanel = shdowPanel;
+			
+		}else if(e.getSource() instanceof JPanel){
+			JPanel source = (JPanel)e.getSource();
+			e.setSource(source.getParent());
+			mousePressed(e);
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

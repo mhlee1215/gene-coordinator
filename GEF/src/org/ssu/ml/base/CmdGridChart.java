@@ -6,6 +6,8 @@
 package org.ssu.ml.base;
 
 import java.awt.Dimension;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,10 +26,11 @@ import org.tigris.gef.presentation.Fig;
 import org.tigris.gef.util.Localizer;
 
 
-public class CmdGridChart extends Cmd {
+public class CmdGridChart extends Cmd implements ComponentListener {
     private static final long serialVersionUID = 8472508088519383941L;
     protected double _magnitude;
-
+    JGridTabbedFrame histoFrame;
+    
     // //////////////////////////////////////////////////////////////
     // constructor
 
@@ -89,9 +92,10 @@ public class CmdGridChart extends Cmd {
         UiGlobals.getGridCategories().add("d"+interval_space+"x"+xOffset+"y"+yOffset);
         
         if(result_1.length > 0){
-        	JGridTabbedFrame histoFrame = new JGridTabbedFrame("title");
+        	histoFrame = new JGridTabbedFrame("title");
+        	histoFrame.addComponentListener(this);
         	
-        	JGridChartPanel total = new JGridChartPanel("Total");
+        	JGridChartPanel total = new JGridChartPanel("Total", 800, 600);
         	for(int count = 0 ; count < UiGlobals.getGridDatas().size() ; count++)
         	{
         		total.addData(UiGlobals.getGridDatas().get(count), UiGlobals.getGridCategories().get(count));
@@ -99,7 +103,7 @@ public class CmdGridChart extends Cmd {
             	//panel.setPrecise(10);
     	        
         	}
-        	total.drawHistogram();
+        	total.drawChart();
         	histoFrame.addPanel(total, "Total Density");
         	
         	for(int count = 0 ; count < UiGlobals.getGridDatas().size() ; count++)
@@ -116,7 +120,8 @@ public class CmdGridChart extends Cmd {
 	        
 	        //RefineryUtilities.centerFrameOnScreen(histoFrame);
 	        histoFrame.setVisible(true);
-	        histoFrame.setResizable(false);
+	        histoFrame.setUndecorated(true);
+	        //histoFrame.setResizable(false);
         }
         else
         	System.out.println("No Data Error!");
@@ -131,4 +136,28 @@ public class CmdGridChart extends Cmd {
     public void undoIt() {
        
     }
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 } /* end class CmdZoom */
