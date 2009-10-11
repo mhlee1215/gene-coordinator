@@ -33,7 +33,7 @@ import java.awt.Dimension;
 
 import javax.swing.JTextField;
 
-import org.ssu.ml.base.CmdGridHistogram;
+import org.ssu.ml.base.CmdGridChart;
 import org.ssu.ml.base.CmdShowAbout;
 import org.tigris.gef.base.CmdSetMode;
 import org.tigris.gef.base.CmdZoom;
@@ -94,7 +94,7 @@ public class NodePaletteFig extends ToolBar {
         add(new CmdZoom(1.25), "Zoom in", "zoom_in", ToolBar.BUTTON_TYPE_LEFT);
         add(new CmdZoom(0.8), "Zoom out", "zoom_out", ToolBar.BUTTON_TYPE_CENTER);
         this.addSeparator();
-        add(new CmdGridHistogram(), "Grid Histo", "Grid_histogram", ToolBar.BUTTON_TYPE_RIGHT);
+        add(new CmdGridChart(), "Grid Histo", "Grid_histogram", ToolBar.BUTTON_TYPE_RIGHT);
         add(new CmdShowAbout(), "Show About", "about", ToolBar.BUTTON_TYPE_RIGHT);
         
         JTextField searchField = new JTextField();

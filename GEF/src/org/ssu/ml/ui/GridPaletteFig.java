@@ -30,7 +30,7 @@ package org.ssu.ml.ui;
 
 import java.awt.Color;
 
-import org.ssu.ml.base.CmdGridHistogram;
+import org.ssu.ml.base.CmdGridChart;
 import org.tigris.gef.base.CmdSetMode;
 import org.tigris.gef.base.CmdZoom;
 import org.tigris.gef.base.ModeBroom;

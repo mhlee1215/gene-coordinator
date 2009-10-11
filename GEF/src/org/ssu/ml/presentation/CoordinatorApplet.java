@@ -29,6 +29,7 @@ import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EtchedBorder;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -55,7 +56,6 @@ import org.tigris.gef.undo.RedoAction;
 import org.tigris.gef.undo.UndoAction;
 import org.tigris.gef.util.Localizer;
 import org.tigris.gef.util.ResourceLoader;
-
 
 
 public class CoordinatorApplet extends JApplet implements ModeChangeListener {
@@ -85,7 +85,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 	private JGraph _graph;
 	/** A statusbar (shown at bottom ow window). */
 	private JLabel _statusbar = new JLabel(" ");
-
+	//private JXPanel jxpanel;
 	private JPanel _mainPanel = new JPanel(new BorderLayout());
 	private JPanel _graphPanel = new JPanel(new BorderLayout());
 	private JMenuBar _menubar = new JMenuBar();
@@ -105,23 +105,44 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 		setSize(756, 600);
 
-		try {
-			
-			//QuaquaManager.setProperty("Quaqua.tabLayoutPolicy", "wrap");
-			// configure the class loader of the UIManager.
-			//UIManager.put("ClassLoader", getClass().getClassLoader());
-			// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			//UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-			try {
-				  UIManager.setLookAndFeel(
-				    UIManager.getSystemLookAndFeelClassName());
-				} catch (Exception e) {
-				}	
+//		try {
+//			
+//			//QuaquaManager.setProperty("Quaqua.tabLayoutPolicy", "wrap");
+//			// configure the class loader of the UIManager.
+//			//UIManager.put("ClassLoader", getClass().getClassLoader());
+//			 UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+//			//UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+//			//UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+////			try {
+////				  UIManager.setLookAndFeel(
+////				    UIManager.getSystemLookAndFeelClassName());
+////				} catch (Exception e) {
+////				}	
+//		
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			//e.printStackTrace();
+//		}
 		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-		}
+		try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (UnsupportedLookAndFeelException e) {
+        	e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            try {
+			  UIManager.setLookAndFeel(
+			    UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception e1) {
+			}
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
 		//UiGlobals.set_curApplet(this);
 		UiGlobals.setApplet(this);
