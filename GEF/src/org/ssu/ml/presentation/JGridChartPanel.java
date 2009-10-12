@@ -39,6 +39,7 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -91,9 +92,9 @@ import etc.RoundedBorder;
 
 public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable, ChangeListener, MouseListener{
 	
-	Border selectedBorder = new RoundedBorder(Color.red, true);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.red);
-	Border unselectedBorder = new RoundedBorder(Color.white, false);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.white);
-	Border overedBorder = new RoundedBorder(Color.LIGHT_GRAY, false);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.LIGHT_GRAY);
+	Border selectedBorder = new RoundedBorder(Color.LIGHT_GRAY, true, Color.black);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.red);
+	Border unselectedBorder = new RoundedBorder(Color.LIGHT_GRAY, true, Color.white);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.white);
+	Border overedBorder = new RoundedBorder(Color.LIGHT_GRAY, true, Color.LIGHT_GRAY);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.LIGHT_GRAY);
 	JPanel overedPanel = null;
 	JPanel selectedPanel = null;
 	
@@ -225,7 +226,22 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
     {
     	chartPanel = createPanel();
     	//_histogram.setPreferredSize(new Dimension(700, 270));
-    	mainPanel.add(chartPanel, BorderLayout.CENTER);
+    	chartPanel.setPreferredSize(new Dimension(1350, 430));
+    	//chartPanel.setSize(new Dimension(1000, 600));
+    	
+    	JPanel drawPanel = new JPanel();
+    	drawPanel.add(chartPanel);
+    	JScrollPane jScrollPane = new JScrollPane(drawPanel);
+    	
+    	jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        //jScrollPane.setViewportBorder(new LineBorder(Color.RED));
+        //jScrollPane.getViewport().add(chartPanel, null);
+        //jScrollPane.getViewport().setPreferredSize(new Dimension(1000, 600));
+        //jScrollPane.add(chartPanel);
+        
+        jScrollPane.setPreferredSize(new Dimension(700, 460));
+    	mainPanel.add(jScrollPane, BorderLayout.CENTER);
         //this.remove
     }
     
@@ -490,13 +506,14 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 			plotChart.setBackgroundPaint(Color.gray);
 			
 			JPanel innerChartPanel = new ChartPanel(plotChart);
+			
 			System.out.println("popup size : "+innerChartPanel.getComponentPopupMenu());
 			
 			System.out.println("createPanel size : "+getSize());
 			//innerChartPanel.set
 			
-			innerChartPanel.setPreferredSize(new Dimension(this.totalWidth/datas.size(), getSize().height-130));
-			
+			innerChartPanel.setPreferredSize(new Dimension(300, 350));
+			//subTitlePanel.setPreferredSize(new Dimension(300, getSize().height-130));
 			
 			JRadioButton radio = new JRadioButton();
 			radio.setText("radio");
@@ -506,7 +523,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 			GridBagConstraints gbc = new GridBagConstraints();  
 			subTitlePanel.setLayout( new GridBagLayout() );   
 		    gbc.gridy = 1;  
-		    gbc.insets = new Insets( 0, 10, 10, 0 );  
+		    gbc.insets = new Insets( 10, 10, 10, 0 );  
 		    subTitlePanel.add( innerChartPanel, gbc );  
 		    //setSize( 500, 500 );  
 			
@@ -516,6 +533,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 			
 			
 			//subChartPanel.add(innerChartPanel, BorderLayout.CENTER);
+		    
 			mainPanel.add(subBorderPanel, gbcMain);
 			//mainPanel.add(new JXTitledPanel("title"));
 			//new PlotPanel(cplot);
@@ -602,6 +620,8 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
     	double data3[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
     	JGridChartPanel char1 = new JGridChartPanel("title", 500, 500);
     	JXFrame frame = new JXFrame();
+    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	RefineryUtilities.centerFrameOnScreen(frame);
     	frame.setVisible(true);
     	frame.addComponentListener(new ComponentListener(){
 
@@ -642,9 +662,11 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
     	char1.addData(data2, "data3");
     	char1.addData(data3, "datar");
     	char1.drawChart();
-    	frame.getContentPane().add(char1);
+    	frame.add(char1);
     	//frame.add(char1);
     	frame.pack();
+    	
+    	
 //    	
 //    	final JDialog dialog = new JDialog(frame, "Child", true);
 //        dialog.setBackground(Color.green);
@@ -703,11 +725,11 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	}
 	
 	public void reDraw(){
-		clean();
-		mainPanel.remove(chartPanel);
-		chartPanel = createPanel();
-		mainPanel.add(chartPanel);
-		chartPanel.revalidate();
+//		clean();
+//		mainPanel.remove(chartPanel);
+//		chartPanel = createPanel();
+//		mainPanel.add(chartPanel);
+//		chartPanel.revalidate();
 	}
 	
 	public void paint(Graphics g)
@@ -727,7 +749,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 		if( e.getSource() instanceof JXTitledPanel){
 			JXTitledPanel source = (JXTitledPanel)e.getSource();
 			JXPanel shdowPanel = (JXPanel)source.getParent();
-			System.out.println("src : "+source +", selected : "+selectedPanel);
+			//System.out.println("src : "+source +", selected : "+selectedPanel);
 			if(shdowPanel != selectedPanel){
 				shdowPanel.setBorder(this.overedBorder);
 				//source.setAlpha(.5f);
@@ -758,6 +780,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+	    
 		// TODO Auto-generated method stub
 		if( e.getSource() instanceof JXTitledPanel){
 			JPanel source = (JPanel)e.getSource();
