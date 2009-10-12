@@ -120,7 +120,7 @@ public class CmdGridChart extends Cmd implements ComponentListener {
 	        
 	        //RefineryUtilities.centerFrameOnScreen(histoFrame);
 	        histoFrame.setVisible(true);
-	        histoFrame.setUndecorated(true);
+	        //histoFrame.setUndecorated(true);
 	        //histoFrame.setResizable(false);
         }
         else

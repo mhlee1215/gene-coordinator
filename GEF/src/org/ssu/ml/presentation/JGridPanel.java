@@ -31,11 +31,11 @@ public class JGridPanel extends JXPanel {
 	protected JPanel mainPanel = new JPanel(new BorderLayout());
     
     public JGridPanel(){
-    	add(mainPanel);
+        setLayout(new BorderLayout());
+    	add(mainPanel, BorderLayout.CENTER);
 		setUpToolbar();
 		setStatusBar();
     }
-	
     public JFreeChart getChart() {
 		return chart;
 	}
