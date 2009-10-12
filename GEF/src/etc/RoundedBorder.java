@@ -18,14 +18,16 @@ import org.jdesktop.swingx.graphics.ShadowRenderer;
 
 public class RoundedBorder extends AbstractBorder {
 	private Color FILL = new Color(135, 135, 135);
+	private Color shadowColor;
 	private final Stroke STROKE = new BasicStroke(20f);
-	int arc = 30;
+	int arc = 10;
 	int offset = 30;
 	boolean drawShadow;
 	
-	public RoundedBorder(Color borderColor, boolean drawShadow){
+	public RoundedBorder(Color borderColor, boolean drawShadow, Color shadowColor){
 		FILL = borderColor;
 		this.drawShadow = drawShadow;
+		this.shadowColor = shadowColor;
 	}
 	@Override 
 	public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
@@ -38,27 +40,20 @@ public class RoundedBorder extends AbstractBorder {
 		
 		
 		
-		//
+	    int shadowSize = 6;
+	    
+		BufferedImage shadow = GraphicsUtilities.createCompatibleTranslucentImage(w, h);
 		
-		
-		//w -= 68;
-	    //h -= 68;
-		
-		    int arc = 30;
-		    int shadowSize = 6;
-		    
-			BufferedImage shadow = GraphicsUtilities.createCompatibleTranslucentImage(w, h);
-			
-			Graphics2D g3 = shadow.createGraphics();
-		    g3.setColor(Color.WHITE);
-		    g3.fillRoundRect(0, 0, w-10, h-10, arc, arc);
-		    g3.dispose();
-	
-		    ShadowRenderer renderer = new ShadowRenderer(shadowSize, 0.5f, Color.BLACK);
-		    shadow = renderer.createShadow(shadow);
-		    
-		    int xOffset = (shadow.getWidth()  - w) / 2;
-		    int yOffset = (shadow.getHeight() - h) / 2;
+		Graphics2D g3 = shadow.createGraphics();
+	    g3.setColor(Color.WHITE);
+	    g3.fillRoundRect(0, 0, w-13, h-13, arc, arc);
+	    g3.dispose();
+
+	    ShadowRenderer renderer = new ShadowRenderer(shadowSize, 0.5f, shadowColor);
+	    shadow = renderer.createShadow(shadow);
+	    
+	    int xOffset = (shadow.getWidth()  - w) / 2;
+	    int yOffset = (shadow.getHeight() - h) / 2;
 		if(this.drawShadow){
 		    g2.drawImage(shadow, 0, 0, null);
 		}
@@ -72,8 +67,8 @@ public class RoundedBorder extends AbstractBorder {
 		//g2.drawRoundRect(offset, offset, w-offset*2, h-offset*2, 5, 5);
 		
 		
-		g2.setColor(new Color(0, 0, 0, 220));
-	    //g2.fillRoundRect(offset, offset, w-offset, h-offset, arc, arc);
+		g2.setColor(FILL);
+	    g2.fillRoundRect(10, 10, w-20, h-20, arc+5, arc);
 //
 	    g2.setStroke(new BasicStroke(3f));
 	    g2.setColor(Color.WHITE);
