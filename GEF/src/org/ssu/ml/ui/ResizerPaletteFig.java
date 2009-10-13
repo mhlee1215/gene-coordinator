@@ -297,9 +297,9 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 
 					if (gridCurValue != slider.getValue()) {
 						gridCurValue = slider.getValue();
-						int scale = slider.getValue();
-						gridSpinner.setValue(scale);
-						gridResize(scale);
+						int space = slider.getValue();
+						gridSpinner.setValue(space);
+						gridResize(space);
 						
 					}
 				}
@@ -338,14 +338,14 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		
 	}
 	
-	public void gridResize(int scale)
+	public void gridResize(int space)
 	{
 		Editor editor = UiGlobals.curEditor();
 		LayerGrid grid = (LayerGrid) editor.getLayerManager()
 				.findLayerNamed("Grid");
 		HashMap map = new HashMap();
 		double defaultSpace = (int) Math.pow(2, 3);
-		map.put("spacing_include_stamp", (int) (scale));
+		map.put("spacing_include_stamp", (int) (space)*UiGlobals.getPre_scaled());
 		
 		grid.adjust(map);
 	}

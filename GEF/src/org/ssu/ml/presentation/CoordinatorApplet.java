@@ -246,7 +246,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("Color", Color.LIGHT_GRAY);
 		map.put("bgColor", Color.white);
-		map.put("spacing_include_stamp", (int)UiGlobals.getDefault_grid_spacing());
+		map.put("spacing_include_stamp", (int)UiGlobals.getDefault_grid_spacing()+50);
 		map.put("paintLines", true);
 		map.put("paintDots", false);
 
