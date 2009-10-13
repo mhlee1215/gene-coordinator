@@ -33,6 +33,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -130,7 +132,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		this.setForeground(Color.white);
 		//this.setLayout(new GridLayout(4, 1));
 		//this.setLayout(new FlowLayout());
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		//this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		// add(new CmdSetMode(ModeCreateFigLine.class, "Line"));
 		// add(new CmdSetMode(ModeCreateFigText.class, "Text")	);
 
@@ -152,8 +154,8 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		JMenuBar scaleMenuBar = new JMenuBar();
 		//scaleMenuBar.setComponentOrientation()
 		scaleMenuBar.add(scaleMenu);
-		scaleMenuBar.setPreferredSize(new Dimension(50, 50));
-		add(scaleMenuBar);
+		//scaleMenuBar.setPreferredSize(new Dimension(50, 50));
+		
 		
 		
 		
@@ -193,7 +195,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
                 BorderFactory.createTitledBorder("Grid")
                 );
         
-		add(gridResizer);
+		
 		UiGlobals.set_gridSlider(gridResizer);
 		
 		
@@ -207,21 +209,21 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		gridSpinner.setName("gridSpinner");
 		
 		gridSpinner.setModel(model);
-		add(gridSpinner);
+		
 		gridSpinner.addChangeListener(this);
 		
 		
 		
-		JPanel panel = new JPanel();
-		panel.setPreferredSize(new Dimension(50, 80));
-		panel.setLayout(null);
+		JPanel locControlPanel = new JPanel();
+		//locControlPanel.setPreferredSize(new Dimension(50, 80));
+		locControlPanel.setLayout(null);
 		JButton buttonUp = new JButton("^");
 		buttonUp.setActionCommand("gridUp");
 		buttonUp.addActionListener(this);
 		buttonUp.setPreferredSize(new Dimension(20, 20));
 		buttonUp.setMargin(new Insets(0, 0, 0, 0));
 		buttonUp.setBounds(16, 0, 20, 20);
-		panel.add(buttonUp);
+		locControlPanel.add(buttonUp);
 		
 		JButton buttonDown = new JButton("v");
 		buttonDown.setActionCommand("gridDown");
@@ -229,7 +231,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		buttonDown.setPreferredSize(new Dimension(20, 20));
 		buttonDown.setMargin(new Insets(0, 0, 0, 0));
 		buttonDown.setBounds(16, 40, 20, 20);
-		panel.add(buttonDown);
+		locControlPanel.add(buttonDown);
 		
 		JButton buttonLeft = new JButton("<");
 		buttonLeft.setActionCommand("gridLeft");
@@ -237,7 +239,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		buttonLeft.setPreferredSize(new Dimension(28, 20));
 		buttonLeft.setMargin(new Insets(0, 0, 0, 0));
 		buttonLeft.setBounds(0, 20, 20, 20);
-		panel.add(buttonLeft);
+		locControlPanel.add(buttonLeft);
 		
 		JButton buttonRight = new JButton(">");
 		buttonRight.setActionCommand("gridRight");
@@ -245,10 +247,10 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		buttonRight.setPreferredSize(new Dimension(28, 20));
 		buttonRight.setMargin(new Insets(0, 0, 0, 0));
 		buttonRight.setBounds(32, 20, 20, 20);
-		panel.add(buttonRight);
+		locControlPanel.add(buttonRight);
 		
 		
-		add(panel);
+		
 		
 		
 		
@@ -279,6 +281,97 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		scaleResizer.setEnabled(false);
 		
 		
+//		setLayout(new GridBagLayout());
+//		GridBagConstraints c = new GridBagConstraints();
+//		
+//		//c.fill = GridBagConstraints.HORIZONTAL;
+//		c.gridx = 0;
+//		c.gridy = 0;
+//		add(scaleMenuBar, c);
+//		
+//		//c.fill = GridBagConstraints.HORIZONTAL;
+//		c.gridx = 0;
+//		c.gridy = 1;
+//		add(gridResizer, c);
+//		
+//		//c.fill = GridBagConstraints.HORIZONTAL;
+//		c.gridx = 0;
+//		c.gridy = 2;
+//		add(gridSpinner, c);
+//		
+//		//c.fill = GridBagConstraints.HORIZONTAL;
+//		c.gridx = 0;
+//		c.gridy = 3;
+//		add(locControlPanel, c);
+		
+		
+		//boolean shouldFill = true;
+		//JButton button;
+		setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		//if (shouldFill) {
+				//natural height, maximum width
+		//		c.fill = GridBagConstraints.HORIZONTAL;
+		//}
+
+		//button = new JButton("Button 1");
+		
+		int leftToolbarWidth = 50;
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.PAGE_START;
+		c.weightx = 0.5;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.ipady = 20;
+		scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 30));
+		add(scaleMenuBar, c);
+
+		//button = new JButton("Button 2");
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.ipady = 150;      //make this component tall
+		c.weightx = 0.0;
+		c.gridx = 0;
+		c.gridy = 1;
+		//c.anchor = GridBagConstraints.PAGE_END;
+		scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 150));
+		
+		JPanel resizerPanel = new JPanel();
+		//resizerPanel.setLayout(new GridBagLayout());
+		//GridBagConstraints cResizer = new GridBagConstraints();
+		//cResizer.insets = new Insets(10, 0, 10, 0);
+		resizerPanel.add(gridResizer);
+		
+		add(resizerPanel, c);
+
+		//button = new JButton("Button 3");
+		c.fill = GridBagConstraints.HORIZONTAL;
+		//c.weightx = 0.5;
+		c.ipady = 0;
+		c.gridx = 0;
+		c.gridy = 2;
+		gridSpinner.setPreferredSize(new Dimension(leftToolbarWidth, 30));
+		add(gridSpinner, c);
+
+		//button = new JButton("Long-Named Button 4");
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.ipady = 60;      //make this component tall
+		c.weightx = 0.0;
+		//c.gridwidth = 3;
+		c.gridx = 0;
+		c.gridy = 3;
+		add(locControlPanel, c);
+
+//		button = new JButton("5");
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.ipady = 0;       //reset to default
+//		c.weighty = 1.0;   //request any extra vertical space
+//		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+//		c.insets = new Insets(10,0,0,0);  //top padding
+//		c.gridx = 0;       //aligned with button 2
+//		//c.gridwidth = 2;   //2 columns wide
+//		c.gridy = 4;       //third row
+//		add(button, c);
 		
 		UiGlobals.set_scaleSlider(scaleResizer);
 	}
