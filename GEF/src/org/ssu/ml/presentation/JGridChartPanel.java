@@ -122,8 +122,10 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	
 	int totalWidth = 0;
 	int totalHeight = 0;
-	int chartWidth = 0;
-	int chartHeight = 0;
+	int chartWidth = 300;
+	int chartHeight = 400;
+
+	int chartPadding = 30;
 
     private static final long serialVersionUID = -8167010467922210977L;
     
@@ -226,7 +228,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
     {
     	chartPanel = createPanel();
     	//_histogram.setPreferredSize(new Dimension(700, 270));
-    	chartPanel.setPreferredSize(new Dimension(1350, 430));
+    	chartPanel.setPreferredSize(new Dimension(datas.size()*(chartWidth+chartPadding), chartHeight+chartPadding));
     	//chartPanel.setSize(new Dimension(1000, 600));
     	
     	JPanel drawPanel = new JPanel();
@@ -452,40 +454,51 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 			subBorderPanel.setBackground(Color.white);
 			subBorderPanel.setBorder(this.unselectedBorder);
 			
-			JXTitledPanel subTitlePanel = new JXTitledPanel("title");
+			String title = String.format("%-88s", "title");
+			JXTitledPanel subTitlePanel = new JXTitledPanel(title);
 			
 			
 			GridBagConstraints gbcBorder = new GridBagConstraints();  
 			subBorderPanel.setLayout( new GridBagLayout() );   
-		    gbcBorder.insets = new Insets(5, 5, 5, 5);
+		    gbcBorder.insets = new Insets(14, 10, 5, 0);
+		    
+		    
 		    subBorderPanel.add( subTitlePanel, gbcBorder );
 			
 		    
+			//int titleWidth = 300;
 			
 			
-			
-			int width = 100;
-			int height = 300;
-			Color color1 = Colors.White.color(0.5f);
-			Color color2 = Colors.Gray.color(0.5f);
+			//int width = 50;
+			//int height = 50;
+			Color color1 = Colors.Gray.color(0.02f);
+			Color color2 = Colors.White.color(0.5f);
 			 
 			LinearGradientPaint gradientPaint =
-			     new LinearGradientPaint(6.0f, 6.0f, width, height,
-			                             new float[]{0.0f, 1.0f},
-			                             new Color[]{color1, color2});
+			     new LinearGradientPaint(0, 0, chartWidth, 0,
+			                             new float[]{0.1f, 0.3f, 0.9f},
+			                             new Color[]{color1, color2, color1});
 			MattePainter mattePainter = new MattePainter(gradientPaint);
 			
-			MattePainter mp = new MattePainter(Colors.LightBlue.alpha(0.8f));
-			GlossPainter gp = new GlossPainter(Colors.White.alpha(0.8f),
-			                                   GlossPainter.GlossPosition.TOP);
-			PinstripePainter pp = new PinstripePainter(Colors.Gray.alpha(0.8f),
-			                                           45d);
+//			LinearGradientPaint gradientPaint1 =
+//                new LinearGradientPaint(1.0f, 0.0f, 1000, height,
+//                                        new float[]{0.0f, 1.0f},
+//                                        new Color[]{color1, color2});
+//           MattePainter mattePainter1 = new MattePainter(gradientPaint1);
+			
+//			MattePainter mp = new MattePainter(Colors.LightBlue.alpha(0.8f));
+//			GlossPainter gp = new GlossPainter(Colors.White.alpha(0.8f),
+//			                                   GlossPainter.GlossPosition.TOP);
+//			PinstripePainter pp = new PinstripePainter(Colors.Gray.alpha(0.8f),
+//			                                           45d);
 			//subChartPanel.set
-			RectanglePainter roundRect = new RectanglePainter(
-			        6, 6, 6, 6,   10,10,   true, 
-				Color.GRAY, 3, Color.DARK_GRAY); 
-			roundRect.setAntialiasing(true);
-			subTitlePanel.setTitlePainter(roundRect);
+//			RectanglePainter roundRect = new RectanglePainter(
+//			        6, 6, 6, 6,   10,10,   true, 
+//				Color.GRAY, 3, Color.DARK_GRAY); 
+//			roundRect.setAntialiasing(true);
+			
+			//subTitlePanel.setTitlePainter(mattePainter);
+			subTitlePanel.setTitlePainter(new CompoundPainter(mattePainter));
 			subTitlePanel.setBorder(null);
 			RectanglePainter backgroundRoundRect = new RectanglePainter(
 			        6, 6, 6, 6, 10,10,   true, 
@@ -499,8 +512,8 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 			//subChartPanel.set
 			//new GradientPainter();
 			//subChartPanel.setTitle("title");
-			subTitlePanel.setBackground(Color.white);
-			subTitlePanel.setForeground(Color.white);
+			//subTitlePanel.setBackground(Color.white);
+			//subTitlePanel.setForeground(Color.white);
 			//subChartPanel.set
 			//subChartPanel.setLayout(new BorderLayout());
 			plotChart.setBackgroundPaint(Color.gray);
@@ -511,8 +524,8 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 			
 			System.out.println("createPanel size : "+getSize());
 			//innerChartPanel.set
-			
-			innerChartPanel.setPreferredSize(new Dimension(300, 350));
+			//subTitlePanel.setPreferredSize(new Dimension(300, 350));
+			innerChartPanel.setPreferredSize(new Dimension(chartWidth, 350));
 			//subTitlePanel.setPreferredSize(new Dimension(300, getSize().height-130));
 			
 			JRadioButton radio = new JRadioButton();
@@ -523,8 +536,11 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 			GridBagConstraints gbc = new GridBagConstraints();  
 			subTitlePanel.setLayout( new GridBagLayout() );   
 		    gbc.gridy = 1;  
-		    gbc.insets = new Insets( 10, 10, 10, 0 );  
-		    subTitlePanel.add( innerChartPanel, gbc );  
+		    gbc.insets = new Insets( 1, 5, 10, 5 );  
+		    
+		    
+		    subTitlePanel.add( innerChartPanel, gbc );
+		    //subTitlePanel.setPreferredSize(new Dimension(300, 300));
 		    //setSize( 500, 500 );  
 			
 			

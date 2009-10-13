@@ -45,6 +45,7 @@ public class JGridPanel extends JXPanel {
     	toolbar.setBackground(Color.white);
     	toolbar.setForeground(Color.white);
     	toolbar.add(new CmdSaveChart(this, "aa"), "Save to JPEG", "Save1");
+    	toolbar.add(new CmdSaveChart(this, "aa"), "Save Grid Data", "Save1");
     	mainPanel.add(toolbar, BorderLayout.NORTH);
     }
     
