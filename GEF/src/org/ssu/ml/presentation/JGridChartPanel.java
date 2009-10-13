@@ -232,6 +232,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
     	//chartPanel.setSize(new Dimension(1000, 600));
     	
     	JPanel drawPanel = new JPanel();
+    	drawPanel.setBackground(Color.white);
     	drawPanel.add(chartPanel);
     	JScrollPane jScrollPane = new JScrollPane(drawPanel);
     	
