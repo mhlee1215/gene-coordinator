@@ -168,9 +168,9 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		gridResizer.setBackground(Color.white);
 		//Font font = new Font("Dialog.plain", 0, 10);
 		
-		JLabel minLabel = new JLabel("Min");
+		JLabel minLabel = new JLabel("m");
 		//minLabel.setFont(font);
-		JLabel maxLabel = new JLabel("Max");
+		JLabel maxLabel = new JLabel("M");
 		//maxLabel.setFont(font);
 		Hashtable<Integer, JLabel> labelTable = 
             new Hashtable<Integer, JLabel>();
@@ -188,12 +188,12 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
         //BorderFactory a;
         
         
-        gridResizer.setBorder(
-                //BorderFactory.createEmptyBorder(0,0,0,0)
-                //BorderFactory.createLineBorder(Color.black, 1)
-        		
-                BorderFactory.createTitledBorder("Grid")
-                );
+//        gridResizer.setBorder(
+//                //BorderFactory.createEmptyBorder(0,0,0,0)
+//                //BorderFactory.createLineBorder(Color.black, 1)
+//        		
+//                BorderFactory.createTitledBorder("Grid")
+//                );
         
 		
 		UiGlobals.set_gridSlider(gridResizer);
@@ -328,7 +328,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		add(scaleMenuBar, c);
 
 		//button = new JButton("Button 2");
-		c.fill = GridBagConstraints.VERTICAL;
+		c.fill = GridBagConstraints.HORIZONTAL;
 		c.ipady = 200;      //make this component tall
 		c.weightx = 0.0;
 		c.gridx = 0;
@@ -338,9 +338,11 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 150));
 		
 		JPanel resizerPanel = new JPanel();
-		//resizerPanel.setLayout(new GridBagLayout());
-		//GridBagConstraints cResizer = new GridBagConstraints();
+		
+		resizerPanel.setLayout(new GridBagLayout());
+		GridBagConstraints cResizer = new GridBagConstraints();
 		//cResizer.insets = new Insets(10, 0, 10, 0);
+		resizerPanel.setBorder(BorderFactory.createTitledBorder("Grid"));
 		resizerPanel.add(gridResizer);
 		
 		add(resizerPanel, c);
