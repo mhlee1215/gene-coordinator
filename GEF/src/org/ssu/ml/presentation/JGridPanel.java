@@ -19,13 +19,14 @@ import javax.swing.JToolBar;
 import org.jdesktop.swingx.JXPanel;
 import org.jfree.chart.JFreeChart;
 import org.ssu.ml.base.CmdSaveChart;
+import org.ssu.ml.base.CmdSaveGridData;
 import org.ssu.ml.ui.GridPaletteFig;
 import org.tigris.gef.ui.ToolBar;
 
 
 
 public class JGridPanel extends JXPanel {
-	JFreeChart chart;
+	JPanel chart;
 	ToolBar toolbar = new ToolBar();
 	protected JLabel statusbar = new JLabel(" ");
 	protected JPanel mainPanel = new JPanel(new BorderLayout());
@@ -36,7 +37,7 @@ public class JGridPanel extends JXPanel {
 		setUpToolbar();
 		setStatusBar();
     }
-    public JFreeChart getChart() {
+    public JPanel getChart() {
 		return chart;
 	}
 
@@ -45,7 +46,7 @@ public class JGridPanel extends JXPanel {
     	toolbar.setBackground(Color.white);
     	toolbar.setForeground(Color.white);
     	toolbar.add(new CmdSaveChart(this, "aa"), "Save to JPEG", "Save1");
-    	toolbar.add(new CmdSaveChart(this, "aa"), "Save Grid Data", "Save1");
+    	toolbar.add(new CmdSaveGridData(this), "Save Grid Data", "Save1");
     	mainPanel.add(toolbar, BorderLayout.NORTH);
     }
     

@@ -144,6 +144,10 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 		this.totalHeight = toalHeight;
     }
 
+	public JPanel getChart(){
+		return selectedPanel;
+	}
+	
     public void addData(double[] data, String category){
     	datas.add(data);
     	categories.add(category);
@@ -434,6 +438,8 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	public JPanel createPanel() {
 		//System.out.println("create Panel, precise : " + precise);
 		JXPanel mainPanel = new JXPanel();
+		mainPanel.setName("mainPanel");
+		mainPanel.addMouseListener(this);
 		mainPanel.setBackground(Color.white);
 		GridBagConstraints gbcMain = new GridBagConstraints();  
 		mainPanel.setLayout( new GridBagLayout() );   
@@ -452,6 +458,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 			
 			
 			JXPanel subBorderPanel = new JXPanel();
+			subBorderPanel.setName(Integer.toString(count));
 			subBorderPanel.setBackground(Color.white);
 			subBorderPanel.setBorder(this.unselectedBorder);
 			
@@ -742,6 +749,7 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	}
 	
 	public void reDraw(){
+		
 //		clean();
 //		mainPanel.remove(chartPanel);
 //		chartPanel = createPanel();
@@ -810,8 +818,14 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 			
 		}else if(e.getSource() instanceof JPanel){
 			JPanel source = (JPanel)e.getSource();
-			e.setSource(source.getParent());
-			mousePressed(e);
+			if(source.getName() != null && source.getName().equals("mainPanel")){
+				//unselect all panel.
+				selectedPanel.setBorder(this.unselectedBorder);
+				selectedPanel = null;
+			}else{
+				e.setSource(source.getParent());
+				mousePressed(e);
+			}
 		}
 	}
 

@@ -202,7 +202,7 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
 		}
 		
 		JFreeChart jfreechart = createChart(histogramdataset);
-		chart = jfreechart;
+		chart = new ChartPanel(jfreechart);
 		XYPlot plot = jfreechart.getXYPlot();
 		
 		plot.setBackgroundPaint(Color.white);
@@ -218,7 +218,7 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
 		plot.addDomainMarker(target, Layer.BACKGROUND);
 		
 		
-		XYBarRenderer renderer = (XYBarRenderer) plot.getRenderer();  // BarRenderer¸¦ ±¸ÇÑ´Ù.
+		XYBarRenderer renderer = (XYBarRenderer) plot.getRenderer();  // BarRendererï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
 		renderer.setSeriesPaint(0, UiGlobals.getConstantColor().getColor(0));
 		XYBarPainter painter = new StandardXYBarPainter();
 		

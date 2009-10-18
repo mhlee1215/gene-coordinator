@@ -180,7 +180,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 				maxLabel );
 		gridResizer.setLabelTable(labelTable);
 		
-		gridResizer.setPreferredSize(new Dimension(50, 500));
+		//gridResizer.setPreferredSize(new Dimension(50, 500));
         gridResizer.setPaintLabels(true);
         gridResizer.setMajorTickSpacing(1);
         gridResizer.addChangeListener(this);
@@ -328,11 +328,12 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		add(scaleMenuBar, c);
 
 		//button = new JButton("Button 2");
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.ipady = 150;      //make this component tall
+		c.fill = GridBagConstraints.VERTICAL;
+		c.ipady = 200;      //make this component tall
 		c.weightx = 0.0;
 		c.gridx = 0;
 		c.gridy = 1;
+		//c.insets = new Insets(20, 0, 20, 0);
 		//c.anchor = GridBagConstraints.PAGE_END;
 		scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 150));
 		

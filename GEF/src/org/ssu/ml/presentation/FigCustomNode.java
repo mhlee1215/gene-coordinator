@@ -52,8 +52,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Vector;
 
@@ -62,6 +64,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
+import org.jdesktop.swingx.graphics.GraphicsUtilities;
+import org.jdesktop.swingx.graphics.ShadowRenderer;
 import org.ssu.ml.base.CmdGetNodes;
 import org.ssu.ml.base.NodeDescriptor;
 import org.ssu.ml.base.UiGlobals;
@@ -76,8 +80,18 @@ import org.tigris.gef.util.Localizer;
  * @author ics125
  */
 public class FigCustomNode extends FigRect {
+	
+	Color borderColor = Color.black;
+	
+    public Color getBorderColor() {
+		return borderColor;
+	}
 
-    public FigCustomNode(int x, int y, int w, int h) {
+	public void setBorderColor(Color borderColor) {
+		this.borderColor = borderColor;
+	}
+
+	public FigCustomNode(int x, int y, int w, int h) {
 		super(x, y, w, h);
 		// TODO Auto-generated constructor stub
 	}
@@ -168,11 +182,43 @@ public class FigCustomNode extends FigRect {
        // drawRect(g, isFilled(), getFillColor(), getLineWidth(), getLineColor(), getX(), getY(), getWidth(),
         //        getHeight(), getDashed(), _dashes, _dashPeriod);
     	
+    	Graphics2D g2 = (Graphics2D)g.create();
+		g2.setRenderingHint(
+		RenderingHints.KEY_ANTIALIASING,
+		RenderingHints.VALUE_ANTIALIAS_ON);
+		
+//		int w = getWidth();
+//		int h = getHeight();
+//		int arc = 4;
+//		int padding = 2;
+//		
+//		
+//		BufferedImage shadow = GraphicsUtilities.createCompatibleTranslucentImage(w+padding, h+padding);
+//		
+//		Graphics2D g3 = shadow.createGraphics();
+//	    g3.setColor(Color.white);
+//	    g3.fillRoundRect(0, 0, w+padding, h+padding, arc, arc);
+//	    g3.dispose();
+//	    
+//		int shadowSize = 1;
+//		Color shadowColor = Color.black;
+//		ShadowRenderer renderer = new ShadowRenderer(shadowSize, 0.5f, shadowColor);
+//	    shadow = renderer.createShadow(shadow);
+//	    
+//		//if(this.drawShadow){
+//		    g2.drawImage(shadow, getX()-padding, getY()-padding, getWidth()+padding, getHeight()+padding, null);
+//		//}
+		
+		
+    	Color old = g2.getColor();
+    	g2.setColor(getLineColor());
+    	g2.fillOval(getX(), getY(), getWidth(), getHeight());
     	
-    	Color old = g.getColor();
-    	g.setColor(getLineColor());
-    	g.fillOval(getX(), getY(), getWidth(), getHeight());
-    	g.setColor(old);
+    	g2.setColor(borderColor);
+    	g2.setStroke(new BasicStroke(1f));
+    	g2.drawOval(getX(), getY(), getWidth(), getHeight());
+    	
+    	g2.setColor(old);
     }
     
     
