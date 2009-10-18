@@ -74,19 +74,28 @@ public class CmdSaveGridData extends Cmd implements ComponentListener {
         System.out.println("drawingSizeX : "+drawingSizeX);
         System.out.println("drawingSizeY : "+drawingSizeY);
         
-        /*
+        
         xOffset = Math.abs(xOffset);
         yOffset = Math.abs(yOffset);
+        
+        CGridData gridData = new CGridData(drawingSizeX, drawingSizeY, interval_space);
         for(int count = 0 ; count < nodes.size() ; count++)
         {
         	Fig node = nodes.get(count);
-        	histoData.addData(node.getLocation().x+xOffset, node.getLocation().y+yOffset);
+        	String name = "";
+        	Object desc = node.getOwner();
+        	if(desc instanceof NodeDescriptor)
+        	{
+        		
+        		NodeDescriptor nodeDesc = (NodeDescriptor)desc;
+       			name = nodeDesc.getName();
+        	}
+        	gridData.addData(node.getLocation().x+xOffset, node.getLocation().y+yOffset, name);
         }
-        Double[] result = histoData.generateHistoData();
-        double[] result_1 = new double[result.length];
-        for(int count = 0 ; count < result.length ; count++)
-        	result_1[count] = (double)result[count];
-        */
+        
+        String result = gridData.generateData();
+        System.out.println(result);
+        
 
 //        UiGlobals.getGridStes().add(new CGridState(interval_space, xOffset, yOffset));
 //        UiGlobals.getGridDatas().add(result_1);

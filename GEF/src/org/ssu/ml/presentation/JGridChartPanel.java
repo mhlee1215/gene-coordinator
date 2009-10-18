@@ -188,7 +188,14 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	        maxRanger.addChangeListener(this);
 	        maxRanger.setPaintTicks(true);
 	        maxRanger.setMinorTickSpacing(5);
-	        leftSideToolbar.add(maxRanger);
+	        
+	        JPanel maxRangerPanel = new JPanel();
+	        maxRangerPanel.setLayout(new GridBagLayout());
+			GridBagConstraints cResizer = new GridBagConstraints();
+			//cResizer.insets = new Insets(10, 0, 10, 0);
+			maxRangerPanel.setBorder(BorderFactory.createTitledBorder("Max"));
+			maxRangerPanel.add(maxRanger);
+	        leftSideToolbar.add(maxRangerPanel);
 		}
         
 		{
