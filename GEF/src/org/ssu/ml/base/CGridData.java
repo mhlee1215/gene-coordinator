@@ -29,7 +29,7 @@ public class CGridData {
 		gNodeBean.get(new Point(w, h)).add(name);
 	}
 	
-	public StringBuffer generateData()
+	public String generateData()
 	{
 		StringBuffer result = new StringBuffer();
 		Vector<Double> vector = new Vector<Double>();
@@ -37,11 +37,16 @@ public class CGridData {
 		{
 			for(int count1 = 0 ; count1 < gHeight ; count1++)
 			{
-				
+				Vector<String> curList = gNodeBean.get(new Point(count, count1));
+				if(curList.size() > 0)
+				{
+					result.append("Grid "+count+", "+count1+"\n");
+					for(int nCount = 0 ; nCount < curList.size() ; nCount++)
+						result.append(curList.get(nCount)+"\n");
+				}
 			}
 		}
-		
-		return result;
+		return result.toString();
 	}
 	
 }
