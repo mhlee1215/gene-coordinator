@@ -70,7 +70,7 @@ public class CmdGetNodes extends Cmd {
         	}
         }
         String[] params = {nodeStr}; 
-        CallJSObject jsObject = new CallJSObject("listProcessing", params, UiGlobals.get_curApplet());
+        CallJSObject jsObject = new CallJSObject("listProcessing", params, UiGlobals.getApplet());
         Thread thread = new Thread(jsObject);
         thread.run();
     }

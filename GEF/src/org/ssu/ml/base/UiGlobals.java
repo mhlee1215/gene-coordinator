@@ -14,12 +14,23 @@ public class UiGlobals extends Globals{
 	private static Font normalFont = new Font("Lucida Grande", Font.PLAIN, 10);
 	private static Font titleFont = new Font("Lucida Grande", Font.BOLD, 25);
 	private static ColorPool constantColor = new ColorPool();
+	
 	private static Vector<double[]> gridDatas = new Vector<double[]>();
+	private static Vector<CGridState> gridStes = new Vector<CGridState>();
 	private static Vector<String> gridCategories = new Vector<String>();
-	private static Applet _curApplet = null;
+	
 	private static String fileName = "";
 	private static int default_grid_spacing = 20;
 	
+	
+	public static Vector<CGridState> getGridStes() {
+		return gridStes;
+	}
+
+	public static void setGridStes(Vector<CGridState> gridStes) {
+		UiGlobals.gridStes = gridStes;
+	}
+
 	public static Font getTitleFont() {
 		return titleFont;
 	}
@@ -89,14 +100,6 @@ public class UiGlobals extends Globals{
 	}
 
 	private static JSlider _gridSlider = null;
-
-	public static Applet get_curApplet() {
-		return _curApplet;
-	}
-
-	public static void set_curApplet(Applet curApplet) {
-		_curApplet = curApplet;
-	}
 
 	public static JSlider get_gridSlider() {
 		return _gridSlider;

@@ -28,7 +28,7 @@ public class CallJSObject implements Runnable{
         if(win == null)
         	System.err.println("Applet is not existed.");
         
-        //System.out.println("CALL "+functionName);
+        System.out.println("CALL "+functionName);
         win.call(functionName, param); 		//
 		
 	}

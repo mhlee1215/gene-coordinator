@@ -5,11 +5,13 @@
 
 package org.ssu.ml.base;
 
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
@@ -61,7 +64,23 @@ public class CmdSaveChart extends Cmd {
 
     	try {
     		//URL path = UiGlobals.getApplet().getCodeBase();
-			saveToFile(gridPanel.getChart(),"/home/mhlee/public/data/"+filename+".jpg",800,600,100);
+    		//JPanel selectedPanel = gridPanel.getChart();
+    		//Component[] c = selectedPanel.getComponents();
+    		//System.out.println(c[0]);
+    		if(gridPanel.getChart() == null){
+    			System.out.println("You must select one Graph to save.");
+    		}
+    		else{
+	    		//JPanel titledPanel = (JPanel)c[0];
+	    		//File outputfile = new File("c:/aa.png");
+	    		//ImageIO.write(createImage(selectedPanel), "png", outputfile);
+				//if(c.length > 0){
+					
+					//JGridChartPanel gcp  = (JGridChartPanel) c[0];
+					
+				//}
+				saveToFile(gridPanel.getChart(),"/home/mhlee/public/data/"+filename+".jpg");
+    		}
     	} catch (Exception e) {
     		System.out.println("Download method can be execute only on the web!");
     		e.printStackTrace();
@@ -73,26 +92,47 @@ public class CmdSaveChart extends Cmd {
        
     }
     
-    public void saveToFile(JFreeChart chart, String aFileName,
-			int width, int height, double quality)
+    public void saveToFile(JPanel chart, String aFileName)
 			throws Exception {
-		BufferedImage img = draw(chart, width, height);
+		saveToFile(chart, aFileName, chart.getWidth(), chart.getHeight());
+	}
+    
+    public void saveToFile(JPanel chart, String aFileName,
+			int width, int height)
+			throws Exception {
+		BufferedImage img = createImage(chart, width, height);
 		
 		SendImageToJsp(img, aFileName, width, height);
 	}
 	
-	protected BufferedImage draw(JFreeChart chart, int width, int height)
-    {
-        BufferedImage img =
-        new BufferedImage(width , height,
-        BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2 = img.createGraphics();
-                       
-        chart.draw(g2, new Rectangle2D.Double(0, 0, width, height));
- 
-        g2.dispose();
-        return img;
+    public BufferedImage createImage(JPanel panel) {
+
+        int w = panel.getWidth();
+        int h = panel.getHeight();
+        
+        return createImage(panel, w, h);
     }
+    
+    public BufferedImage createImage(JPanel panel, int width, int height) {
+
+        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = bi.createGraphics();
+        panel.paint(g);
+        return bi;
+    }
+    
+//	protected BufferedImage draw(JPanel chart, int width, int height)
+//    {
+//        BufferedImage img =
+//        new BufferedImage(width , height,
+//        BufferedImage.TYPE_INT_RGB);
+//        Graphics2D g2 = img.createGraphics();
+//              
+//        chart.draw(g2, new Rectangle2D.Double(0, 0, width, height));
+// 
+//        g2.dispose();
+//        return img;
+//    }
 	
 	public void SendImageToJsp(BufferedImage img, String filename, int width, int height) throws Exception
 	{
@@ -107,17 +147,13 @@ public class CmdSaveChart extends Cmd {
 		
 		
 		
-		String url = UiGlobals.getApplet().getCodeBase().toString() + "coordinator/writeImage.jsp";
+		//String url = UiGlobals.getApplet().getCodeBase().toString() + "coordinator/writeImage.jsp";
+		String url = "http://localhost:8080/coordinator/writeImage.jsp";
 		HttpClient httpClient = new HttpClient();
 		System.out.println("code base to Write : "+url);
 		PostMethod postMethod = new PostMethod(url);
 		
-		//Set Inputstream as entity
 		System.out.println("send filename : "+filename);
-		NameValuePair[] requestBody = {
-				new NameValuePair("filename", filename)
-		};
-		postMethod.setRequestBody(requestBody);
 		postMethod.setRequestEntity(new InputStreamRequestEntity(bis));
 		
 		try{
@@ -129,6 +165,10 @@ public class CmdSaveChart extends Cmd {
 			e.printStackTrace();
 		}
 		
+		String[] params = {}; 
+        CallJSObject jsObject = new CallJSObject("callImageDownloader", params, UiGlobals.getApplet());
+        Thread thread = new Thread(jsObject);
+        thread.run();
 		
 	}
 } /* end class CmdZoom */
