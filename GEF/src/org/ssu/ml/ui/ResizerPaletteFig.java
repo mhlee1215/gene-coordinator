@@ -46,6 +46,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -78,22 +79,6 @@ import org.tigris.gef.base.ModeCreateFigText;
 import org.tigris.gef.base.ModeSelect;
 import org.tigris.gef.ui.ToolBar;
 
-/**
- * A Palette that defines buttons to create lines, rectangles, rounded
- * rectangles, circles, and text. Also a select button is provided to switch
- * back to ModeSelect.
- * 
- * Needs-more-work: sticky mode buttons are not supported right now. They should
- * be in the next release.
- * 
- * @see ModeSelect
- * @see ModeCreateFigLine
- * @see ModeCreateFigRect
- * @see ModeCreateFigRRect
- * @see ModeCreateFigCircle
- * @see ModeCreateFigText
- * @see ModeCreateFigPoly
- */
 
 public class ResizerPaletteFig extends ToolBar implements ChangeListener, ActionListener{
 
@@ -105,6 +90,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 	private int gridCurValue = 0;
 	private int scaleCurValue = 0;
 	
+	JComboBox scaleCombo = null;
 	JSpinner gridSpinner = null;
 	JSlider gridResizer = null;
 	JSlider scaleResizer = null;
@@ -156,7 +142,13 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		scaleMenuBar.add(scaleMenu);
 		//scaleMenuBar.setPreferredSize(new Dimension(50, 50));
 		
-		
+		String[] strScaleItems = new String[scaleMax - scaleMin];
+		for(int count = scaleMin ; count < scaleMax ; count++){
+		    strScaleItems[count-scaleMin] = scalePrefix+count;
+		}
+		scaleCombo = new JComboBox(strScaleItems);
+		scaleCombo.setSelectedIndex(initScale-1);
+		scaleCombo.addActionListener(this);
 		
 		
 		int gridMax = 200;
@@ -168,9 +160,9 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		gridResizer.setBackground(Color.white);
 		//Font font = new Font("Dialog.plain", 0, 10);
 		
-		JLabel minLabel = new JLabel("m");
+		JLabel minLabel = new JLabel("▼");
 		//minLabel.setFont(font);
-		JLabel maxLabel = new JLabel("M");
+		JLabel maxLabel = new JLabel("▲");
 		//maxLabel.setFont(font);
 		Hashtable<Integer, JLabel> labelTable = 
             new Hashtable<Integer, JLabel>();
@@ -316,8 +308,17 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 
 		//button = new JButton("Button 1");
 		
-		int leftToolbarWidth = 50;
+		int leftToolbarWidth = 35;
 		
+		c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.PAGE_START;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.gridy = 0;
+        //c.ipady = 20;
+        scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 30));
+        add(scaleCombo, c);
+        
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.PAGE_START;
 		c.weightx = 0.5;
@@ -325,24 +326,25 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		c.gridy = 0;
 		c.ipady = 20;
 		scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 30));
-		add(scaleMenuBar, c);
+		//add(scaleMenuBar, c);
 
 		//button = new JButton("Button 2");
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.ipady = 200;      //make this component tall
+		//c.ipady = 200;      //make this component tall
 		c.weightx = 0.0;
 		c.gridx = 0;
 		c.gridy = 1;
 		//c.insets = new Insets(20, 0, 20, 0);
 		//c.anchor = GridBagConstraints.PAGE_END;
-		scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 150));
+		gridResizer.setPreferredSize(new Dimension(leftToolbarWidth, 150));
 		
 		JPanel resizerPanel = new JPanel();
 		
 		resizerPanel.setLayout(new GridBagLayout());
 		GridBagConstraints cResizer = new GridBagConstraints();
-		//cResizer.insets = new Insets(10, 0, 10, 0);
-		resizerPanel.setBorder(BorderFactory.createTitledBorder("Grid"));
+		cResizer.insets = new Insets(0, -5, 0, -50);
+		resizerPanel.setBorder(BorderFactory.createTitledBorder("Grid Size"));
+		
 		resizerPanel.add(gridResizer);
 		
 		add(resizerPanel, c);
@@ -364,6 +366,16 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		c.gridx = 0;
 		c.gridy = 3;
 		add(locControlPanel, c);
+		
+		c.ipady = 0;       //reset to default
+		c.weighty = 1.0;   //request any extra vertical space
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+		c.insets = new Insets(0,0,0,0);  //top padding
+		c.gridx = 0;       //aligned with button 2
+		//c.gridwidth = 2;   //2 columns wide
+		c.gridy = 4;       //third row
+        add(new JPanel(), c);
 
 //		button = new JButton("5");
 //		c.fill = GridBagConstraints.HORIZONTAL;
@@ -490,6 +502,16 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 					
 				}
 			}
+		}
+		else if(s instanceof JComboBox){
+		    JComboBox cb = (JComboBox)s;
+		    String scaleName = (String)cb.getSelectedItem();
+		    String[] scaleNamePart = scaleName.split(scalePrefix);
+		    System.out.println("Scale changed to : "+scaleNamePart[1]);
+		    NodeRenderManager manager = UiGlobals.getNodeRenderManager();
+            UiGlobals.setPre_scaled(Integer.parseInt(scaleNamePart[1]));
+            manager.drawNodes(true);
+		    
 		}
 	}
 } /* end class PaletteFig */

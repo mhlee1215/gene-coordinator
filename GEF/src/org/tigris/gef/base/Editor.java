@@ -874,8 +874,9 @@ public class Editor implements Serializable, MouseListener,
         translateMouseEvent(me);
         Globals.curEditor(this);
 
-        if (_curFig instanceof MouseListener)
+        if (_curFig instanceof MouseListener){
             ((MouseListener) _curFig).mouseReleased(me);
+        }
         if (_canSelectElements) {
             _selectionManager.mouseReleased(me);
             _modeManager.mouseReleased(me);
