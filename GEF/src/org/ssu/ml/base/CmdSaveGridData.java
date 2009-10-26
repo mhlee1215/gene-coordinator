@@ -8,12 +8,16 @@ package org.ssu.ml.base;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.jfree.ui.RefineryUtilities;
 import org.ssu.ml.base.UiGlobals;
 import org.ssu.ml.presentation.JGridChartPanel;
@@ -94,8 +98,37 @@ public class CmdSaveGridData extends Cmd implements ComponentListener {
         }
         
         String result = gridData.generateData();
-        System.out.println(result);
+        //System.out.println(result);
         
+        byte[] data = result.getBytes();
+		
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+		System.out.println(data);
+		
+		
+		
+		String url = UiGlobals.getApplet().getCodeBase().toString() + "coordinator/writeGridData.jsp";
+		//String url = "http://localhost:8080/coordinator/writeImage.jsp";
+		HttpClient httpClient = new HttpClient();
+		System.out.println("code base to Write : "+url);
+		PostMethod postMethod = new PostMethod(url);
+		
+		//System.out.println("send filename : "+filename);
+		postMethod.setRequestEntity(new InputStreamRequestEntity(bis));
+		
+		try{
+			//Execute
+			httpClient.executeMethod(postMethod);
+			
+			System.out.println(postMethod.getResponseBody());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		String[] params = {}; 
+        CallJSObject jsObject = new CallJSObject("callGridDownloader", params, UiGlobals.getApplet());
+        Thread thread = new Thread(jsObject);
+        thread.run();
 
 //        UiGlobals.getGridStes().add(new CGridState(interval_space, xOffset, yOffset));
 //        UiGlobals.getGridDatas().add(result_1);
