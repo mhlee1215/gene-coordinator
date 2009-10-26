@@ -40,7 +40,7 @@ public class CGridData {
 				Vector<String> curList = gNodeBean.get(new Point(count, count1));
 				if(curList.size() > 0)
 				{
-					result.append("Grid "+count+", "+count1+"\n");
+					result.append("Grid "+count+","+count1+"\n");
 					for(int nCount = 0 ; nCount < curList.size() ; nCount++)
 						result.append(curList.get(nCount)+"\n");
 				}

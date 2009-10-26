@@ -147,8 +147,8 @@ public class CmdSaveChart extends Cmd {
 		
 		
 		
-		//String url = UiGlobals.getApplet().getCodeBase().toString() + "coordinator/writeImage.jsp";
-		String url = "http://localhost:8080/coordinator/writeImage.jsp";
+		String url = UiGlobals.getApplet().getCodeBase().toString() + "coordinator/writeImage.jsp";
+		//String url = "http://localhost:8080/coordinator/writeImage.jsp";
 		HttpClient httpClient = new HttpClient();
 		System.out.println("code base to Write : "+url);
 		PostMethod postMethod = new PostMethod(url);

@@ -223,7 +223,14 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	        minRanger.setPaintTicks(true);
 	        minRanger.setMinorTickSpacing(5);
 	        
-			leftSideToolbar.add(minRanger);
+	        JPanel minRangerPanel = new JPanel();
+	        minRangerPanel.setLayout(new GridBagLayout());
+			GridBagConstraints cResizer = new GridBagConstraints();
+			//cResizer.insets = new Insets(10, 0, 10, 0);
+			minRangerPanel.setBorder(BorderFactory.createTitledBorder("Min"));
+			minRangerPanel.add(minRanger);
+			
+			leftSideToolbar.add(minRangerPanel);
 			
 		}
     	
