@@ -79,7 +79,7 @@ public class LayerGrid extends Layer {
     private transient Image _stamp = null;
 
     /** The size of the image stamp. */
-    private int _stampWidth = 100, _stampHeight = 100;
+    private int _stampWidth = 1000, _stampHeight = 1000;
 
     /** The color of the grid lines or dots. */
     protected Color _color = new Color(180, 180, 180); // Color.gray;
@@ -156,6 +156,7 @@ public class LayerGrid extends Layer {
      * 'stamp' onto the given Graphics
      */
     public synchronized void paintContents(Graphics g) {
+    	
         // This line is for printing under Java 1.1
         if (g instanceof PrintGraphics) {
             if (!Globals.getPrefs().getPrintGrid())
@@ -166,9 +167,11 @@ public class LayerGrid extends Layer {
                 paintDots(g, Globals.getPrefs().getPrintBackground());
             return;
         }
+        
+        //if(1==1) return;
         if (_stamp == null) {
-            if (_spacing > _stampHeight)
-                _stampHeight = _stampWidth = _spacing;
+            //if (_spacing > _stampHeight)
+             //   _stampHeight = _stampWidth = _spacing;
             if (Globals.curEditor() == null) {
                 // this is a bad idea, but it works around a very awkward AWT
                 // requirement: that only frames can make Image instances
@@ -178,12 +181,15 @@ public class LayerGrid extends Layer {
                 _stamp = frame.createImage(_stampWidth, _stampHeight);
                 frame.dispose();
             } else {
-                _stamp = Globals.curEditor().createImage(_stampWidth,
-                        _stampHeight);
+            	System.out.println("_stampWidth : "+_stampWidth);
+            	System.out.println("_stampHeight : "+_stampHeight);
+                _stamp = Globals.curEditor().createImage(_stampWidth,  _stampHeight);
             }
+            
             if (_stamp != null) {
-                if (_paintLines)
+                if (_paintLines){
                     paintLines(_stamp, _paintBackground);
+                }
                 else if (_paintDots)
                     paintDots(_stamp, _paintBackground);
             }
@@ -374,8 +380,8 @@ public class LayerGrid extends Layer {
         m = map.get("spacing_include_stamp");
         if (m instanceof Integer){
             _spacing = ((Integer) m).intValue();
-            _stampWidth = _spacing*10;
-            _stampHeight = _spacing*10;
+            _stampWidth = _spacing;//*10;
+            _stampHeight = _spacing;//*10;
         }
         
         m = map.get("stampWidth");

@@ -452,8 +452,8 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		LayerGrid grid = (LayerGrid) editor.getLayerManager()
 				.findLayerNamed("Grid");
 		HashMap map = new HashMap();
-		double defaultSpace = (int) Math.pow(2, 3);
-		map.put("spacing_include_stamp", (int) (space)*UiGlobals.getPre_scaled());
+		UiGlobals.setGrid_spacing(space);
+		map.put("spacing_include_stamp", (int) (space)*UiGlobals.getGrid_scale());
 		
 		grid.adjust(map);
 	}
@@ -497,7 +497,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 					
 					//UiGlobals.get_scaleSlider().setEnabled(false);
 					NodeRenderManager manager = UiGlobals.getNodeRenderManager();
-					UiGlobals.setPre_scaled(count);
+					UiGlobals.setGrid_scale(count);
 					manager.drawNodes(true);
 					
 				}
