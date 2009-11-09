@@ -509,7 +509,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		    String[] scaleNamePart = scaleName.split(scalePrefix);
 		    System.out.println("Scale changed to : "+scaleNamePart[1]);
 		    NodeRenderManager manager = UiGlobals.getNodeRenderManager();
-            UiGlobals.setPre_scaled(Integer.parseInt(scaleNamePart[1]));
+            UiGlobals.setGrid_scale(Integer.parseInt(scaleNamePart[1]));
             manager.drawNodes(true);
 		    
 		}
