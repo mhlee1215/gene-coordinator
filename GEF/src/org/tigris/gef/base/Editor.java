@@ -454,8 +454,8 @@ public class Editor implements Serializable, MouseListener,
     /** Add a Fig to the diagram being edited. */
     public void add(Fig f) {
     	
-        if (LOG.isDebugEnabled())
-            LOG.debug("Adding fig " + f);
+        //if (LOG.isDebugEnabled())
+        //    LOG.debug("Adding fig " + f);
         getLayerManager().add(f);
     }
 
@@ -874,9 +874,8 @@ public class Editor implements Serializable, MouseListener,
         translateMouseEvent(me);
         Globals.curEditor(this);
 
-        if (_curFig instanceof MouseListener){
+        if (_curFig instanceof MouseListener)
             ((MouseListener) _curFig).mouseReleased(me);
-        }
         if (_canSelectElements) {
             _selectionManager.mouseReleased(me);
             _modeManager.mouseReleased(me);
