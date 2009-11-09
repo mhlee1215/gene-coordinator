@@ -35,16 +35,12 @@ import javax.swing.JTextField;
 
 import org.ssu.ml.base.CmdGridChart;
 import org.ssu.ml.base.CmdShowAbout;
-import org.tigris.gef.base.CmdSetMode;
-import org.tigris.gef.base.CmdZoom;
-import org.tigris.gef.base.ModeBroom;
+import org.ssu.ml.base.CmdZoom;
 import org.tigris.gef.base.ModeCreateFigCircle;
-import org.tigris.gef.base.ModeCreateFigInk;
 import org.tigris.gef.base.ModeCreateFigLine;
 import org.tigris.gef.base.ModeCreateFigPoly;
 import org.tigris.gef.base.ModeCreateFigRRect;
 import org.tigris.gef.base.ModeCreateFigRect;
-import org.tigris.gef.base.ModeCreateFigSpline;
 import org.tigris.gef.base.ModeCreateFigText;
 import org.tigris.gef.base.ModeSelect;
 import org.tigris.gef.ui.ToolBar;
@@ -91,8 +87,8 @@ public class NodePaletteFig extends ToolBar {
         //add(new CmdSetMode(ModeCreateFigText.class, "Text"));
         
         //add(image1, "Image1", "Image1");
-        add(new CmdZoom(2), "Zoom in", "zoom_in", ToolBar.BUTTON_TYPE_LEFT);
-        add(new CmdZoom(0.5), "Zoom out", "zoom_out", ToolBar.BUTTON_TYPE_CENTER);
+        add(new CmdZoom(1.25), "Zoom in", "zoom_in", ToolBar.BUTTON_TYPE_LEFT);
+        add(new CmdZoom(1/1.25), "Zoom out", "zoom_out", ToolBar.BUTTON_TYPE_CENTER);
         this.addSeparator();
         add(new CmdGridChart(), "Grid Histo", "Grid_histogram", ToolBar.BUTTON_TYPE_RIGHT);
         add(new CmdShowAbout(), "Show About", "about", ToolBar.BUTTON_TYPE_RIGHT);

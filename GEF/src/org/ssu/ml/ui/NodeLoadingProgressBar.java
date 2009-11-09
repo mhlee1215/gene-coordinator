@@ -35,6 +35,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import org.apache.log4j.Logger;
 import org.ssu.ml.base.DoublePair;
 import org.ssu.ml.base.NodeDescriptor;
 import org.ssu.ml.base.UiGlobals;
@@ -60,7 +61,8 @@ import org.ssu.ml.presentation.FigCustomNode;
 public class NodeLoadingProgressBar extends JPanel
                               implements ActionListener, 
                                          PropertyChangeListener {
-
+	Logger logger = Logger.getLogger(NodeLoadingProgressBar.class);
+	
 	private final static int STATUS_STARTED = 0;
 	private final static int STATUS_STOPPED = 1;
 	private final static int STATUS_CANCELED = 2;
@@ -304,7 +306,10 @@ public class NodeLoadingProgressBar extends JPanel
 
 		int lineCount = 0;
 		try {
-			BufferedReader br = Utils.getInputReader(filename);
+			BufferedReader br = null;
+			if(UiGlobals.getFileName()!=null){
+				br = Utils.getInputReader(filename);	
+			}
 			
 			if(br == null){
 				makeRandomData(50, 300, 300);
@@ -352,6 +357,8 @@ public class NodeLoadingProgressBar extends JPanel
     
     public void init()
     {
+    	logger.debug("public void init");
+    	logger.debug("====[S]======================");
     	Editor editor = graph.getEditor();
     	
     	float minLocx = Utils.minValue(nodeData.getLocxArry());
@@ -365,15 +372,13 @@ public class NodeLoadingProgressBar extends JPanel
 		height = (int) maxLocy - (int) minLocy + NodeRenderManager._PADDING;
 		
 
-		double scale = pre_scaled;//Math.pow(2, pre_scaled - 1);
+		double scale = UiGlobals.getGrid_scale();//Math.pow(2, pre_scaled - 1);
 
 		
-		System.out.println("pre_scaled : " + pre_scaled + ", real scale : "+ scale);
+		logger.debug("pre_scaled : " + pre_scaled + ", real scale : "+ scale);
 		
 
-		
-		// int pre_scaled = 2;
-		System.out.println(pre_scaled+", "+scale);
+		logger.debug("edtor.setScale("+1.0 / scale+")");
 		editor.setScale(1.0 / scale);
 
 		nodeData.setPre_scale(scale);
@@ -381,6 +386,8 @@ public class NodeLoadingProgressBar extends JPanel
 		
 		int drawingSizeX = (int)(width*scale);
 		int drawingSizeY = (int)(height*scale);
+		logger.debug("drawingSizeX : "+drawingSizeX);
+		logger.debug("drawingSizeY : "+drawingSizeY);
 		graph.setDrawingSize(drawingSizeX, drawingSizeY);
 		UiGlobals.setDrawingSizeX(drawingSizeX);
 		UiGlobals.setDrawingSizeY(drawingSizeY);
@@ -388,11 +395,14 @@ public class NodeLoadingProgressBar extends JPanel
 		LayerGrid grid = (LayerGrid) editor.getLayerManager().findLayerNamed(
 				"Grid");
 		HashMap<String, Object> map = new HashMap<String, Object>();
-
-		map.put("spacing_include_stamp", (int)(UiGlobals.getDefault_grid_spacing()*scale));
+		logger.debug("spacing_include_stamp : "+(UiGlobals.getGrid_spacing()*scale));
+		map.put("spacing_include_stamp", (int)(UiGlobals.getGrid_spacing()*scale));
+		logger.debug("thick : "+scale);
 		map.put("thick", (int) scale);
+		
 		grid.adjust(map);
 		
 		UiGlobals.setStatusbarText(" resolution : x "+scale);
+		logger.debug("====[E]======================");
     }
 }

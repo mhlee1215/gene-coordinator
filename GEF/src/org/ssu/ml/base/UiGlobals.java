@@ -21,8 +21,30 @@ public class UiGlobals extends Globals{
 	
 	private static String fileName = "";
 	private static int default_grid_spacing = 20;
+	private static int drawingSizeX;
+	private static int drawingSizeY;
+	private static int pre_scaled = 4;
+	
+	private static int grid_spacing =  default_grid_spacing;
+	private static int grid_scale = pre_scaled; 
 	
 	
+	public static int getGrid_scale() {
+		return grid_scale;
+	}
+
+	public static void setGrid_scale(int gridScale) {
+		grid_scale = gridScale;
+	}
+
+	public static int getGrid_spacing() {
+		return grid_spacing;
+	}
+
+	public static void setGrid_spacing(int gridSpacing) {
+		grid_spacing = gridSpacing;
+	}
+
 	public static Vector<CGridState> getGridStes() {
 		return gridStes;
 	}
@@ -47,9 +69,7 @@ public class UiGlobals extends Globals{
 		UiGlobals.normalFont = normalFont;
 	}
 
-	private static int drawingSizeX;
-	private static int drawingSizeY;
-	private static int pre_scaled = 4;
+	
 	
 	public static ColorPool getConstantColor() {
 		return constantColor;
