@@ -2,7 +2,6 @@ import org.jdesktop.swingx.*;
 import org.jdesktop.swingx.icon.*;
 import org.jdesktop.swingx.painter.*;
 
-import ch.randelshofer.quaqua.util.Images;
 
 import etc.Colors;
 
