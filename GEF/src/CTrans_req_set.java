@@ -311,18 +311,25 @@ public class CTrans_req_set {
 	
 	public static void main(String[] argv)
 	{
-		argv = new String[5];
-		argv[0] = "Mouse430_2.na29.annot.csv";
-		argv[1] = "Probe Set ID";
-		argv[2] = "RefSeq Transcript ID";
-		argv[3] = "GPL1261.rma.test";
-		argv[4] = argv[3]+".trans";
-		if(argv.length < 5)
+		String[] conv_argv = null;
+		
+		if(argv.length < 4)
 		{
-			System.out.println("insert : 1:path Trans Set, 2:reference sequence index, 3:gplSet, 4:output min Pair in transSet");
+			System.out.println("Usabe : <annotation file path> <probeSet Name> <Target Column Name> <gplSet path> [<output min Pair in transSet>]");
 			return;
+		}else{
+			if(argv.length < 5){
+				conv_argv = new String[5];
+				conv_argv[0] = argv[0];
+				conv_argv[1] = argv[1];
+				conv_argv[2] = argv[2];
+				conv_argv[3] = argv[3];
+				conv_argv[3] = argv[3]+".trans";
+			}else{
+				conv_argv = argv;
+			}
 		}
-		new CTrans_req_set(argv);
+		new CTrans_req_set(conv_argv);
 		
 	}
 }
