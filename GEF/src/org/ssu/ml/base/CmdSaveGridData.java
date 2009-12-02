@@ -97,8 +97,9 @@ public class CmdSaveGridData extends Cmd implements ComponentListener {
         	gridData.addData(node.getLocation().x+xOffset, node.getLocation().y+yOffset, name);
         }
         
-        String result = gridData.generateData();
-        //System.out.println(result);
+        //String result = gridData.generateData();
+        String result = gridData.generateDataSquare();
+        System.out.println("-------------"+result);
         
         byte[] data = result.getBytes();
 		
