@@ -79,7 +79,10 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.ui.RefineryUtilities;
+import org.ssu.ml.base.CmdSaveChart;
+import org.ssu.ml.base.CmdSaveGridData;
 import org.ssu.ml.base.UiGlobals;
+import org.ssu.ml.ui.WestToolBar;
 import org.tigris.gef.ui.*;
 
 import etc.Colors;
@@ -90,7 +93,7 @@ import etc.RoundedBorder;
  * status bar.
  */
 
-public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable, ChangeListener, MouseListener{
+public class JGridChartPanel extends JGridPanel  implements ActionListener, IStatusBar, Cloneable, ChangeListener, MouseListener{
 	
 	Border selectedBorder = new RoundedBorder(Color.LIGHT_GRAY, true, Color.black);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.red);
 	Border unselectedBorder = new RoundedBorder(Color.LIGHT_GRAY, true, Color.white);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.white);
@@ -102,6 +105,8 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	private static final String SERIES_GOOD = "Good";
 	private static final String SERIES_BIG = "Big";
 	private static final String SERIES_SMALL = "Small";
+	private static final String TYPE_GMT = "gmt";
+	private static final String TYPE_GMX = "gmx";
     
 	Vector<double[]> datas = new Vector<double[]>();
 	Vector<String> categories = new Vector<String>();
@@ -115,10 +120,11 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	int maxCurValue;
 	int minCurValue;
 	int minimum_interval = 5;
+	String geneDataType = TYPE_GMX;
 	
 	JPanel chartPanel;
 	
-	ToolBar leftSideToolbar;
+	WestToolBar leftSideToolbar;
 	
 	int totalWidth = 0;
 	int totalHeight = 0;
@@ -157,9 +163,29 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
         return null; // needs-more-work
     }
     
+    @Override
+    public void setUpToolbar()
+    {
+    	JComboBox typeCombo = null;
+    	String[] strScaleItems = {"GMX", "GMT"};
+    	typeCombo = new JComboBox(strScaleItems);
+    	typeCombo.setName("typeCombo");
+		typeCombo.setSelectedIndex(0);
+		typeCombo.addActionListener(this);
+    	
+    	
+    	toolbar.add(new CmdSaveChart(this, "aa"), "Get Chart Image", "Save", ToolBar.BUTTON_TYPE_TEXT);
+    	toolbar.addSeparator();
+    	JLabel label = new JLabel("Gene Data format : ");
+    	toolbar.add(label);
+    	toolbar.add(typeCombo);
+    	toolbar.add(new CmdSaveGridData(this), "Get Gene Data", "Save", ToolBar.BUTTON_TYPE_TEXT);
+    	mainPanel.add(toolbar, BorderLayout.NORTH);
+    }
+    
     public void setUpSideToolbar()
     {
-    	leftSideToolbar = new ToolBar();
+    	leftSideToolbar = new WestToolBar();
     	
 		maxCurValue = 50;
 		minCurValue = 10;
@@ -847,6 +873,16 @@ public class JGridChartPanel extends JGridPanel implements IStatusBar, Cloneable
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object s = e.getSource();
+		if(s instanceof JComboBox){
+			JComboBox combo = (JComboBox)s;
+			System.out.println(combo.getSelectedItem());
+		}
 	}
 
 }

@@ -42,7 +42,7 @@ public class CmdSaveGridData extends Cmd implements ComponentListener {
     // constructor
 
     public CmdSaveGridData(JGridPanel gridPanel) {
-        super("Show Grid Histogram");
+        super("Get Gene Sets");
         this.gridPanel = gridPanel;
     }
 

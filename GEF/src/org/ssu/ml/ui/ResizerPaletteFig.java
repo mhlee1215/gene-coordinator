@@ -45,6 +45,7 @@ import java.util.Hashtable;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -61,8 +62,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.jdesktop.swingx.JXTaskPane;
 import org.ssu.ml.base.UiGlobals;
-import org.tigris.gef.base.CmdSetMode;
+import org.tigris.gef.base.CmdSetMode; 
 import org.tigris.gef.base.CmdZoom;
 import org.tigris.gef.base.Editor;
 import org.tigris.gef.base.Layer;
@@ -77,10 +79,10 @@ import org.tigris.gef.base.ModeCreateFigRect;
 import org.tigris.gef.base.ModeCreateFigSpline;
 import org.tigris.gef.base.ModeCreateFigText;
 import org.tigris.gef.base.ModeSelect;
-import org.tigris.gef.ui.ToolBar;
+import org.tigris.gef.util.ResourceLoader;
 
 
-public class ResizerPaletteFig extends ToolBar implements ChangeListener, ActionListener{
+public class ResizerPaletteFig extends WestToolBar implements ChangeListener, ActionListener{
 
 	/**
      * 
@@ -97,7 +99,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 	
 	
 	JMenu scaleMenu;
-	String scalePrefix = "Scale x";
+	String scalePrefix = "x";
 	int scaleMin = 1;
 	int initScale = 4;
 	int scaleMax = 9;
@@ -114,8 +116,6 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 	 * pressed.
 	 */
 	public void defineButtons() {
-		this.setBackground(Color.white);
-		this.setForeground(Color.white);
 		//this.setLayout(new GridLayout(4, 1));
 		//this.setLayout(new FlowLayout());
 		//this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -157,7 +157,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		gridResizer = new JSlider(JSlider.VERTICAL,
 				gridMin, gridMax, gridCurValue);
 		gridResizer.setName("gridResizer");
-		gridResizer.setBackground(Color.white);
+		//gridResizer.setBackground(Color.white);
 		//Font font = new Font("Dialog.plain", 0, 10);
 		
 		JLabel minLabel = new JLabel("▼");
@@ -209,38 +209,51 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		JPanel locControlPanel = new JPanel();
 		//locControlPanel.setPreferredSize(new Dimension(50, 80));
 		locControlPanel.setLayout(null);
-		JButton buttonUp = new JButton("^");
+		
+		int btnWidth = 25;
+		int btnHeight = 25;
+		
+		JButton buttonUp = new JButton("");
+		Icon upIcon = ResourceLoader.lookupIconResource("directionUp", "direction_up");
+		buttonUp.setIcon(upIcon);
 		buttonUp.setActionCommand("gridUp");
 		buttonUp.addActionListener(this);
-		buttonUp.setPreferredSize(new Dimension(20, 20));
+		buttonUp.setPreferredSize(new Dimension(btnWidth, btnHeight));
 		buttonUp.setMargin(new Insets(0, 0, 0, 0));
-		buttonUp.setBounds(16, 0, 20, 20);
+		buttonUp.setBounds(btnWidth, 0, btnWidth, btnHeight);
+		buttonUp.setBackground(Color.white);
 		locControlPanel.add(buttonUp);
 		
-		JButton buttonDown = new JButton("v");
+		JButton buttonDown = new JButton("");
+		Icon downIcon = ResourceLoader.lookupIconResource("directionDown", "direction_up");
+		buttonDown.setIcon(downIcon);
 		buttonDown.setActionCommand("gridDown");
 		buttonDown.addActionListener(this);
-		buttonDown.setPreferredSize(new Dimension(20, 20));
+		buttonDown.setPreferredSize(new Dimension(btnWidth, btnHeight));
 		buttonDown.setMargin(new Insets(0, 0, 0, 0));
-		buttonDown.setBounds(16, 40, 20, 20);
+		buttonDown.setBounds(btnWidth, btnWidth, btnWidth, btnHeight);
 		locControlPanel.add(buttonDown);
 		
-		JButton buttonLeft = new JButton("<");
+		JButton buttonLeft = new JButton("");
+		Icon leftIcon = ResourceLoader.lookupIconResource("directionLeft", "direction_up");
+		buttonLeft.setIcon(leftIcon);
 		buttonLeft.setActionCommand("gridLeft");
 		buttonLeft.addActionListener(this);
-		buttonLeft.setPreferredSize(new Dimension(28, 20));
+		buttonLeft.setPreferredSize(new Dimension(btnWidth, btnHeight));
 		buttonLeft.setMargin(new Insets(0, 0, 0, 0));
-		buttonLeft.setBounds(0, 20, 20, 20);
+		buttonLeft.setBounds(0, btnWidth/2, btnWidth, btnHeight);
 		locControlPanel.add(buttonLeft);
 		
-		JButton buttonRight = new JButton(">");
+		JButton buttonRight = new JButton("");
+		Icon rightIcon = ResourceLoader.lookupIconResource("directionRight", "direction_up");
+		buttonRight.setIcon(rightIcon);
 		buttonRight.setActionCommand("gridRight");
 		buttonRight.addActionListener(this);
-		buttonRight.setPreferredSize(new Dimension(28, 20));
+		buttonRight.setPreferredSize(new Dimension(btnWidth, btnHeight));
 		buttonRight.setMargin(new Insets(0, 0, 0, 0));
-		buttonRight.setBounds(32, 20, 20, 20);
+		buttonRight.setBounds(btnWidth*2, btnWidth/2, btnWidth, btnHeight);
 		locControlPanel.add(buttonRight);
-		
+		//locControlPanel.setBackground(Color.white);
 		
 		
 		
@@ -299,73 +312,169 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		
 		//boolean shouldFill = true;
 		//JButton button;
-		setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+		
+		
 		//if (shouldFill) {
 				//natural height, maximum width
 		//		c.fill = GridBagConstraints.HORIZONTAL;
 		//}
 
 		//button = new JButton("Button 1");
+		setLayout(new GridLayout(1, 1));
+		JPanel mainPanel = new JPanel();
+		mainPanel.setBackground(Color.white);
+		add(mainPanel);
+		mainPanel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 		
-		int leftToolbarWidth = 35;
+		int leftToolbarWidth = 30;
+		int gridyIndex = 0;
+		
+		
+		JXTaskPane scaleTask = new JXTaskPane();
+		scaleTask.setLayout(new GridBagLayout());
+		GridBagConstraints taskConstraints = new GridBagConstraints();
+		taskConstraints.fill = GridBagConstraints.HORIZONTAL;
+		taskConstraints.anchor = GridBagConstraints.PAGE_START;
+		taskConstraints.weightx = 1;
+		taskConstraints.insets = new Insets(-6,-8,-6,-8);  //top padding
+		taskConstraints.gridx = 0;
+		taskConstraints.gridy = 0;
+        
+		Icon scaleTaskIcon = ResourceLoader.lookupIconResource("scaleTask1", "scaleTask1");
+		scaleTask.setTitle("Scale");
+		scaleTask.setFocusable(false);
+		scaleTask.setCollapsed(true);
+		scaleTask.setIcon(scaleTaskIcon);
+		
+		scaleTask.add(scaleCombo, taskConstraints);
+		
+		
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.PAGE_START;
         c.weightx = 0.5;
         c.gridx = 0;
-        c.gridy = 0;
-        //c.ipady = 20;
-        scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 30));
-        add(scaleCombo, c);
+        c.gridy = gridyIndex++;
+		mainPanel.add(scaleTask, c);
+		
+		
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//        c.anchor = GridBagConstraints.PAGE_START;
+//        c.weightx = 0.5;
+//        c.gridx = 0;
+//        c.gridy = gridyIndex++;
+//        //c.ipady = 20;
+//        scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 30));
+//        mainPanel.add(scaleCombo, c);
         
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.PAGE_START;
-		c.weightx = 0.5;
-		c.gridx = 0;
-		c.gridy = 0;
-		c.ipady = 20;
-		scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 30));
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.anchor = GridBagConstraints.PAGE_START;
+//		c.weightx = 0.5;
+//		c.gridx = 0;
+//		c.gridy = 0;
+//		c.ipady = 20;
+//		scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 30));
 		//add(scaleMenuBar, c);
 
 		//button = new JButton("Button 2");
-		c.fill = GridBagConstraints.HORIZONTAL;
-		//c.ipady = 200;      //make this component tall
-		c.weightx = 0.0;
-		c.gridx = 0;
-		c.gridy = 1;
-		//c.insets = new Insets(20, 0, 20, 0);
-		//c.anchor = GridBagConstraints.PAGE_END;
-		gridResizer.setPreferredSize(new Dimension(leftToolbarWidth, 150));
-		
+        Insets old = c.insets; 
+        
+        gridResizer.setPreferredSize(new Dimension(leftToolbarWidth, 100));
 		JPanel resizerPanel = new JPanel();
-		
 		resizerPanel.setLayout(new GridBagLayout());
-		GridBagConstraints cResizer = new GridBagConstraints();
-		cResizer.insets = new Insets(0, -5, 0, -50);
-		resizerPanel.setBorder(BorderFactory.createTitledBorder("Grid Size"));
-		
+		//GridBagConstraints cResizer = new GridBagConstraints();
+		//cResizer.insets = new Insets(1000, -5, 0, -50);
+		resizerPanel.setBorder(BorderFactory.createTitledBorder(""));
+		//resizerPanel.setBackground(Color.white);
 		resizerPanel.add(gridResizer);
 		
-		add(resizerPanel, c);
+        JXTaskPane gridTask = new JXTaskPane();
+        Icon gridTaskIcon = ResourceLoader.lookupIconResource("gridTask", "gridTask");
+        //gridTask.setLayout(new GridBagLayout());
+		GridBagConstraints gridTaskConstraints = new GridBagConstraints();
+		gridTaskConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gridTaskConstraints.anchor = GridBagConstraints.PAGE_START;
+		gridTaskConstraints.weightx = 1;
+		gridTaskConstraints.insets = new Insets(-6,-8,-6,-8);  //top padding
+		gridTaskConstraints.gridx = 0;
+		gridTaskConstraints.gridy = 0;
+        gridTask.setTitle("Grid");
+        gridTask.setFocusable(false);
+        gridTask.setCollapsed(true);
+        gridTask.setIcon(gridTaskIcon);
+        
+        gridTaskConstraints.insets = new Insets(-6,-8,-6,-8);  //top padding
+		gridTaskConstraints.gridx = 0;
+		gridTaskConstraints.gridy = 0;
+        gridTask.add(gridSpinner);
+		
+        gridTaskConstraints.insets = new Insets(8,-8,-6,-8);  //top padding
+		gridTaskConstraints.gridx = 0;
+		gridTaskConstraints.gridy = 1;
+		gridTask.add(resizerPanel);
+		
+		
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.PAGE_START;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        c.insets = new Insets(5,0,0,0);  //top padding
+        c.gridy = gridyIndex++;
+		mainPanel.add(gridTask, c);
+		c.insets = old;
+		
 
 		//button = new JButton("Button 3");
-		c.fill = GridBagConstraints.HORIZONTAL;
-		//c.weightx = 0.5;
-		c.ipady = 0;
-		c.gridx = 0;
-		c.gridy = 2;
-		gridSpinner.setPreferredSize(new Dimension(leftToolbarWidth, 30));
-		add(gridSpinner, c);
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		//c.weightx = 0.5;
+//		c.ipady = 0;
+//		c.gridx = 0;
+//		c.gridy =  gridyIndex++;
+//		gridSpinner.setPreferredSize(new Dimension(leftToolbarWidth, 30));
+//		mainPanel.add(gridSpinner, c);
 
-		//button = new JButton("Long-Named Button 4");
+		JXTaskPane locCtrlTask = new JXTaskPane();
+		locCtrlTask.setLayout(new GridBagLayout());
+        Icon locCtrlTaskIcon = ResourceLoader.lookupIconResource("direction_up", "direction_up");
+        locCtrlTask.setTitle("Move");
+        locCtrlTask.setCollapsed(true);
+        locCtrlTask.setFocusable(false);
+        locControlPanel.setBorder(BorderFactory.createTitledBorder(""));
+        locCtrlTask.setIcon(locCtrlTaskIcon);
+        
+        GridBagConstraints locTaskConstraints = new GridBagConstraints();
+        //locTaskConstraints.fill = GridBagConstraints.HORIZONTAL;
+        locTaskConstraints.anchor = GridBagConstraints.PAGE_START;
+        locTaskConstraints.weightx = 1;
+        locTaskConstraints.insets = new Insets(-4,-8,-6,-8);  //top padding
+        locTaskConstraints.gridx = 0;
+        locTaskConstraints.gridy = 0;
+        locCtrlTask.add(locControlPanel, locTaskConstraints);
+        locControlPanel.setPreferredSize(new Dimension(75, 55));
+		//JLabel locControlLabel = new JLabel(" Grid Ctrl");
+        //gridLabel.set
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.ipady = 60;      //make this component tall
-		c.weightx = 0.0;
-		//c.gridwidth = 3;
-		c.gridx = 0;
-		c.gridy = 3;
-		add(locControlPanel, c);
+        c.anchor = GridBagConstraints.PAGE_START;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        old = c.insets; 
+        c.insets = new Insets(5,0,0,0);  //top padding
+        c.gridy = gridyIndex++;
+		mainPanel.add(locCtrlTask, c);
+		c.insets = old;
+		//button = new JButton("Long-Named Button 4");
+		
+		
+		
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.ipady = 60;      //make this component tall
+//		c.weightx = 0.0;
+//		//c.gridwidth = 3;
+//		c.gridx = 0;
+//		c.gridy = gridyIndex++;
+//		mainPanel.add(locControlPanel, c);
 		
 		c.ipady = 0;       //reset to default
 		c.weighty = 1.0;   //request any extra vertical space
@@ -374,8 +483,8 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 		c.insets = new Insets(0,0,0,0);  //top padding
 		c.gridx = 0;       //aligned with button 2
 		//c.gridwidth = 2;   //2 columns wide
-		c.gridy = 4;       //third row
-        add(new JPanel(), c);
+		c.gridy = gridyIndex++;       //third row
+		mainPanel.add(new JPanel(), c);
 
 //		button = new JButton("5");
 //		c.fill = GridBagConstraints.HORIZONTAL;
@@ -388,6 +497,7 @@ public class ResizerPaletteFig extends ToolBar implements ChangeListener, Action
 //		c.gridy = 4;       //third row
 //		add(button, c);
 		
+        
 		UiGlobals.set_scaleSlider(scaleResizer);
 	}
 

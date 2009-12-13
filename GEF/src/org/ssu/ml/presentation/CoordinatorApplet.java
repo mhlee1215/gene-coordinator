@@ -42,6 +42,7 @@ import org.ssu.ml.ui.NodePaletteFig;
 import org.ssu.ml.ui.NodeRenderManager;
 import org.ssu.ml.ui.ResizerPaletteFig;
 import org.ssu.ml.ui.Utils;
+import org.ssu.ml.ui.WestToolBar;
 import org.tigris.gef.base.*;
 import org.tigris.gef.event.ModeChangeEvent;
 import org.tigris.gef.event.ModeChangeListener;
@@ -79,8 +80,8 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 	
 	Editor editor = null;
 
-	private ToolBar _toolbar = null;
-	private ToolBar _westToolbar = null;
+	private WestToolBar _toolbar = null;
+	private WestToolBar _westToolbar = null;
 	/** The graph pane (shown in middle of window). */
 	private JGraph _graph;
 	/** A statusbar (shown at bottom ow window). */
@@ -99,6 +100,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		Localizer.switchCurrentLocale(Locale.getDefault());
 		ResourceLoader.addResourceExtension("gif");
 		ResourceLoader.addResourceExtension("png");
+		ResourceLoader.addResourceExtension("jpg");
 		ResourceLoader.addResourceLocation("/org/tigris/gef/Images");
 		
 		System.out.println("constructur");
@@ -443,12 +445,12 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 	}
 
-	public void setToolBar(ToolBar tb) {
+	public void setToolBar(WestToolBar tb) {
 		_toolbar = tb;
 		_mainPanel.add(_toolbar, BorderLayout.NORTH);
 	}
 
-	public void setWestToolBar(ToolBar tb) {
+	public void setWestToolBar(WestToolBar tb) {
 		_westToolbar = tb;
 		_mainPanel.add(_westToolbar, BorderLayout.WEST);
 	}
