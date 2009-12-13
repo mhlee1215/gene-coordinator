@@ -21,7 +21,7 @@
 // CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT,
 // UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-package org.tigris.gef.ui;
+package org.ssu.ml.ui;
 
 import org.tigris.gef.base.CmdCreateNode;
 import org.tigris.gef.base.CmdSetMode;
@@ -37,7 +37,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
 
-public class ToolBar extends JToolBar implements MouseListener {
+public class TopToolBar extends JToolBar implements MouseListener {
 	
 	public static final int BUTTON_TYPE_NO_TEXT = 1;
 	public static final int BUTTON_TYPE_TEXT = 2;
@@ -48,7 +48,7 @@ public class ToolBar extends JToolBar implements MouseListener {
     private static final Color buttonBack = new Color(204, 204, 204);
     
     private JPanel toolbarPanel = new JPanel();
-    public ToolBar() {
+    public TopToolBar() {
         setFloatable(false);
         setName("toolBar");
         toolbarPanel.setBackground(Color.white);
@@ -103,7 +103,7 @@ public class ToolBar extends JToolBar implements MouseListener {
 
         JButton b = super.add(a);
         b.setName(null);
-        if(buttonType == ToolBar.BUTTON_TYPE_TEXT)
+        if(buttonType == TopToolBar.BUTTON_TYPE_TEXT)
         	b.setText(name);
         b.setIcon(icon);
         b.setVerticalTextPosition(SwingConstants.CENTER);

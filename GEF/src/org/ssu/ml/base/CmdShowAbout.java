@@ -32,7 +32,7 @@ public class CmdShowAbout extends Cmd {
 
     /** Default behaviour is to restore scaling to 1.0 (1 to 1) */
     public CmdShowAbout() {
-        super("Show Grid Histogram");
+        super("");
     }
 
     /**

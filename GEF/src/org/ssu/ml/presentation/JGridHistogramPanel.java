@@ -53,6 +53,7 @@ import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RefineryUtilities;
 import org.jfree.ui.TextAnchor;
 import org.ssu.ml.base.UiGlobals;
+import org.ssu.ml.ui.WestToolBar;
 import org.tigris.gef.ui.*;
 
 /**
@@ -74,7 +75,7 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
     
     /** A statusbar (shown at bottom ow window). */
     
-    ToolBar sideToolbar = new ToolBar();
+    WestToolBar sideToolbar = new WestToolBar();
 
     HistogramDataset histogramdataset = new HistogramDataset();
     Dimension drawingSize = null;
@@ -89,8 +90,6 @@ public class JGridHistogramPanel extends JGridPanel implements IStatusBar, Clone
 	
 	public void setUpSideToolbar()
     {
-    	sideToolbar = new ToolBar();
-    	
     	int beanMax = 100;
 		int beanMin = 1;
 		beanCurValue = 10;

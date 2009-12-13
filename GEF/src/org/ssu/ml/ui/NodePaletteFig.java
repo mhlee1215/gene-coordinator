@@ -62,7 +62,7 @@ import org.tigris.gef.ui.ToolBar;
  * @see ModeCreateFigPoly
  */
 
-public class NodePaletteFig extends ToolBar {
+public class NodePaletteFig extends WestToolBar {
 
     /**
      * 
@@ -81,20 +81,26 @@ public class NodePaletteFig extends ToolBar {
      * pressed.
      */
     public void defineButtons() {
-        this.setBackground(Color.white);
-        this.setForeground(Color.white);
+        this.setBackground(Color.black);
+        this.setForeground(Color.black);
+        
         //add(new CmdSetMode(ModeCreateFigLine.class, "Line"));
         //add(new CmdSetMode(ModeCreateFigText.class, "Text"));
         
         //add(image1, "Image1", "Image1");
-        add(new CmdZoom(1.25), "Zoom in", "zoom_in", ToolBar.BUTTON_TYPE_LEFT);
-        add(new CmdZoom(1/1.25), "Zoom out", "zoom_out", ToolBar.BUTTON_TYPE_CENTER);
-        this.addSeparator();
-        add(new CmdGridChart(), "Grid Histo", "Grid_histogram", ToolBar.BUTTON_TYPE_RIGHT);
-        add(new CmdShowAbout(), "Show About", "about", ToolBar.BUTTON_TYPE_RIGHT);
+        add(new CmdZoom(1.25), "Zoom in", "zoomIn", ToolBar.BUTTON_TYPE_NO_TEXT);
+        add(new CmdZoom(1/1.25), "Zoom out", "zoomOut", ToolBar.BUTTON_TYPE_NO_TEXT);
+        //this.addSeparator();
+        add(new CmdGridChart(), "Grid Histo", "siGraph", ToolBar.BUTTON_TYPE_NO_TEXT);
+        //add(new CmdShowAbout(), "Show About", "about1", ToolBar.BUTTON_TYPE_NO_TEXT);
         
         JTextField searchField = new JTextField();
         searchField.setPreferredSize(new Dimension(200, 30));
+        this.setBackground(Color.black);
+        this.setForeground(Color.black);
+        
+        System.out.println("back!!!!!!!!!!!!!"+this.getBackground());
+        System.out.println("back!!!!!!!!!!!!!"+this.getForeground());
         //add(searchField);
     }
 } /* end class PaletteFig */

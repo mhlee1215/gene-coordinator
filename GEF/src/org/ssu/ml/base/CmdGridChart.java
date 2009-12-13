@@ -36,7 +36,7 @@ public class CmdGridChart extends Cmd implements ComponentListener {
 
     /** Default behaviour is to restore scaling to 1.0 (1 to 1) */
     public CmdGridChart() {
-        super("Show Grid Histogram");
+        super("");
     }
 
     /**
