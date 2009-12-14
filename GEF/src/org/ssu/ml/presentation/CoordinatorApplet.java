@@ -105,7 +105,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		
 		System.out.println("constructur");
 
-		setSize(756, 600);
+		setSize(870, 600);
 
 //		try {
 //			
