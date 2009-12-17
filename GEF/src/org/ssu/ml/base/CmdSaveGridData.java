@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.ByteArrayInputStream;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,12 +37,12 @@ public class CmdSaveGridData extends Cmd implements ComponentListener {
     private static final long serialVersionUID = 8472508088519383941L;
     protected double _magnitude;
     JGridTabbedFrame histoFrame;
-    JGridPanel gridPanel;
+    JGridChartPanel gridPanel;
     
     // //////////////////////////////////////////////////////////////
     // constructor
 
-    public CmdSaveGridData(JGridPanel gridPanel) {
+    public CmdSaveGridData(JGridChartPanel gridPanel) {
         super("Get Gene Sets");
         this.gridPanel = gridPanel;
     }
@@ -97,9 +98,22 @@ public class CmdSaveGridData extends Cmd implements ComponentListener {
         	gridData.addData(node.getLocation().x+xOffset, node.getLocation().y+yOffset, name);
         }
         
+        Calendar cal = Calendar.getInstance();
+        String filename = "geneSet_"+String.format("%04d%02d%02d%02d%02d%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND));
+        filename += "."+gridPanel.getGeneDataType();
+        
         //String result = gridData.generateData();
-        String result = gridData.generateDataSquare();
-        System.out.println("-------------"+result);
+        String result = "";//gridData.generateDataSquare();
+        
+        if(gridPanel.getGeneDataType().equals(JGridChartPanel.TYPE_GMX))
+            result = gridData.generateDataSquare();
+        else if(gridPanel.getGeneDataType().equals(JGridChartPanel.TYPE_GMT))
+            result = gridData.generateDataSquareTrans();
+        System.out.println("filename : "+filename);
+        System.out.println(result);
+        
+        //Attach Filename on top of reuslt file.
+        result = filename+"\n"+result;
         
         byte[] data = result.getBytes();
 		
@@ -126,7 +140,7 @@ public class CmdSaveGridData extends Cmd implements ComponentListener {
 			e.printStackTrace();
 		}
 		
-		String[] params = {}; 
+		String[] params = {filename}; 
         CallJSObject jsObject = new CallJSObject("callGridDownloader", params, UiGlobals.getApplet());
         Thread thread = new Thread(jsObject);
         thread.run();

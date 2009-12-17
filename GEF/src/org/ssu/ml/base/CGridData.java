@@ -57,7 +57,7 @@ public class CGridData {
 		String cycleResult = "";
 		for(int rowCnt = 0 ; isHaveData ; rowCnt++){
 			isHaveData = false;
-			cycleResult = Integer.toString(rowCnt);
+			cycleResult = "";//Integer.toString(rowCnt);
 			for(int count = 0 ; count < gWidth ; count++)
 			{
 				for(int count1 = 0 ; count1 < gHeight ; count1++)
@@ -67,17 +67,29 @@ public class CGridData {
 					if(rowCnt == 0){
 						isHaveData = true;
 						if(cycleResult.equals(""))
-							cycleResult = delimeter+"Grid_"+count+"_"+count1;
+							cycleResult = "Grid_"+count+"_"+count1;
 						else
 							cycleResult += delimeter+"Grid_"+count+"_"+count1;
-					}else{
+					}else if(rowCnt == 1){
+                        isHaveData = true;
+                        if(cycleResult.equals(""))
+                            cycleResult = "na";
+                        else
+                            cycleResult += delimeter+"na";
+                    }else{
 						
-						if(curList.size() > rowCnt-1)
+						if(curList.size() > rowCnt-2)
 						{
 							isHaveData = true;
-							cycleResult += delimeter+curList.get(rowCnt-1);
+							if(cycleResult.equals(""))
+							    cycleResult += curList.get(rowCnt-2);
+							else
+							    cycleResult += delimeter+curList.get(rowCnt-2);
 						}else{
-							cycleResult += delimeter;
+						    if(cycleResult.equals(""))
+						        cycleResult += "na";
+						    else
+						        cycleResult += delimeter+"na";
 						}
 					}
 				}
@@ -90,22 +102,26 @@ public class CGridData {
 	
 	public String generateDataSquareTrans()
 	{
-		StringBuffer result = new StringBuffer();
-		Vector<Double> vector = new Vector<Double>();
-		for(int count = 0 ; count < gWidth ; count++)
-		{
-			for(int count1 = 0 ; count1 < gHeight ; count1++)
-			{
-				Vector<String> curList = gNodeBean.get(new Point(count, count1));
-				if(curList.size() > 0)
-				{
-					result.append("Grid "+count+","+count1+"\n");
-					for(int nCount = 0 ; nCount < curList.size() ; nCount++)
-						result.append(curList.get(nCount)+"\n");
-				}
-			}
-		}
-		return result.toString();
+	    StringBuffer result = new StringBuffer();
+        boolean isHaveData = true;
+        String cycleResult = "";
+        
+        for (int count = 0; count < gWidth; count++) {
+            for (int count1 = 0; count1 < gHeight; count1++) {
+                cycleResult = "";
+                isHaveData = false;
+                Vector<String> curList = gNodeBean.get(new Point(count, count1));
+                cycleResult = "Grid_"+count+"_"+count1;
+                cycleResult += delimeter+"na";
+                for(int nodeNum = 0 ; nodeNum < curList.size() ; nodeNum++){
+                    isHaveData = true;
+                    cycleResult += delimeter + curList.get(nodeNum);
+                }
+                if(isHaveData)
+                    result.append(cycleResult + "\n");
+            }
+        }
+        return result.toString();
 	}
 	
 }
