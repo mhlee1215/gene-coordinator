@@ -105,8 +105,8 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	private static final String SERIES_GOOD = "Good";
 	private static final String SERIES_BIG = "Big";
 	private static final String SERIES_SMALL = "Small";
-	private static final String TYPE_GMT = "gmt";
-	private static final String TYPE_GMX = "gmx";
+	public static final String TYPE_GMT = "GMT";
+	public static final String TYPE_GMX = "GMX";
     
 	Vector<double[]> datas = new Vector<double[]>();
 	Vector<String> categories = new Vector<String>();
@@ -120,7 +120,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	int maxCurValue;
 	int minCurValue;
 	int minimum_interval = 5;
-	String geneDataType = TYPE_GMX;
+	private String geneDataType = TYPE_GMT;
 	
 	JPanel chartPanel;
 	
@@ -132,6 +132,14 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	int chartHeight = 400;
 
 	int chartPadding = 30;
+
+    public String getGeneDataType() {
+        return geneDataType;
+    }
+
+    public void setGeneDataType(String geneDataType) {
+        this.geneDataType = geneDataType;
+    }
 
     private static final long serialVersionUID = -8167010467922210977L;
     
@@ -167,7 +175,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     public void setUpToolbar()
     {
     	JComboBox typeCombo = null;
-    	String[] strScaleItems = {"GMX", "GMT"};
+    	String[] strScaleItems = {TYPE_GMT, TYPE_GMX};
     	typeCombo = new JComboBox(strScaleItems);
     	typeCombo.setName("typeCombo");
 		typeCombo.setSelectedIndex(0);
@@ -882,6 +890,10 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 		if(s instanceof JComboBox){
 			JComboBox combo = (JComboBox)s;
 			System.out.println(combo.getSelectedItem());
+			if(combo.getName().equals("typeCombo")){
+			    this.geneDataType = (String)combo.getSelectedItem();
+			}
+			
 		}
 	}
 
