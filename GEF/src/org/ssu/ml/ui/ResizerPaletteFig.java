@@ -399,7 +399,7 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		gridTaskConstraints.insets = new Insets(-6,-8,-6,-8);  //top padding
 		gridTaskConstraints.gridx = 0;
 		gridTaskConstraints.gridy = 0;
-        gridTask.setTitle("Grid");
+        gridTask.setTitle("Grid size");
         gridTask.setFocusable(false);
         gridTask.setCollapsed(true);
         gridTask.setIcon(gridTaskIcon);
@@ -438,7 +438,7 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		JXTaskPane locCtrlTask = new JXTaskPane();
 		locCtrlTask.setLayout(new GridBagLayout());
         Icon locCtrlTaskIcon = ResourceLoader.lookupIconResource("direction_up", "direction_up");
-        locCtrlTask.setTitle("Move");
+        locCtrlTask.setTitle("Grid move");
         locCtrlTask.setCollapsed(true);
         locCtrlTask.setFocusable(false);
         locControlPanel.setBorder(BorderFactory.createTitledBorder(""));
