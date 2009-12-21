@@ -182,12 +182,12 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 		typeCombo.addActionListener(this);
     	
     	
-    	toolbar.add(new CmdSaveChart(this, "aa"), "Get Chart Image", "Save", ToolBar.BUTTON_TYPE_TEXT);
+    	toolbar.add(new CmdSaveChart(this, "aa"), "Save chart image", "Save", ToolBar.BUTTON_TYPE_TEXT);
     	toolbar.addSeparator();
-    	JLabel label = new JLabel("Gene Data format : ");
+    	JLabel label = new JLabel("Gene-set data format : ");
     	toolbar.add(label);
     	toolbar.add(typeCombo);
-    	toolbar.add(new CmdSaveGridData(this), "Get Gene Data", "Save", ToolBar.BUTTON_TYPE_TEXT);
+    	toolbar.add(new CmdSaveGridData(this), "Save gene-set data", "Save", ToolBar.BUTTON_TYPE_TEXT);
     	mainPanel.add(toolbar, BorderLayout.NORTH);
     }
     
@@ -227,7 +227,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	        maxRangerPanel.setLayout(new GridBagLayout());
 			GridBagConstraints cResizer = new GridBagConstraints();
 			//cResizer.insets = new Insets(10, 0, 10, 0);
-			maxRangerPanel.setBorder(BorderFactory.createTitledBorder("Max"));
+			maxRangerPanel.setBorder(BorderFactory.createTitledBorder("Boundary1"));
 			maxRangerPanel.add(maxRanger);
 	        leftSideToolbar.add(maxRangerPanel);
 		}
@@ -261,7 +261,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	        minRangerPanel.setLayout(new GridBagLayout());
 			GridBagConstraints cResizer = new GridBagConstraints();
 			//cResizer.insets = new Insets(10, 0, 10, 0);
-			minRangerPanel.setBorder(BorderFactory.createTitledBorder("Min"));
+			minRangerPanel.setBorder(BorderFactory.createTitledBorder("Boundary2"));
 			minRangerPanel.add(minRanger);
 			
 			leftSideToolbar.add(minRangerPanel);
@@ -322,9 +322,11 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 		}
 		System.out.println("data.length : "+data.length);
 		System.out.println("goodCount : "+goodCount+", overCount  :"+overCount+", : lowerCount"+lowerCount);
+		
+		
+		categoryDataset.addValue(lowerCount, SERIES_SMALL, categoryName);
 		categoryDataset.addValue(goodCount, SERIES_GOOD, categoryName);
 		categoryDataset.addValue(overCount, SERIES_BIG, categoryName);
-		categoryDataset.addValue(lowerCount, SERIES_SMALL, categoryName);
 		return categoryDataset;
 	}
 	
@@ -468,9 +470,10 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 		System.out.println("data.length : "+data.length+", category : "+categori);
 		System.out.println("goodCount : "+goodCount+", overCount  :"+overCount+", : lowerCount"+lowerCount);
 		//dataset.addV
+		dataset.addValue(lowerCount, SERIES_SMALL, categori);
 		dataset.addValue(goodCount, SERIES_GOOD, categori);
 		dataset.addValue(overCount, SERIES_BIG, categori);
-		dataset.addValue(lowerCount, SERIES_SMALL, categori);
+		
         
         CategoryPlot categoryPlot = new CategoryPlot(dataset, null, rangeAxis1, renderer);
 		//categoryPlot.setOrientation(PlotOrientation.VERTICAL);
@@ -510,7 +513,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			subBorderPanel.setBackground(Color.white);
 			subBorderPanel.setBorder(this.unselectedBorder);
 			
-			String title = String.format("%-88s", "title");
+			String title = String.format("%-88s", categories.get(count));
 			JXTitledPanel subTitlePanel = new JXTitledPanel(title);
 			
 			
