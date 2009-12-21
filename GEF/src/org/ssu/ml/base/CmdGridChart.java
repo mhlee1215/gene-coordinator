@@ -29,7 +29,7 @@ import org.tigris.gef.util.Localizer;
 public class CmdGridChart extends Cmd implements ComponentListener {
     private static final long serialVersionUID = 8472508088519383941L;
     protected double _magnitude;
-    JGridTabbedFrame histoFrame;
+    JFrame histoFrame;
     
     // //////////////////////////////////////////////////////////////
     // constructor
@@ -94,7 +94,10 @@ public class CmdGridChart extends Cmd implements ComponentListener {
         UiGlobals.getGridCategories().add("d"+interval_space+"x"+xOffset+"y"+yOffset);
         
         if(result_1.length > 0){
-        	histoFrame = new JGridTabbedFrame("title");
+        	//histoFrame = new JGridTabbedFrame("title");
+        	if(UiGlobals.getDistFrame()!=null) UiGlobals.getDistFrame().setVisible(false);
+        	histoFrame = new JFrame("Gene-set size distribution"); 
+        	UiGlobals.setDistFrame(histoFrame);
         	histoFrame.addComponentListener(this);
         	
         	JGridChartPanel total = new JGridChartPanel("Total", 800, 600);
@@ -106,15 +109,16 @@ public class CmdGridChart extends Cmd implements ComponentListener {
     	        
         	}
         	total.drawChart();
-        	histoFrame.addPanel(total, "Total Density");
+        	histoFrame.add(total);
+        	//histoFrame = total;
         	
-        	for(int count = 0 ; count < UiGlobals.getGridDatas().size() ; count++)
-        	{
-        		JGridHistogramPanel panel = new JGridHistogramPanel("Grid Density - "+count, UiGlobals.getGridDatas().get(count));
-            	panel.drawHistogram();
-            	//panel.setPrecise(10);
-    	        histoFrame.addPanel(panel, UiGlobals.getGridCategories().get(count));
-        	}
+//        	for(int count = 0 ; count < UiGlobals.getGridDatas().size() ; count++)
+//        	{
+//        		JGridHistogramPanel panel = new JGridHistogramPanel("Grid Density - "+count, UiGlobals.getGridDatas().get(count));
+//            	panel.drawHistogram();
+//            	//panel.setPrecise(10);
+//    	        histoFrame.addPanel(panel, UiGlobals.getGridCategories().get(count));
+//        	}
         	
 	        
 	        

@@ -4,6 +4,7 @@ import java.applet.Applet;
 import java.awt.Font;
 import java.util.Vector;
 
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 
@@ -28,7 +29,17 @@ public class UiGlobals extends Globals{
 	private static int grid_spacing =  default_grid_spacing;
 	private static int grid_scale = pre_scaled; 
 	
+	private static JFrame distFrame;
 	
+	
+	public static JFrame getDistFrame() {
+		return distFrame;
+	}
+
+	public static void setDistFrame(JFrame distFrame) {
+		UiGlobals.distFrame = distFrame;
+	}
+
 	public static int getGrid_scale() {
 		return grid_scale;
 	}
