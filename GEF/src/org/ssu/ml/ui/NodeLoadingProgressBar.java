@@ -178,7 +178,7 @@ public class NodeLoadingProgressBar extends JPanel
             if(status == STATUS_CANCELED || status == STATUS_STARTED)
             	frame.setVisible(false);
             
-            UiGlobals.setStatusbarText(" Node render is completed.");
+            UiGlobals.setStatusbarText(" Node rendering is completed.");
             
         }
     }

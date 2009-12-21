@@ -791,7 +791,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 				mainPanel.add(chartPanel);
 				chartPanel.revalidate();
 
-				this.showStatus("Good range : [" + maxCurValue + " to "
+				this.showStatus("Size of good gene-sets : [" + maxCurValue + " to "
 						+ minCurValue + "]");
 
 			}
