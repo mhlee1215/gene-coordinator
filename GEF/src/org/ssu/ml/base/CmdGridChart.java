@@ -100,7 +100,7 @@ public class CmdGridChart extends Cmd implements ComponentListener {
         	UiGlobals.setDistFrame(histoFrame);
         	histoFrame.addComponentListener(this);
         	
-        	JGridChartPanel total = new JGridChartPanel("Total", 800, 600);
+        	JGridChartPanel total = new JGridChartPanel("Total", 800, 300);
         	for(int count = 0 ; count < UiGlobals.getGridDatas().size() ; count++)
         	{
         		total.addData(UiGlobals.getGridDatas().get(count), UiGlobals.getGridCategories().get(count));
@@ -121,8 +121,8 @@ public class CmdGridChart extends Cmd implements ComponentListener {
 //        	}
         	
 	        
-	        
-	        histoFrame.pack();
+	        histoFrame.setSize(700, 460);
+	        //histoFrame.pack();
 	        
 	        //RefineryUtilities.centerFrameOnScreen(histoFrame);
 	        histoFrame.setVisible(true);
