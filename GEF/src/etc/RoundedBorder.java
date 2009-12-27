@@ -10,11 +10,14 @@ import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.border.AbstractBorder;
 
 import org.jdesktop.swingx.graphics.GraphicsUtilities;
 import org.jdesktop.swingx.graphics.ShadowRenderer;
+import org.tigris.gef.util.ResourceLoader;
 
 public class RoundedBorder extends AbstractBorder {
 	private Color FILL = new Color(135, 135, 135);
@@ -23,11 +26,28 @@ public class RoundedBorder extends AbstractBorder {
 	int arc = 10;
 	int offset = 30;
 	boolean drawShadow;
+	boolean isSelected = false;
+	BufferedImage img = null;
 	
 	public RoundedBorder(Color borderColor, boolean drawShadow, Color shadowColor){
+		this(borderColor, drawShadow, shadowColor, false);
+	}
+	
+	public RoundedBorder(Color borderColor, boolean drawShadow, Color shadowColor, boolean isSelected){
 		FILL = borderColor;
 		this.drawShadow = drawShadow;
 		this.shadowColor = shadowColor;
+		this.isSelected = isSelected;
+		if(isSelected){
+			java.net.URL imgURL = null;
+		    imgURL = ResourceLoader.class.getResource("/org/tigris/gef/Images/green_check.png");
+		    try {
+				img = ImageIO.read(imgURL);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	@Override 
 	public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
@@ -74,7 +94,9 @@ public class RoundedBorder extends AbstractBorder {
 	    g2.setColor(Color.WHITE);
 	    g2.drawRoundRect(10, 10, w-20, h-20, arc+5, arc); 
 	    
-	    
+	    if(isSelected){
+	    	g2.drawImage(img, 0, 0, null);
+	    }
 	    g2.dispose();
 	}
 	

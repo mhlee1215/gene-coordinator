@@ -104,7 +104,7 @@ public class WestToolBar extends JToolBar implements MouseListener {
         b.setIcon(icon);
         b.setVerticalTextPosition(SwingConstants.CENTER);
         b.setHorizontalTextPosition(SwingConstants.RIGHT);
-        b.setMargin(new Insets(0, 0, 0, 0));
+        b.setMargin(new Insets(1, 3, 1, 3));
         //b.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
         b.setFocusable(false);
        

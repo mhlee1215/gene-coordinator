@@ -105,7 +105,6 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		
 		System.out.println("constructur");
 
-		setSize(870, 600);
 
 //		try {
 //			
@@ -265,7 +264,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		content.add(_mainPanel, BorderLayout.CENTER);
 		content.add(_statusbar, BorderLayout.SOUTH);
 		UiGlobals.set_statusBar(_statusbar);
-		setSize(500, 500);
+		setSize(870, 600);
 		setVisible(true);
 
 		_graph.addModeChangeListener(this);

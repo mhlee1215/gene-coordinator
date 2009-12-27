@@ -23,67 +23,70 @@
 
 package org.ssu.ml.presentation;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.LinearGradientPaint;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.NumberFormat;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
+import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.JXRootPane;
 import org.jdesktop.swingx.JXTitledPanel;
-import org.jdesktop.swingx.border.DropShadowBorder;
-import org.jdesktop.swingx.painter.AbstractPainter;
 import org.jdesktop.swingx.painter.CompoundPainter;
-import org.jdesktop.swingx.painter.GlossPainter;
 import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.painter.PinstripePainter;
 import org.jdesktop.swingx.painter.RectanglePainter;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItem;
-import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.CombinedDomainCategoryPlot;
 import org.jfree.chart.plot.CombinedRangeCategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarPainter;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.statistics.HistogramDataset;
-import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.ui.RefineryUtilities;
 import org.ssu.ml.base.CmdSaveChart;
 import org.ssu.ml.base.CmdSaveGridData;
 import org.ssu.ml.base.UiGlobals;
 import org.ssu.ml.ui.WestToolBar;
-import org.tigris.gef.ui.*;
+import org.tigris.gef.ui.IStatusBar;
+import org.tigris.gef.ui.ToolBar;
 
 import etc.Colors;
 import etc.RoundedBorder;
@@ -95,7 +98,7 @@ import etc.RoundedBorder;
 
 public class JGridChartPanel extends JGridPanel  implements ActionListener, IStatusBar, Cloneable, ChangeListener, MouseListener{
 	
-	Border selectedBorder = new RoundedBorder(Color.LIGHT_GRAY, true, Color.black);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.red);
+	Border selectedBorder = new RoundedBorder(Color.LIGHT_GRAY, true, Color.black, true);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.red);
 	Border unselectedBorder = new RoundedBorder(Color.LIGHT_GRAY, true, Color.white);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.white);
 	Border overedBorder = new RoundedBorder(Color.LIGHT_GRAY, true, Color.LIGHT_GRAY);//BorderFactory.createMatteBorder(5, 5, 5, 5, Color.LIGHT_GRAY);
 	JPanel overedPanel = null;
@@ -122,16 +125,16 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	int minimum_interval = 5;
 	private String geneDataType = TYPE_GMT;
 	
-	JPanel chartPanel;
+	JScrollPane chartPanel;
 	
 	WestToolBar leftSideToolbar;
 	
 	int totalWidth = 0;
 	int totalHeight = 0;
 	int chartWidth = 300;
-	int chartHeight = 400;
+	int chartHeight = 300;
 
-	int chartPadding = 30;
+	int chartPadding = 50;
 
     public String getGeneDataType() {
         return geneDataType;
@@ -191,6 +194,9 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     	mainPanel.add(toolbar, BorderLayout.NORTH);
     }
     
+    /**
+     * 
+     */
     public void setUpSideToolbar()
     {
     	leftSideToolbar = new WestToolBar();
@@ -222,13 +228,14 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	        maxRanger.addChangeListener(this);
 	        maxRanger.setPaintTicks(true);
 	        maxRanger.setMinorTickSpacing(5);
-	        
+	        maxRanger.setPreferredSize(new Dimension(50, 130));
 	        JPanel maxRangerPanel = new JPanel();
 	        maxRangerPanel.setLayout(new GridBagLayout());
 			GridBagConstraints cResizer = new GridBagConstraints();
-			//cResizer.insets = new Insets(10, 0, 10, 0);
-			maxRangerPanel.setBorder(BorderFactory.createTitledBorder("Boundary1"));
-			maxRangerPanel.add(maxRanger);
+			cResizer.insets = new Insets(0, -8, 0, 0);
+			//BorderFactory.createt
+			maxRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Boundary1", TitledBorder.RIGHT, TitledBorder.ABOVE_TOP));
+			maxRangerPanel.add(maxRanger, cResizer);
 	        leftSideToolbar.add(maxRangerPanel);
 		}
         
@@ -256,13 +263,13 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	        
 	        minRanger.setPaintTicks(true);
 	        minRanger.setMinorTickSpacing(5);
-	        
+	        minRanger.setPreferredSize(new Dimension(50, 130));
 	        JPanel minRangerPanel = new JPanel();
 	        minRangerPanel.setLayout(new GridBagLayout());
 			GridBagConstraints cResizer = new GridBagConstraints();
-			//cResizer.insets = new Insets(10, 0, 10, 0);
-			minRangerPanel.setBorder(BorderFactory.createTitledBorder("Boundary2"));
-			minRangerPanel.add(minRanger);
+			cResizer.insets = new Insets(0, -8, 0, 0);
+			minRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Boundary2", TitledBorder.RIGHT, TitledBorder.ABOVE_TOP));
+			minRangerPanel.add(minRanger, cResizer);
 			
 			leftSideToolbar.add(minRangerPanel);
 			
@@ -276,36 +283,51 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     // IStatusListener implementation
 
     
+    /**
+     * 
+     */
     public void drawChart()
     {
-    	chartPanel = createPanel();
+    	JScrollPane jScrollPane = createChart();
+    	mainPanel.add(jScrollPane, BorderLayout.CENTER);
+        //this.remove
+    }
+    
+    /**
+     * @return
+     */
+    public JScrollPane createChart(){
+    	
+    	JPanel createdPanel = createPanel();
     	//_histogram.setPreferredSize(new Dimension(700, 270));
-    	chartPanel.setPreferredSize(new Dimension(datas.size()*(chartWidth+chartPadding), chartHeight+chartPadding));
+    	createdPanel.setPreferredSize(new Dimension(datas.size()*(chartWidth+30), chartHeight+chartPadding));
     	//chartPanel.setSize(new Dimension(1000, 600));
     	
     	JPanel drawPanel = new JPanel();
     	drawPanel.setBackground(Color.white);
-    	drawPanel.add(chartPanel);
+    	drawPanel.add(createdPanel);
+    	drawPanel.addMouseListener(this);
     	JScrollPane jScrollPane = new JScrollPane(drawPanel);
     	
     	jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         //jScrollPane.setViewportBorder(new LineBorder(Color.RED));
         //jScrollPane.getViewport().add(chartPanel, null);
         //jScrollPane.getViewport().setPreferredSize(new Dimension(1000, 600));
         //jScrollPane.add(chartPanel);
         
-        jScrollPane.setPreferredSize(new Dimension(700, 460));
-    	mainPanel.add(jScrollPane, BorderLayout.CENTER);
-        //this.remove
+        jScrollPane.setPreferredSize(new Dimension(700, 350));
+        jScrollPane.addMouseListener(this);
+    	return jScrollPane;
     }
     
 	
-//	private CategoryDataset addDataset(double data[], String categoryName){
-//		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-//		return addDataset(dataset, data, categoryName);
-//	}
-	
+	/**
+	 * @param categoryDataset
+	 * @param data
+	 * @param categoryName
+	 * @return
+	 */
 	private CategoryDataset addDataset(DefaultCategoryDataset categoryDataset, double data[], String categoryName){
 		int overCount = 0;
 		int goodCount = 0;
@@ -330,85 +352,11 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 		return categoryDataset;
 	}
 	
-	
-	
-//	private static JFreeChart createChart(CategoryDataset categoryDataset)
-//	{
-//	    
-//	     JFreeChart jfreechart = ChartFactory.createBarChart(
-//	             "Block size counting for construction of gene sets",         // chart title
-//	             "grid space",               // domain axis label
-//	             "count",                  // range axis label
-//	             categoryDataset,                  // data
-//	             PlotOrientation.VERTICAL, // orientation
-//	             true,                     // include legend
-//	             true,                     // tooltips?
-//	             false                     // URLs?
-//	         );
-//	   
-//	     jfreechart.setBackgroundPaint(Color.WHITE);
-//	     CategoryPlot plot = jfreechart.getCategoryPlot();  // íƮ�� Plot ��ü�� ���Ѵ�.
-//	     plot.setBackgroundPaint(Color.white);     // íƮ�� Plot ����; lightGray�� �ٲ۴�.
-//	     plot.setRangeGridlinePaint(Color.BLUE);       // ���� �׸�������� ��; BLUE�� �ٲ۴�.
-//	     plot.setDomainGridlinesVisible(true);        // ���� �׸������; �Ⱥ��̰� �Ѵ�.
-//	     plot.setDomainGridlinePaint(Color.blue);
-//	     plot.setOutlinePaint(Color.blue);	//��Ʈ �ܰ�
-//	     plot.setOutlineVisible(true);
-//	     plot.setAnchorValue(10);
-//	     
-//	     
-//	     // 6. ��; Ŀ���͸������ϱ�
-//        BarRenderer renderer = (BarRenderer) plot.getRenderer();  // BarRenderer�� ���Ѵ�.
-//        
-//        renderer.setItemMargin(0.05);                 // �0� �;����� ����; d�Ѵ�.
-//        renderer.setDrawBarOutline(true);            // ���� ��輱 ǥ�ø� ��d
-//        //renderer.setOutlinePaint(Color.red);
-//        BarPainter painter = new StandardBarPainter();
-//        renderer.setBarPainter(painter);
-//        Stroke stroke = new BasicStroke(3.0f);
-//        //stroke.
-//        
-//        
-//        renderer.setSeriesOutlinePaint(0, Color.black);
-//        renderer.setSeriesOutlinePaint(1, Color.black);
-//        renderer.setSeriesOutlinePaint(2, Color.black);
-//        renderer.setSeriesOutlineStroke(0, stroke);
-//        renderer.setSeriesOutlineStroke(1, stroke);
-//        renderer.setSeriesOutlineStroke(2, stroke);
-//        renderer.setShadowXOffset(10.0);
-//        renderer.setShadowYOffset(10.0);
-//        
-//        StandardCategoryItemLabelGenerator labelGenerator = new StandardCategoryItemLabelGenerator();
-//        renderer.setItemLabelFont(UiGlobals.getNormalFont());
-//        renderer.setItemLabelGenerator(labelGenerator);
-//        renderer.setItemLabelPaint(Color.black);
-//        renderer.setItemLabelsVisible(true);
-//        
-//        NumberFormat format = NumberFormat.getInstance();
-//        String labelFormat = "<html><body style=\"background-color: #ffffdd\"><h1>{0}</h1><br><h2>{1}</h2><br><h3>{2}</h3></body></html>";
-//        StandardCategoryToolTipGenerator generator = new StandardCategoryToolTipGenerator(labelFormat, format);
-//        //System.out.println(generator.getLabelFormat());
-//        
-//        renderer.setSeriesToolTipGenerator(0, generator);
-//        renderer.setSeriesToolTipGenerator(1, generator);
-//        renderer.setSeriesToolTipGenerator(2, generator);
-//        
-//        // 7.�;�� �ٲٱ�
-//        
-//        GradientPaint gp0 = new GradientPaint(0.0f, 0.0f, new Color(204, 255, 153),  0.0f, 0.0f, new Color(204, 255, 153));
-//        GradientPaint gp1 = new GradientPaint(0.0f, 0.0f, Color.green, 0.0f, 0.0f, new Color(0, 64, 0));
-//        GradientPaint gp2 = new GradientPaint(0.0f, 0.0f, Color.red,   0.0f, 0.0f, new Color(64, 0, 0));
-//        renderer.setSeriesPaint(0, UiGlobals.getConstantColor().getColor(0));
-//        renderer.setSeriesPaint(1, UiGlobals.getConstantColor().getColor(1));
-//        renderer.setSeriesPaint(2, UiGlobals.getConstantColor().getColor(2));
-//        
-//        
-//	     //XYPlot xyplot = (XYPlot)jfreechart.getPlot();
-//	     //xyplot.setForegroundAlpha(0.3F);
-//
-//	     return jfreechart;
-//	}
-	
+	/**
+	 * @param data
+	 * @param categori
+	 * @return
+	 */
 	public CategoryPlot createCategoryPlot(double[] data, String categori){
 		NumberAxis rangeAxis1 = new NumberAxis(categori);
 		rangeAxis1.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -493,9 +441,11 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 		mainPanel.addMouseListener(this);
 		mainPanel.setBackground(Color.white);
 		GridBagConstraints gbcMain = new GridBagConstraints();  
-		mainPanel.setLayout( new GridBagLayout() );   
+		mainPanel.setLayout( new GridBagLayout() );
+		mainPanel.setPreferredSize(new Dimension(700, 200));
 		gbcMain.gridy = 0;  
-		gbcMain.insets = new Insets( 0, 0, 0, 0 );
+		
+		gbcMain.insets = new Insets( 20, 0, 0, 0 );
 		
 		NumberAxis valueAxis = new NumberAxis("Count");
 		CombinedRangeCategoryPlot plot = new CombinedRangeCategoryPlot(valueAxis);
@@ -564,17 +514,8 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 				Color.GRAY, 3, Color.DARK_GRAY); 
 			backgroundRoundRect.setAntialiasing(true);
 			
-			//subTitlePanel.setBackgroundPainter(backgroundRoundRect);
 			
 			
-			//subChartPanel.set
-			//subChartPanel.set
-			//new GradientPainter();
-			//subChartPanel.setTitle("title");
-			//subTitlePanel.setBackground(Color.white);
-			//subTitlePanel.setForeground(Color.white);
-			//subChartPanel.set
-			//subChartPanel.setLayout(new BorderLayout());
 			plotChart.setBackgroundPaint(Color.gray);
 			
 			JPanel innerChartPanel = new ChartPanel(plotChart);
@@ -582,15 +523,11 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			System.out.println("popup size : "+innerChartPanel.getComponentPopupMenu());
 			
 			System.out.println("createPanel size : "+getSize());
-			//innerChartPanel.set
-			//subTitlePanel.setPreferredSize(new Dimension(300, 350));
-			innerChartPanel.setPreferredSize(new Dimension(chartWidth, 350));
-			//subTitlePanel.setPreferredSize(new Dimension(300, getSize().height-130));
+			innerChartPanel.setPreferredSize(new Dimension(chartWidth, this.chartHeight-24));
 			
 			JRadioButton radio = new JRadioButton();
 			radio.setText("radio");
 			
-			//subChartPanel.add(radio, BorderLayout.NORTH);
 			
 			GridBagConstraints gbc = new GridBagConstraints();  
 			subTitlePanel.setLayout( new GridBagLayout() );   
@@ -599,87 +536,17 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 		    
 		    
 		    subTitlePanel.add( innerChartPanel, gbc );
-		    //subTitlePanel.setPreferredSize(new Dimension(300, 300));
-		    //setSize( 500, 500 );  
-			
 			
 		    subTitlePanel.addMouseListener(this);
 		    innerChartPanel.addMouseListener(this);
-			
-			
-			//subChartPanel.add(innerChartPanel, BorderLayout.CENTER);
 		    
 			mainPanel.add(subBorderPanel, gbcMain);
-			//mainPanel.add(new JXTitledPanel("title"));
-			//new PlotPanel(cplot);
-			//new ChartPanel(cplot);
 			plot.add(cplot);
-			//cplot.setOrientation(PlotOrientation.VERTICAL);
-			
-			
-	        //cplot.setDomainCrosshairColumnKey(SERIES_GOOD);
-	        //cplot.setDomainCrosshairVisible(true);
-			//cplot.set
 		}
-		//plot.setOrientation(PlotOrientation.);
-		//plot.setDomainAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
 		
 		plot.setDomainAxis(new CategoryAxis("111"));
-		//plot.setDrawSharedDomainAxis(false);
-		//plot.setDomainCrosshairVisible(false);
-		//plot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-		
-		//plot.setdomain
-		
-		//JFreeChart jfreechart = createChart(categoryDataset);
-//		JFreeChart jfreechart = new JFreeChart(
-//	            "Block size counting for construction of gene sets",
-//	            UiGlobals.getTitleFont(),
-//	            plot,
-//	            true
-//	        );
-		
-		
-//		LegendItemCollection legendCollection = new LegendItemCollection();
-//		LegendItem item1 = new LegendItem(SERIES_GOOD, UiGlobals.getConstantColor().getColor(0));
-//		//Paint paint = new Paint();
-//		//Point paint = new BasicPaint();
-//		//item1.set
-//		LegendItem item2 = new LegendItem(SERIES_BIG, UiGlobals.getConstantColor().getColor(1));
-//		LegendItem item3 = new LegendItem(SERIES_SMALL, UiGlobals.getConstantColor().getColor(2));
-//		legendCollection.add(item1);
-//		legendCollection.add(item2);
-//		legendCollection.add(item3);
-//		plot.setFixedLegendItems(legendCollection);
-		
-		//jfreechart.removeLegend();
-		//jfreechart.addLegend(new LegendTitle("aa"));
-		//LegendTitle lt = jfreechart.getLegend();
-		//lt.
-		
-		/*
-		JFreeChart jfreechart = ChartFactory.createBarChart(
-	             "Block size counting for construction of gene sets",         // chart title
-	             "grid space",               // domain axis label
-	             "count",                  // range axis label
-	             plot,                  // data
-	             PlotOrientation.VERTICAL, // orientation
-	             true,                     // include legend
-	             true,                     // tooltips?
-	             false                     // URLs?
-	         );
-	         */
-		//chart = jfreechart;
-		//	XYPlot plot = jfreechart.getXYPlot();
-		//jfreechart.get
-		//XYItemRenderer renderer = plot.getRenderer();
-		//renderer.set
-		//BarRenderer renderer = (BarRenderer)plot.getRenderer();
-		//renderer.set
-		
-		//return new ChartPanel(jfreechart);
+
 		return mainPanel;
-		//return new JXTitledPanel("title");
 	}
 
 	public void clean()
@@ -694,6 +561,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     	double data2[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
     	double data3[] = {3, 3, 3, 1, 1, 2, 2, 3, 3, 2,3  ,1, 2,3, 1,2, 3, 12,3 };
     	JGridChartPanel char1 = new JGridChartPanel("title", 500, 500);
+    	
     	JXFrame frame = new JXFrame();
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	RefineryUtilities.centerFrameOnScreen(frame);
@@ -726,7 +594,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 				// TODO Auto-generated method stub
 				
 			}});
-    	char1.setSize(700, 500);
+    	//char1.setSize(700, 200);
     	//char1.setAlpha(.3f);
     	
     	
@@ -735,13 +603,17 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     	char1.addData(data, "data1");
     	char1.addData(data1, "data2");
     	char1.addData(data2, "data3");
-    	char1.addData(data3, "datar");
+    	//char1.addData(data3, "datar");
     	char1.drawChart();
     	frame.add(char1);
     	//frame.add(char1);
     	frame.pack();
     	
-    	
+    	try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+        	e.printStackTrace();
+        } 
 //    	
 //    	final JDialog dialog = new JDialog(frame, "Child", true);
 //        dialog.setBackground(Color.green);
@@ -786,10 +658,12 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 					}
 				}
 				clean();
-				mainPanel.remove(chartPanel);
-				chartPanel = createPanel();
+				mainPanel.remove(3);
+				//mainPanel.remove(chartPanel);
+				chartPanel = createChart();
+				
 				mainPanel.add(chartPanel);
-				chartPanel.revalidate();
+				mainPanel.revalidate();
 
 				this.showStatus("Size of good gene-sets : [" + maxCurValue + " to "
 						+ minCurValue + "]");
@@ -856,7 +730,6 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-	    
 		// TODO Auto-generated method stub
 		if( e.getSource() instanceof JXTitledPanel){
 			JPanel source = (JPanel)e.getSource();
