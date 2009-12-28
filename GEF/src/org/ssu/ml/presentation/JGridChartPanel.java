@@ -234,7 +234,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			GridBagConstraints cResizer = new GridBagConstraints();
 			cResizer.insets = new Insets(0, -8, 0, 0);
 			//BorderFactory.createt
-			maxRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Boundary1", TitledBorder.RIGHT, TitledBorder.ABOVE_TOP));
+			maxRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Upper boundary", TitledBorder.RIGHT, TitledBorder.ABOVE_TOP));
 			maxRangerPanel.add(maxRanger, cResizer);
 	        leftSideToolbar.add(maxRangerPanel);
 		}
@@ -268,7 +268,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	        minRangerPanel.setLayout(new GridBagLayout());
 			GridBagConstraints cResizer = new GridBagConstraints();
 			cResizer.insets = new Insets(0, -8, 0, 0);
-			minRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Boundary2", TitledBorder.RIGHT, TitledBorder.ABOVE_TOP));
+			minRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Lower boundary", TitledBorder.RIGHT, TitledBorder.ABOVE_TOP));
 			minRangerPanel.add(minRanger, cResizer);
 			
 			leftSideToolbar.add(minRangerPanel);
@@ -665,8 +665,8 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 				mainPanel.add(chartPanel);
 				mainPanel.revalidate();
 
-				this.showStatus("Size of good gene-sets : [" + maxCurValue + " to "
-						+ minCurValue + "]");
+				this.showStatus("Size of good gene-sets : [" + minCurValue + " to "
+						+ maxCurValue + "]");
 
 			}
 		}

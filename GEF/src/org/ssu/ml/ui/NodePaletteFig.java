@@ -88,8 +88,8 @@ public class NodePaletteFig extends WestToolBar {
         //add(new CmdSetMode(ModeCreateFigText.class, "Text"));
         
         //add(image1, "Image1", "Image1");
-        add(new CmdZoom(1.25), "Zoom-in", "zoomIn", ToolBar.BUTTON_TYPE_TEXT);
-        add(new CmdZoom(1/1.25), "Zoom-out", "zoomOut", ToolBar.BUTTON_TYPE_TEXT);
+        add(new CmdZoom(2), "Zoom-in", "zoomIn", ToolBar.BUTTON_TYPE_TEXT);
+        add(new CmdZoom(0.5), "Zoom-out", "zoomOut", ToolBar.BUTTON_TYPE_TEXT);
         //this.addSeparator();
         add(new CmdGridChart(), "Gene-set size distribution", "siGraph", ToolBar.BUTTON_TYPE_TEXT);
         //add(new CmdShowAbout(), "Show About", "about1", ToolBar.BUTTON_TYPE_NO_TEXT);
