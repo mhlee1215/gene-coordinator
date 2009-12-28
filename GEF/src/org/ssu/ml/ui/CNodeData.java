@@ -25,6 +25,8 @@ public class CNodeData {
 	double pre_scale = 1;
 	int padding = 10;
 	
+	Color defaultColor = new Color(100, 163, 194);
+	
 	public CNodeData(){
 		locxVector = new Vector<Float>(DEFAULT_SIZE);
     	locyVector = new Vector<Float>(DEFAULT_SIZE);
@@ -119,13 +121,14 @@ public class CNodeData {
 
 	public Color getColor(int index)
 	{
-		int group = groups.get(index);
-		if(group == 0) return Color.yellow;
-		else if(group == 1) return Color.green;
-		else if(group == 2) return Color.red;
-		else if(group == 3) return Color.blue;
-		else if(group == 3) return Color.magenta;
-		return Color.black;
+		return defaultColor;
+//		int group = groups.get(index);
+//		if(group == 0) return Color.yellow;
+//		else if(group == 1) return Color.green;
+//		else if(group == 2) return Color.red;
+//		else if(group == 3) return Color.blue;
+//		else if(group == 3) return Color.magenta;
+//		return Color.black;
 	} 
 	
 	public HashMap<String, DoublePair> getHashMap()
