@@ -28,6 +28,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -131,10 +132,21 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	
 	int totalWidth = 0;
 	int totalHeight = 0;
-	int chartWidth = 300;
+	int chartWidth = 250;
+	int titleWidth = 80;
 	int chartHeight = 300;
-
-	int chartPadding = 50;
+	int chartPadding = 20;
+	
+	int chartVerticalPadding = 0;
+	int chartHorizenPadding = 0;
+	
+	int chartNum = 0;
+	
+	int drawHeight = 0;
+	int drawWidth = 0;
+	int maxWidthCnt = 5;
+	int widthCnt = 0;
+	int heightCnt = 0;
 
     public String getGeneDataType() {
         return geneDataType;
@@ -168,6 +180,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     public void addData(double[] data, String category){
     	datas.add(data);
     	categories.add(category);
+    	chartNum++;
     }
     
     public Object clone() {
@@ -282,14 +295,34 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     // //////////////////////////////////////////////////////////////
     // IStatusListener implementation
 
-    
+    public void init(){
+        heightCnt = (int)(Math.ceil(((double)datas.size())/5));
+        drawHeight = heightCnt*(chartHeight+chartVerticalPadding);
+        if(datas.size() >= maxWidthCnt){
+            widthCnt = maxWidthCnt;
+        }
+        else{ 
+            widthCnt = (datas.size()%maxWidthCnt+1);
+        }
+        drawWidth = widthCnt*(chartWidth+chartHorizenPadding);
+        
+        System.out.println("widthCnt : "+widthCnt);
+        System.out.println("drawWidth : "+drawWidth);
+        System.out.println("heightCnt : "+heightCnt);
+        System.out.println("drawHeight : "+drawHeight);
+        
+    }
     /**
      * 
      */
     public void drawChart()
     {
-    	JScrollPane jScrollPane = createChart();
-    	mainPanel.add(jScrollPane, BorderLayout.CENTER);
+        init();
+        
+        chartPanel = createChart();
+        
+        chartPanel.setPreferredSize(new Dimension(700, chartHeight+chartPadding+10));
+    	mainPanel.add(chartPanel, BorderLayout.CENTER);
         //this.remove
     }
     
@@ -299,9 +332,8 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     public JScrollPane createChart(){
     	
     	JPanel createdPanel = createPanel();
-    	//_histogram.setPreferredSize(new Dimension(700, 270));
-    	createdPanel.setPreferredSize(new Dimension(datas.size()*(chartWidth+30), chartHeight+chartPadding));
-    	//chartPanel.setSize(new Dimension(1000, 600));
+    	System.out.println("data.size : "+datas.size());
+    	createdPanel.setPreferredSize(new Dimension(drawWidth, drawHeight));
     	
     	JPanel drawPanel = new JPanel();
     	drawPanel.setBackground(Color.white);
@@ -310,13 +342,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     	JScrollPane jScrollPane = new JScrollPane(drawPanel);
     	
     	jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        //jScrollPane.setViewportBorder(new LineBorder(Color.RED));
-        //jScrollPane.getViewport().add(chartPanel, null);
-        //jScrollPane.getViewport().setPreferredSize(new Dimension(1000, 600));
-        //jScrollPane.add(chartPanel);
-        
-        jScrollPane.setPreferredSize(new Dimension(700, 350));
+        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         jScrollPane.addMouseListener(this);
     	return jScrollPane;
     }
@@ -440,12 +466,14 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 		mainPanel.setName("mainPanel");
 		mainPanel.addMouseListener(this);
 		mainPanel.setBackground(Color.white);
-		GridBagConstraints gbcMain = new GridBagConstraints();  
-		mainPanel.setLayout( new GridBagLayout() );
-		mainPanel.setPreferredSize(new Dimension(700, 200));
-		gbcMain.gridy = 0;  
+		//GridBagConstraints gbcMain = new GridBagConstraints();  
+		//mainPanel.setLayout( new GridBagLayout() );
+		mainPanel.setLayout(new GridLayout(0, widthCnt));
+		//mainPanel.setLayout(new FlowLayout());
+		//mainPanel.setPreferredSize(new Dimension(700, 440));
+		//gbcMain.gridy = 0;  
 		
-		gbcMain.insets = new Insets( 20, 0, 0, 0 );
+		//gbcMain.insets = new Insets( 0, 0, 0, 0 );
 		
 		NumberAxis valueAxis = new NumberAxis("Count");
 		CombinedRangeCategoryPlot plot = new CombinedRangeCategoryPlot(valueAxis);
@@ -462,14 +490,16 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			subBorderPanel.setName(Integer.toString(count));
 			subBorderPanel.setBackground(Color.white);
 			subBorderPanel.setBorder(this.unselectedBorder);
-			
-			String title = String.format("%-88s", categories.get(count));
+			subBorderPanel.setPreferredSize(new Dimension(chartWidth, chartHeight));
+			String title = String.format("%-10s", categories.get(count));
 			JXTitledPanel subTitlePanel = new JXTitledPanel(title);
-			
+			int titleWidth = chartWidth-40;
+			int titleHeight = chartHeight-34;
+			subTitlePanel.setPreferredSize(new Dimension(titleWidth, titleHeight));
 			
 			GridBagConstraints gbcBorder = new GridBagConstraints();  
 			subBorderPanel.setLayout( new GridBagLayout() );   
-		    gbcBorder.insets = new Insets(14, 10, 5, 0);
+		    gbcBorder.insets = new Insets(14, 15, 20, 15);
 		    
 		    
 		    subBorderPanel.add( subTitlePanel, gbcBorder );
@@ -509,6 +539,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			//subTitlePanel.setTitlePainter(mattePainter);
 			subTitlePanel.setTitlePainter(new CompoundPainter(mattePainter));
 			subTitlePanel.setBorder(null);
+			//subTitlePanel.setPreferredSize(new Dimension(chartWidth+58, chartHeight+30));
 			RectanglePainter backgroundRoundRect = new RectanglePainter(
 			        6, 6, 6, 6, 10,10,   true, 
 				Color.GRAY, 3, Color.DARK_GRAY); 
@@ -523,24 +554,26 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			System.out.println("popup size : "+innerChartPanel.getComponentPopupMenu());
 			
 			System.out.println("createPanel size : "+getSize());
-			innerChartPanel.setPreferredSize(new Dimension(chartWidth, this.chartHeight-24));
+			innerChartPanel.setPreferredSize(new Dimension(titleWidth-115, titleHeight-116));
 			
 			JRadioButton radio = new JRadioButton();
 			radio.setText("radio");
 			
 			
 			GridBagConstraints gbc = new GridBagConstraints();  
-			subTitlePanel.setLayout( new GridBagLayout() );   
+			//subTitlePanel.setLayout( new GridBagLayout() );   
 		    gbc.gridy = 1;  
 		    gbc.insets = new Insets( 1, 5, 10, 5 );  
 		    
-		    
-		    subTitlePanel.add( innerChartPanel, gbc );
+		    //JPanel tmpPanel = new JPanel();
+		    //tmpPanel.add(innerChartPanel);
+		    //tmpPanel.setPreferredSize(new Dimension(titleWidth-50, titleHeight-50));
+		    subTitlePanel.add( innerChartPanel);
 			
 		    subTitlePanel.addMouseListener(this);
 		    innerChartPanel.addMouseListener(this);
 		    
-			mainPanel.add(subBorderPanel, gbcMain);
+			mainPanel.add(subBorderPanel);
 			plot.add(cplot);
 		}
 		
@@ -600,10 +633,12 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     	
     	
     	char1.setBackground(Color.white);
-    	char1.addData(data, "data1");
-    	char1.addData(data1, "data2");
-    	char1.addData(data2, "data3");
+    	char1.addData(data, "Interval : 100, X axis Offset : 100, Y axis Offset : 200");
+    	char1.addData(data1, "2");
+    	char1.addData(data2, "33");
     	//char1.addData(data3, "datar");
+    	//char1.addData(data2, "33");
+        //char1.addData(data3, "datar");
     	char1.drawChart();
     	frame.add(char1);
     	//frame.add(char1);
