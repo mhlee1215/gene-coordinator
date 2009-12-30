@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -51,6 +52,7 @@ public class CmdSaveGridData extends Cmd implements ComponentListener {
     	
     	if(gridPanel.getChart() == null){
     		System.out.println("please select at least one Graph.");
+    		JOptionPane.showMessageDialog(UiGlobals.getDistFrame(), "Please select a graph you want.");
     		return;
     	}
         

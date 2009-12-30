@@ -103,6 +103,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		ResourceLoader.addResourceExtension("jpg");
 		ResourceLoader.addResourceLocation("/org/tigris/gef/Images");
 		
+		UiGlobals.init();
 		System.out.println("constructur");
 
 

@@ -88,8 +88,8 @@ public class CmdGridChart extends Cmd implements ComponentListener {
         for(int count = 0 ; count < result.length ; count++)
         	result_1[count] = (double)result[count];
         
-        String category = "Inteval : "+interval_space+", X axis offset : "+xOffset+", Y axix offset"+yOffset;
-        category = "d"+interval_space+"x"+xOffset+"y"+yOffset;
+        String category = "Cell size : "+interval_space+",x axis offset : "+xOffset+",x axis offset : "+yOffset;
+        //category = "d"+interval_space+"x"+xOffset+"y"+yOffset;
         if(UiGlobals.getGridCategories().size() == 0 || !UiGlobals.getGridCategories().get(UiGlobals.getGridCategories().size()-1).equals(category)){
 	        UiGlobals.getGridStes().add(new CGridState(interval_space, xOffset, yOffset));
 	        UiGlobals.getGridDatas().add(result_1);
