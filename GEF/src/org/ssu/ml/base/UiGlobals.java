@@ -1,6 +1,5 @@
 package org.ssu.ml.base;
 
-import java.applet.Applet;
 import java.awt.Font;
 import java.util.Vector;
 
@@ -31,6 +30,11 @@ public class UiGlobals extends Globals{
 	
 	private static JFrame distFrame;
 	
+	public static void init(){
+	    gridDatas.clear();
+	    gridStes.clear();
+	    gridCategories.clear();
+	}
 	
 	public static JFrame getDistFrame() {
 		return distFrame;

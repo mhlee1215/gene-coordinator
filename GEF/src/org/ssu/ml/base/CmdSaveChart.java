@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -68,6 +69,7 @@ public class CmdSaveChart extends Cmd {
     		//Component[] c = selectedPanel.getComponents();
     		//System.out.println(c[0]);
     		if(gridPanel.getChart() == null){
+    		    JOptionPane.showMessageDialog(UiGlobals.getDistFrame(), "Please select a graph you want.");
     			System.out.println("You must select one Graph to save.");
     		}
     		else{

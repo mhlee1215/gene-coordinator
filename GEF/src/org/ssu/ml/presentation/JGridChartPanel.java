@@ -28,7 +28,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -132,7 +131,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	
 	int totalWidth = 0;
 	int totalHeight = 0;
-	int chartWidth = 250;
+	int chartWidth = 280;
 	int titleWidth = 80;
 	int chartHeight = 300;
 	int chartPadding = 20;
@@ -414,7 +413,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
         renderer.setItemLabelsVisible(true);
         
         NumberFormat format = NumberFormat.getInstance();
-        String labelFormat = "<html><body style=\"background-color: #ffffdd\"><h1>{0}</h1><br><h2>{1}</h2><br><h3>{2}</h3></body></html>";
+        String labelFormat = "<html><body style=\"background-color: #ffffdd\"><h2>{0} area</h2><br><strong>Location Info</strong> : {1}<br><strong>Count</strong> : {2}</body></html>";
         StandardCategoryToolTipGenerator generator = new StandardCategoryToolTipGenerator(labelFormat, format);
         //System.out.println(generator.getLabelFormat());
         
@@ -779,8 +778,15 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			JPanel source = (JPanel)e.getSource();
 			if(source.getName() != null && source.getName().equals("mainPanel")){
 				//unselect all panel.
-				selectedPanel.setBorder(this.unselectedBorder);
-				selectedPanel = null;
+			    if(selectedPanel == null){
+			        // TODO Need to fix... It doesn't work but not a serious problem.
+			        e.setSource(source.getParent());
+	                mousePressed(e);
+			    }
+			    else{
+			        selectedPanel.setBorder(this.unselectedBorder);
+			        selectedPanel = null;
+			    }
 			}else{
 				e.setSource(source.getParent());
 				mousePressed(e);
