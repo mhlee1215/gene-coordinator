@@ -280,7 +280,9 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	        minRangerPanel.setLayout(new GridBagLayout());
 			GridBagConstraints cResizer = new GridBagConstraints();
 			cResizer.insets = new Insets(0, -8, 0, 0);
-			minRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Lower boundary", TitledBorder.RIGHT, TitledBorder.ABOVE_TOP));
+			
+			minRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Lower \nboundary", TitledBorder.LEADING, TitledBorder.ABOVE_TOP));
+			
 			minRangerPanel.add(minRanger, cResizer);
 			
 			leftSideToolbar.add(minRangerPanel);
@@ -488,7 +490,16 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			JXPanel subBorderPanel = new JXPanel();
 			subBorderPanel.setName(Integer.toString(count));
 			subBorderPanel.setBackground(Color.white);
+			
 			subBorderPanel.setBorder(this.unselectedBorder);
+			if(UiGlobals.getIsExample().equals("Y")){
+				if(UiGlobals.getExampleType().equals("2")){
+					subBorderPanel.setBorder(this.selectedBorder);
+					selectedPanel = subBorderPanel;
+				}
+			}
+			
+			
 			subBorderPanel.setPreferredSize(new Dimension(chartWidth, chartHeight));
 			String title = String.format("%-10s", categories.get(count));
 			JXTitledPanel subTitlePanel = new JXTitledPanel(title);
