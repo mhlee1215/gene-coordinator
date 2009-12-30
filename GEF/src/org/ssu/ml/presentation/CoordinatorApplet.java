@@ -177,52 +177,11 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		//UiGlobals.setPre_scaled(pre_scaled);
 		UiGlobals.setFileName(this.getParameter("fileName"));
 		
+		UiGlobals.setIsExample(this.getParameter("isExample"));
+		UiGlobals.setExampleType(this.getParameter("type"));
+		System.out.println("isExample : "+UiGlobals.getIsExample());
+		System.out.println("exampleType : "+UiGlobals.getExampleType());
 	}
-	
-//	public void drawNodes(int prescale)
-//	{
-//		float minLocx = Utils.minValue(data.getLocxArry());
-//		float minLocy = Utils.minValue(data.getLocyArry());
-//		float maxLocx = Utils.maxValue(data.getLocxArry());
-//		float maxLocy = Utils.maxValue(data.getLocyArry());
-//
-//		_width = (int) maxLocx - (int) minLocx + _PADDING;
-//		_height = (int) maxLocy - (int) minLocy + _PADDING;
-//		this.setSize(_width, _height);
-//
-//		double scale = Math.pow(2, pre_scaled - 1);
-//
-//		id = this.getParameter("id");
-//		System.out.println("id : " + id);
-//		System.out.println("pre_scaled : " + pre_scaled + ", real scale : "
-//				+ scale);
-//		System.out.println("codebase = " + this.getCodeBase().toString());
-//
-//		// int pre_scaled = 2;
-//		editor.setScale(1.0 / scale);
-//		
-//		data.setPre_scale(scale);
-//		_width *= scale;
-//		_height *= scale;
-//		_graph.setDrawingSize(_width, _height);
-//
-//		LayerGrid grid = (LayerGrid) editor.getLayerManager().findLayerNamed(
-//				"Grid");
-//		HashMap<String, Object> map = new HashMap<String, Object>();
-//
-//		double defaultSpace = (int) Math.pow(2, 5);
-//		map.put("spacing", (int) (scale * defaultSpace));
-//		map.put("thick", (int) scale);
-//		grid.adjust(map);
-//
-//		//int maxNodeNum = data.getPointCount();
-//		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				// createAndShowGUI();
-//				new NodeLoadingProgressBar(data, _graph);
-//			}
-//		});
-//	}
 
 	public void destroy() {
 		// TODO Auto-generated method stub

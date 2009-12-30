@@ -36,6 +36,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
+import org.ssu.ml.base.CmdGridChart;
 import org.ssu.ml.base.DoublePair;
 import org.ssu.ml.base.NodeDescriptor;
 import org.ssu.ml.base.UiGlobals;
@@ -180,6 +181,13 @@ public class NodeLoadingProgressBar extends JPanel
             
             UiGlobals.setStatusbarText(" Node rendering is completed.");
             
+            
+            if(UiGlobals.getIsExample().equals("Y")){
+            	if(UiGlobals.getExampleType().equals("2")){
+            		CmdGridChart cmdGridChart = new CmdGridChart();
+            		cmdGridChart.doIt();
+            	}
+            }
         }
     }
     

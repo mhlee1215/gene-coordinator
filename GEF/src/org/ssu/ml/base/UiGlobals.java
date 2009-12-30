@@ -11,6 +11,9 @@ import org.ssu.ml.ui.NodeRenderManager;
 import org.tigris.gef.base.Globals;
 
 public class UiGlobals extends Globals{
+	public static String isExample = "N";
+	public static String exampleType = "1";
+	
 	private static Font normalFont = new Font("Lucida Grande", Font.PLAIN, 10);
 	private static Font titleFont = new Font("Lucida Grande", Font.BOLD, 25);
 	private static ColorPool constantColor = new ColorPool();
@@ -36,6 +39,32 @@ public class UiGlobals extends Globals{
 	    gridCategories.clear();
 	}
 	
+	
+	
+	public static String getIsExample() {
+		return isExample;
+	}
+
+
+
+	public static void setIsExample(String isExample) {
+		UiGlobals.isExample = isExample;
+	}
+
+
+
+	public static String getExampleType() {
+		return exampleType;
+	}
+
+
+
+	public static void setExampleType(String exampleType) {
+		UiGlobals.exampleType = exampleType;
+	}
+
+
+
 	public static JFrame getDistFrame() {
 		return distFrame;
 	}
