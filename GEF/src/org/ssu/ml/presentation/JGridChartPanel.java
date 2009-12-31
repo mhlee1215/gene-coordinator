@@ -28,6 +28,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -240,13 +241,15 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	        maxRanger.addChangeListener(this);
 	        maxRanger.setPaintTicks(true);
 	        maxRanger.setMinorTickSpacing(5);
-	        maxRanger.setPreferredSize(new Dimension(50, 130));
+	        maxRanger.setPreferredSize(new Dimension(60, 130));
 	        JPanel maxRangerPanel = new JPanel();
 	        maxRangerPanel.setLayout(new GridBagLayout());
 			GridBagConstraints cResizer = new GridBagConstraints();
 			cResizer.insets = new Insets(0, -8, 0, 0);
 			//BorderFactory.createt
-			maxRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Upper boundary", TitledBorder.RIGHT, TitledBorder.ABOVE_TOP));
+			Font borderFont = new Font("Lucida Grande", Font.PLAIN, 9);
+			maxRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Upper boundary", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, borderFont));
+			
 			maxRangerPanel.add(maxRanger, cResizer);
 	        leftSideToolbar.add(maxRangerPanel);
 		}
@@ -281,7 +284,8 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			GridBagConstraints cResizer = new GridBagConstraints();
 			cResizer.insets = new Insets(0, -8, 0, 0);
 			
-			minRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Lower \nboundary", TitledBorder.LEADING, TitledBorder.ABOVE_TOP));
+			Font borderFont = new Font("Lucida Grande", Font.PLAIN, 9);
+			minRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Lower \nboundary", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, borderFont));
 			
 			minRangerPanel.add(minRanger, cResizer);
 			
