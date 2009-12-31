@@ -177,7 +177,9 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		//UiGlobals.setPre_scaled(pre_scaled);
 		UiGlobals.setFileName(this.getParameter("fileName"));
 		
-		UiGlobals.setIsExample(this.getParameter("isExample"));
+		String isExample = this.getParameter("isExample");
+		if(isExample == null) isExample = "N";
+		UiGlobals.setIsExample(isExample);
 		UiGlobals.setExampleType(this.getParameter("type"));
 		System.out.println("isExample : "+UiGlobals.getIsExample());
 		System.out.println("exampleType : "+UiGlobals.getExampleType());
