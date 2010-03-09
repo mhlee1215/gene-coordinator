@@ -4,55 +4,65 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.event.KeyEvent;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Random;
+import java.util.Vector;
 
 import javax.swing.JApplet;
-
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EtchedBorder;
-import javax.swing.plaf.metal.DefaultMetalTheme;
-import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.ssu.ml.base.UiGlobals;
-import org.ssu.ml.ui.CEdgeData;
-import org.ssu.ml.ui.CNodeData;
-import org.ssu.ml.ui.NodeLoadingProgressBar;
 import org.ssu.ml.ui.NodePaletteFig;
 import org.ssu.ml.ui.NodeRenderManager;
 import org.ssu.ml.ui.ResizerPaletteFig;
 import org.ssu.ml.ui.Utils;
 import org.ssu.ml.ui.WestToolBar;
-import org.tigris.gef.base.*;
+import org.tigris.gef.base.AlignAction;
+import org.tigris.gef.base.CmdAdjustGrid;
+import org.tigris.gef.base.CmdAdjustGuide;
+import org.tigris.gef.base.CmdAdjustPageBreaks;
+import org.tigris.gef.base.CmdCopy;
+import org.tigris.gef.base.CmdExit;
+import org.tigris.gef.base.CmdGroup;
+import org.tigris.gef.base.CmdOpen;
+import org.tigris.gef.base.CmdOpenWindow;
+import org.tigris.gef.base.CmdPaste;
+import org.tigris.gef.base.CmdPrint;
+import org.tigris.gef.base.CmdPrintPageSetup;
+import org.tigris.gef.base.CmdRemoveFromGraph;
+import org.tigris.gef.base.CmdReorder;
+import org.tigris.gef.base.CmdSave;
+import org.tigris.gef.base.CmdSavePGML;
+import org.tigris.gef.base.CmdSaveSVG;
+import org.tigris.gef.base.CmdSelectAll;
+import org.tigris.gef.base.CmdSelectInvert;
+import org.tigris.gef.base.CmdSelectNext;
+import org.tigris.gef.base.CmdShowProperties;
+import org.tigris.gef.base.CmdSpawn;
+import org.tigris.gef.base.CmdUngroup;
+import org.tigris.gef.base.CmdUseReshape;
+import org.tigris.gef.base.CmdUseResize;
+import org.tigris.gef.base.CmdUseRotate;
+import org.tigris.gef.base.DistributeAction;
+import org.tigris.gef.base.Editor;
+import org.tigris.gef.base.LayerGrid;
+import org.tigris.gef.base.NudgeAction;
 import org.tigris.gef.event.ModeChangeEvent;
 import org.tigris.gef.event.ModeChangeListener;
 import org.tigris.gef.graph.presentation.JGraph;
-import org.tigris.gef.presentation.FigRect;
-import org.tigris.gef.presentation.FigText;
-import org.tigris.gef.ui.IStatusBar;
-import org.tigris.gef.ui.PaletteFig;
-import org.tigris.gef.ui.Progress;
-import org.tigris.gef.ui.ToolBar;
 import org.tigris.gef.undo.RedoAction;
 import org.tigris.gef.undo.UndoAction;
 import org.tigris.gef.util.Localizer;
@@ -150,6 +160,61 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		UiGlobals.setApplet(this);
 
 	}
+	
+	private void initAnnotation(String filename){
+		String AnnotationFileName = filename;
+		Vector<String> headerColumn = new Vector<String>();
+		Vector<HashMap<Integer, String>> annotationContent = new Vector<HashMap<Integer, String>>();
+	
+		try {
+			BufferedReader br = Utils.getInputReader(AnnotationFileName);
+			
+			String strTmp = "";
+			
+			int count = 0;
+			
+			while((strTmp=br.readLine()) != null)
+			{
+				
+				if(!strTmp.startsWith("#"))
+				{
+					
+					if(count == 0){
+						//Read head.
+						String[] strs = strTmp.split(",");
+						for(int headCnt = 0 ; headCnt < strs.length ; headCnt++)
+						{
+							headerColumn.add(strs[headCnt]);
+						}
+					}else{
+					
+					
+						String[] strs = strTmp.split("\",\"");
+						//Target ID
+						
+						if(count%500 == 0){
+							System.out.println("["+count+"] : "+strTmp);
+						}
+						
+						HashMap<Integer, String> contentMap = new HashMap<Integer, String>();
+						for(int strCnt = 0 ; strCnt < strs.length && strCnt < 5; strCnt++)
+						{
+							String contentTmp = strs[strCnt].replace("\"", "").trim();
+							contentMap.put(strCnt, contentTmp);
+						}
+						annotationContent.add(contentMap);
+						
+					}
+					count++;
+				}
+			}		
+			UiGlobals.setAnnotationHeader(headerColumn);
+			UiGlobals.setAnnotationContent(annotationContent);
+			br.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 
 	private void jbInit() throws Exception {
 
@@ -168,14 +233,11 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		
 		
 		
-	
-		NodeRenderManager nodeRenderManager = new NodeRenderManager(_graph);
-		nodeRenderManager.init(_width, _height);
-		nodeRenderManager.drawNodes(true);
 		
-		UiGlobals.setNodeRenderManager(nodeRenderManager);
+		
 		//UiGlobals.setPre_scaled(pre_scaled);
 		UiGlobals.setFileName(this.getParameter("fileName"));
+		UiGlobals.setAnnotationFileName(this.getParameter("annotationFileName"));
 		
 		String isExample = this.getParameter("isExample");
 		if(isExample == null) isExample = "N";
@@ -183,6 +245,16 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		UiGlobals.setExampleType(this.getParameter("type"));
 		System.out.println("isExample : "+UiGlobals.getIsExample());
 		System.out.println("exampleType : "+UiGlobals.getExampleType());
+		
+		//Start to read annotation file
+		//initAnnotation(UiGlobals.getAnnotationFileName());
+		
+		//Start to node rendering
+		NodeRenderManager nodeRenderManager = new NodeRenderManager(_graph);
+		nodeRenderManager.init(_width, _height);
+		nodeRenderManager.drawNodes(true);
+		UiGlobals.setNodeRenderManager(nodeRenderManager);
+		
 	}
 
 	public void destroy() {
@@ -216,7 +288,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		grid.adjust(map);
 
 		Container content = getContentPane();
-		setUpMenus();
+		//setUpMenus();
 		content.setLayout(new BorderLayout());
 		//content.add(_menubar, BorderLayout.NORTH);
 		_graphPanel.add(_graph, BorderLayout.CENTER);
@@ -426,6 +498,10 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		super.stop();
 	}
 	
+	/**
+	 * Set default font
+	 * @param font
+	 */
 	public void setDefaultFont(Font font)
 	{
 		
