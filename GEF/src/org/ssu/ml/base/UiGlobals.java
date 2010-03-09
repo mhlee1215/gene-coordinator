@@ -1,6 +1,7 @@
 package org.ssu.ml.base;
 
 import java.awt.Font;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -22,7 +23,11 @@ public class UiGlobals extends Globals{
 	private static Vector<CGridState> gridStes = new Vector<CGridState>();
 	private static Vector<String> gridCategories = new Vector<String>();
 	
+	private static Vector<String> annotationHeader = new Vector<String>();
+	private static Vector<HashMap<Integer, String>> annotationContent = new Vector<HashMap<Integer, String>>();
+	
 	private static String fileName = "";
+	private static String annotationFileName = "";
 	private static int default_grid_spacing = 20;
 	private static int drawingSizeX;
 	private static int drawingSizeY;
@@ -41,29 +46,46 @@ public class UiGlobals extends Globals{
 	
 	
 	
+	public static Vector<String> getAnnotationHeader() {
+		return annotationHeader;
+	}
+
+	public static void setAnnotationHeader(Vector<String> annotationHeader) {
+		UiGlobals.annotationHeader = annotationHeader;
+	}
+
+	public static Vector<HashMap<Integer, String>> getAnnotationContent() {
+		return annotationContent;
+	}
+
+	public static void setAnnotationContent(
+			Vector<HashMap<Integer, String>> annotationContent) {
+		UiGlobals.annotationContent = annotationContent;
+	}
+
+	public static String getAnnotationFileName() {
+		return annotationFileName;
+	}
+
+	public static void setAnnotationFileName(String annotationFileName) {
+		UiGlobals.annotationFileName = annotationFileName;
+	}
+
 	public static String getIsExample() {
 		return isExample;
 	}
-
-
 
 	public static void setIsExample(String isExample) {
 		UiGlobals.isExample = isExample;
 	}
 
-
-
 	public static String getExampleType() {
 		return exampleType;
 	}
 
-
-
 	public static void setExampleType(String exampleType) {
 		UiGlobals.exampleType = exampleType;
 	}
-
-
 
 	public static JFrame getDistFrame() {
 		return distFrame;
