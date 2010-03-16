@@ -41,7 +41,7 @@ public class NodeRenderManager {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				// createAndShowGUI();
-				new NodeLoadingProgressBar(graph);
+				new LoadingProgressBarNode(graph);
 			}
 		});
 		
