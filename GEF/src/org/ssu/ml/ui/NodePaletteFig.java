@@ -30,12 +30,16 @@ package org.ssu.ml.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.Vector;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
 import org.ssu.ml.base.CmdGridChart;
 import org.ssu.ml.base.CmdShowAbout;
 import org.ssu.ml.base.CmdZoom;
+import org.ssu.ml.base.UiGlobals;
 import org.tigris.gef.base.ModeCreateFigCircle;
 import org.tigris.gef.base.ModeCreateFigLine;
 import org.tigris.gef.base.ModeCreateFigPoly;
@@ -101,6 +105,20 @@ public class NodePaletteFig extends WestToolBar {
         
         System.out.println("back!!!!!!!!!!!!!"+this.getBackground());
         System.out.println("back!!!!!!!!!!!!!"+this.getForeground());
+        
+        Vector<String> annotHeader = UiGlobals.getAnnotationHeader();
+        
+        
+        String[] strScaleItems = new String[annotHeader.size()];
+        annotHeader.toArray(strScaleItems);
+		JComboBox scaleCombo = new JComboBox(strScaleItems);
+		add(scaleCombo);
+		add(searchField);
+		
+		JButton searchButton = new JButton("Search");
+		add(searchButton);
+		
+		
         //add(searchField);
     }
 } /* end class PaletteFig */

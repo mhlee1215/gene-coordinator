@@ -59,10 +59,10 @@ import java.util.Random;
 import org.ssu.ml.presentation.FigCustomNode;
 
 
-public class NodeLoadingProgressBar extends JPanel
+public class LoadingProgressBarNode extends JPanel
                               implements ActionListener, 
                                          PropertyChangeListener {
-	Logger logger = Logger.getLogger(NodeLoadingProgressBar.class);
+	Logger logger = Logger.getLogger(LoadingProgressBarNode.class);
 	
 	private final static int STATUS_STARTED = 0;
 	private final static int STATUS_STOPPED = 1;
@@ -191,7 +191,7 @@ public class NodeLoadingProgressBar extends JPanel
         }
     }
     
-    public NodeLoadingProgressBar(JGraph graph) {
+    public LoadingProgressBarNode(JGraph graph) {
         super(new BorderLayout());
         nodeData = new CNodeData();
         

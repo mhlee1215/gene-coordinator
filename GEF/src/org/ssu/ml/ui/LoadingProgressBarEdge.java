@@ -56,7 +56,7 @@ import java.util.Random;
 import org.ssu.ml.presentation.FigCustomNode;
 
 
-public class EdgeLoadingProgressBar extends JPanel
+public class LoadingProgressBarEdge extends JPanel
                               implements ActionListener, 
                                          PropertyChangeListener {
 
@@ -226,11 +226,11 @@ public class EdgeLoadingProgressBar extends JPanel
         }
     }
 
-    public EdgeLoadingProgressBar(CNodeData nodeData, JGraph editor) {
+    public LoadingProgressBarEdge(CNodeData nodeData, JGraph editor) {
     	this(nodeData, null, editor);
     }
     
-    public EdgeLoadingProgressBar(CNodeData nodeData, CEdgeData edgeData, JGraph editor) {
+    public LoadingProgressBarEdge(CNodeData nodeData, CEdgeData edgeData, JGraph editor) {
         super(new BorderLayout());
 
         this._graph = editor;
