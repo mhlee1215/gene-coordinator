@@ -88,6 +88,7 @@ public class LoadingProgressBarAnnotation extends JPanel
             setProgress(0);
             
             String AnnotationFileName = filename;
+            System.out.println("Annotation file name: "+filename);
     		Vector<String> headerColumn = new Vector<String>();
     		HashMap<String, HashMap<Integer, String>> annotationContent = new HashMap<String, HashMap<Integer, String>>();
     	
@@ -128,10 +129,11 @@ public class LoadingProgressBarAnnotation extends JPanel
     						annotationContent.put(proveId, contentMap);
     						
     						if(count%100 == 0){
-    							System.out.println(strTmp);
-    							String output = String.format("%.0f", ((double)count*100)/UiGlobals.getNodeCount())+"% Annotation file load..";
+    							//System.out.println(strTmp);
+    							String output = String.format("%.0f", ((double)count*100)/UiGlobals.getNodeCount())+"% An annotation file is being loaded..";
     							UiGlobals.getPropertySearchField().setText(output);
-    							System.out.println("["+count+"] :: "+proveId);
+    							UiGlobals.setStatusbarText(output);
+    							//System.out.println("["+count+"] :: "+proveId);
     						}
     						
     					}
@@ -141,6 +143,26 @@ public class LoadingProgressBarAnnotation extends JPanel
     			UiGlobals.setAnnotationHeader(headerColumn);
     			UiGlobals.setAnnotationContent(annotationContent);
     			br.close();
+    			
+    			Editor editor = UiGlobals.curEditor();
+    			java.util.List<Fig> nodes = editor.getLayerManager().getActiveLayer().getContents();
+    			String prefix = "<html><body style=\"background-color: #ffffdd\"><h3><font color=#000000><span >";
+	            String postfix = "</span></font></h3></body></html>";
+    			for(int count1 = 0 ; count1 < nodes.size() ; count1++)
+    	        {
+    	        	Fig node = nodes.get(count1);
+    	        	FigCustomNode nodeCustom = (FigCustomNode)node;
+    	        	NodeDescriptor desc = (NodeDescriptor)nodeCustom.getOwner();
+    	        	String resultToolTipContent = "";
+    	        	
+    	        	
+    	        	resultToolTipContent = prefix;
+    	        	resultToolTipContent += postfix;
+    	        	
+    	        	
+    	        	
+    	            
+    	        }
     		}catch(Exception e){
     			e.printStackTrace();
     		}
@@ -156,12 +178,14 @@ public class LoadingProgressBarAnnotation extends JPanel
         public void done() {
         	UiGlobals.getPropertySearchButton().setEnabled(true);
         	UiGlobals.getPropertySearchCombo().setEnabled(true);
+        	UiGlobals.getPropertySearchCombo().setPreferredSize(new Dimension(200, 30));
         	String[] propertyItem = new String[UiGlobals.getAnnotationHeader().size()];
         	UiGlobals.getAnnotationHeader().toArray(propertyItem);
         	
         	for(int i = 0 ; i < propertyItem.length ; i++)
         		UiGlobals.getPropertySearchCombo().addItem(propertyItem[i]);
         	UiGlobals.getPropertySearchField().setEnabled(true);
+        	UiGlobals.getPropertySearchField().setPreferredSize(new Dimension(150, 30));
         	UiGlobals.getPropertySearchField().setText("");
         	UiGlobals.getPropertyResetButton().setEnabled(true);
         }
