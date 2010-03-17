@@ -4,9 +4,12 @@ import java.awt.Font;
 import java.util.HashMap;
 import java.util.Vector;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 
 import org.ssu.ml.ui.NodeRenderManager;
 import org.tigris.gef.base.Globals;
@@ -24,7 +27,7 @@ public class UiGlobals extends Globals{
 	private static Vector<String> gridCategories = new Vector<String>();
 	
 	private static Vector<String> annotationHeader = new Vector<String>();
-	private static Vector<HashMap<Integer, String>> annotationContent = new Vector<HashMap<Integer, String>>();
+	private static HashMap<String, HashMap<Integer, String>> annotationContent = new HashMap<String, HashMap<Integer, String>>();
 	
 	private static String fileName = "";
 	private static String annotationFileName = "";
@@ -38,6 +41,46 @@ public class UiGlobals extends Globals{
 	
 	private static JFrame distFrame;
 	
+	private static JTextField propertySearchField;
+	private static JComboBox propertySearchCombo;
+	private static JButton propertySearchButton;
+	private static JButton propertyResetButton;
+	
+	private static int nodeCount = 0;
+	
+	public static int getNodeCount() {
+		return nodeCount;
+	}
+	public static void setNodeCount(int nodeCount) {
+		UiGlobals.nodeCount = nodeCount;
+	}
+	public static JTextField getPropertySearchField() {
+		return propertySearchField;
+	}
+	public static void setPropertySearchField(JTextField propertySearchField) {
+		UiGlobals.propertySearchField = propertySearchField;
+	}
+	public static JComboBox getPropertySearchCombo() {
+		return propertySearchCombo;
+	}
+	public static JButton getPropertyResetButton() {
+		return propertyResetButton;
+	}
+	public static void setPropertyResetButton(JButton propertyResetButton) {
+		UiGlobals.propertyResetButton = propertyResetButton;
+	}
+	public static void setPropertySearchCombo(JComboBox propertySearchCombo) {
+		UiGlobals.propertySearchCombo = propertySearchCombo;
+	}
+	public static JButton getPropertySearchButton() {
+		return propertySearchButton;
+	}
+	public static void setPropertySearchButton(JButton propertySearchButton) {
+		UiGlobals.propertySearchButton = propertySearchButton;
+	}
+
+
+
 	public static void init(){
 	    gridDatas.clear();
 	    gridStes.clear();
@@ -54,15 +97,15 @@ public class UiGlobals extends Globals{
 		UiGlobals.annotationHeader = annotationHeader;
 	}
 
-	public static Vector<HashMap<Integer, String>> getAnnotationContent() {
+	
+
+	public static HashMap<String, HashMap<Integer, String>> getAnnotationContent() {
 		return annotationContent;
 	}
-
 	public static void setAnnotationContent(
-			Vector<HashMap<Integer, String>> annotationContent) {
+			HashMap<String, HashMap<Integer, String>> annotationContent) {
 		UiGlobals.annotationContent = annotationContent;
 	}
-
 	public static String getAnnotationFileName() {
 		return annotationFileName;
 	}

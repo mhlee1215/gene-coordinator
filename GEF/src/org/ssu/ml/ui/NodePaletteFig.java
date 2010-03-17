@@ -30,16 +30,24 @@ package org.ssu.ml.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
+import org.ssu.ml.base.CGridHistogramData;
 import org.ssu.ml.base.CmdGridChart;
 import org.ssu.ml.base.CmdShowAbout;
 import org.ssu.ml.base.CmdZoom;
 import org.ssu.ml.base.UiGlobals;
+import org.ssu.ml.presentation.FigCustomNode;
+import org.tigris.gef.base.Editor;
 import org.tigris.gef.base.ModeCreateFigCircle;
 import org.tigris.gef.base.ModeCreateFigLine;
 import org.tigris.gef.base.ModeCreateFigPoly;
@@ -47,6 +55,7 @@ import org.tigris.gef.base.ModeCreateFigRRect;
 import org.tigris.gef.base.ModeCreateFigRect;
 import org.tigris.gef.base.ModeCreateFigText;
 import org.tigris.gef.base.ModeSelect;
+import org.tigris.gef.presentation.Fig;
 import org.tigris.gef.ui.ToolBar;
 
 /**
@@ -66,12 +75,15 @@ import org.tigris.gef.ui.ToolBar;
  * @see ModeCreateFigPoly
  */
 
-public class NodePaletteFig extends WestToolBar {
+public class NodePaletteFig extends WestToolBar implements ActionListener, PropertyChangeListener{
 
     /**
      * 
      */
     private static final long serialVersionUID = 304194274216578087L;
+    
+    String keyword = "";
+	String propertyName = "";
 
     public NodePaletteFig() {
         defineButtons();
@@ -98,27 +110,83 @@ public class NodePaletteFig extends WestToolBar {
         add(new CmdGridChart(), "Gene-set size distribution", "siGraph", ToolBar.BUTTON_TYPE_TEXT);
         //add(new CmdShowAbout(), "Show About", "about1", ToolBar.BUTTON_TYPE_NO_TEXT);
         
-        JTextField searchField = new JTextField();
-        searchField.setPreferredSize(new Dimension(200, 30));
-        this.setBackground(Color.black);
-        this.setForeground(Color.black);
         
-        System.out.println("back!!!!!!!!!!!!!"+this.getBackground());
-        System.out.println("back!!!!!!!!!!!!!"+this.getForeground());
         
         Vector<String> annotHeader = UiGlobals.getAnnotationHeader();
         
         
         String[] strScaleItems = new String[annotHeader.size()];
         annotHeader.toArray(strScaleItems);
-		JComboBox scaleCombo = new JComboBox(strScaleItems);
-		add(scaleCombo);
+		JComboBox searchCombo = new JComboBox(strScaleItems);
+		searchCombo.setPreferredSize(new Dimension(200, 30));
+		searchCombo.setEnabled(false);
+		searchCombo.addActionListener(this);
+		UiGlobals.setPropertySearchCombo(searchCombo);
+		add(searchCombo);
+		
+		JTextField searchField = new JTextField();
+        searchField.setEnabled(false);
+        searchField.setPreferredSize(new Dimension(150, 30));
+        UiGlobals.setPropertySearchField(searchField);
+        searchField.addActionListener(this);
 		add(searchField);
 		
 		JButton searchButton = new JButton("Search");
+		searchButton.setName("Search");
+		searchButton.setEnabled(false);
+		UiGlobals.setPropertySearchButton(searchButton);
+		searchButton.addActionListener(this);
 		add(searchButton);
+		
+		JButton resetButton = new JButton("Reset");
+		resetButton.setName("Reset");
+		resetButton.setEnabled(false);
+		UiGlobals.setPropertyResetButton(resetButton);
+		resetButton.addActionListener(this);
+		add(resetButton);
 		
 		
         //add(searchField);
     }
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object s = e.getSource();
+		if(s instanceof JButton){
+			JButton button = (JButton)s;
+			Editor editor = UiGlobals.curEditor();
+			if("Search".equals(button.getName())){
+				String selectedProperty = (String)UiGlobals.getPropertySearchCombo().getSelectedItem();
+				System.out.println("searc start: "+selectedProperty);
+				
+				
+				
+				javax.swing.SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						// createAndShowGUI();
+						new LoadingProgressBarSearchAndMark(keyword, propertyName);
+					}
+				});
+			}else if("Reset".equals(button.getName())){
+				javax.swing.SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						// createAndShowGUI();
+						new LoadingProgressBarSearchAndMark(keyword, propertyName, true);
+					}
+				});
+			}
+			
+		}
+		else if(s instanceof JComboBox){
+		    JComboBox cb = (JComboBox)s;
+		    String scaleName = (String)cb.getSelectedItem();
+		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent propertychangeevent) {
+		// TODO Auto-generated method stub
+		
+	}
 } /* end class PaletteFig */

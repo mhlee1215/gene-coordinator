@@ -25,8 +25,13 @@ public class CNodeData {
 	double pre_scale = 1;
 	int padding = 10;
 	
-	Color defaultColor = new Color(100, 163, 194);
+	static final Color defaultColor = new Color(100, 163, 194);
 	
+	
+	public static Color getDefaultColor() {
+		return defaultColor;
+	}
+
 	public CNodeData(){
 		locxVector = new Vector<Float>(DEFAULT_SIZE);
     	locyVector = new Vector<Float>(DEFAULT_SIZE);
