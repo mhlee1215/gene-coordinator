@@ -118,7 +118,7 @@ public class NodePaletteFig extends WestToolBar implements ActionListener, Prope
         String[] strScaleItems = new String[annotHeader.size()];
         annotHeader.toArray(strScaleItems);
 		JComboBox searchCombo = new JComboBox(strScaleItems);
-		searchCombo.setPreferredSize(new Dimension(200, 30));
+		searchCombo.setPreferredSize(new Dimension(50, 30));
 		searchCombo.setEnabled(false);
 		searchCombo.addActionListener(this);
 		UiGlobals.setPropertySearchCombo(searchCombo);
@@ -126,7 +126,7 @@ public class NodePaletteFig extends WestToolBar implements ActionListener, Prope
 		
 		JTextField searchField = new JTextField();
         searchField.setEnabled(false);
-        searchField.setPreferredSize(new Dimension(150, 30));
+        searchField.setPreferredSize(new Dimension(300, 30));
         UiGlobals.setPropertySearchField(searchField);
         searchField.addActionListener(this);
 		add(searchField);

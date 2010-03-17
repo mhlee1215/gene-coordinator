@@ -103,12 +103,15 @@ public class LoadingProgressBarSearchAndMark extends JPanel
     		int searchIndex = UiGlobals.getPropertySearchCombo().getSelectedIndex();
     		String searchKeyword = UiGlobals.getPropertySearchField().getText();
     		System.out.println("index: "+searchIndex+", keyword: "+searchKeyword+", "+nodes.size());
+    		
+    		int findCount = 0;
 	        for(int count = 0 ; count < nodes.size() ; count++)
 	        {
 	        	Fig node = nodes.get(count);
 	        	FigCustomNode nodeCustom = (FigCustomNode)node;
 	        	if(isReset){
 	        		nodeCustom.setBorderColor(Color.black);	
+	        		nodeCustom.setLineColor(CNodeData.getDefaultColor());
 	        		//editor.damageAll();
 	        	}else{
 	        		NodeDescriptor desc = (NodeDescriptor)nodeCustom.getOwner();
@@ -117,7 +120,12 @@ public class LoadingProgressBarSearchAndMark extends JPanel
 	        			String property = propertyMap.get(searchIndex);
 	        			if(property.contains(searchKeyword)){
 	        				System.out.println("find!");
+	        				findCount++;
+	        				nodeCustom.setLineColor(Color.red);
 	        				nodeCustom.setBorderColor(Color.red);
+	        			}else{
+	        				nodeCustom.setBorderColor(Color.black);	
+	    	        		nodeCustom.setLineColor(CNodeData.getDefaultColor());
 	        			}
 	        		}
 	        	}
@@ -127,6 +135,10 @@ public class LoadingProgressBarSearchAndMark extends JPanel
 	        	
 	        }
         	
+	        String output = findCount+" gene(s) is found.";
+	        if(isReset)
+	        	output = "The color of genes are reseted.";
+	        UiGlobals.setStatusbarText(output);
             return null;
         }
         public void stop(){
