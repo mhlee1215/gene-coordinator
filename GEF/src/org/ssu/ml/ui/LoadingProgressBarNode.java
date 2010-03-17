@@ -198,7 +198,8 @@ public class LoadingProgressBarNode extends JPanel
         this.graph = graph;
         this.pre_scaled = UiGlobals.getPre_scaled();
       
-        readCoordData();
+        int readCount = readCoordData();
+        UiGlobals.setNodeCount(readCount);
         init();
 
         

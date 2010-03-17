@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.ssu.ml.base.UiGlobals;
-import org.ssu.ml.ui.NodeLoadingProgressBar;
+import org.ssu.ml.ui.LoadingProgressBarNode;
 import org.tigris.gef.base.Cmd;
 import org.tigris.gef.base.Editor;
 import org.tigris.gef.base.Globals;

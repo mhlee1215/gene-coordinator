@@ -114,27 +114,6 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		ResourceLoader.addResourceLocation("/org/tigris/gef/Images");
 		
 		UiGlobals.init();
-		System.out.println("constructur");
-
-
-//		try {
-//			
-//			//QuaquaManager.setProperty("Quaqua.tabLayoutPolicy", "wrap");
-//			// configure the class loader of the UIManager.
-//			//UIManager.put("ClassLoader", getClass().getClassLoader());
-//			 UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-//			//UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-//			//UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-////			try {
-////				  UIManager.setLookAndFeel(
-////				    UIManager.getSystemLookAndFeelClassName());
-////				} catch (Exception e) {
-////				}	
-//		
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			//e.printStackTrace();
-//		}
 		
 		try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -159,61 +138,6 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		//UiGlobals.set_curApplet(this);
 		UiGlobals.setApplet(this);
 
-	}
-	
-	private void initAnnotation(String filename){
-		String AnnotationFileName = filename;
-		Vector<String> headerColumn = new Vector<String>();
-		Vector<HashMap<Integer, String>> annotationContent = new Vector<HashMap<Integer, String>>();
-	
-		try {
-			BufferedReader br = Utils.getInputReader(AnnotationFileName);
-			
-			String strTmp = "";
-			
-			int count = 0;
-			
-			while((strTmp=br.readLine()) != null)
-			{
-				
-				if(!strTmp.startsWith("#"))
-				{
-					
-					if(count == 0){
-						//Read head.
-						String[] strs = strTmp.split(",");
-						for(int headCnt = 0 ; headCnt < strs.length ; headCnt++)
-						{
-							headerColumn.add(strs[headCnt]);
-						}
-					}else{
-					
-					
-						String[] strs = strTmp.split("\",\"");
-						//Target ID
-						
-						if(count%500 == 0){
-							System.out.println("["+count+"] : "+strTmp);
-						}
-						
-						HashMap<Integer, String> contentMap = new HashMap<Integer, String>();
-						for(int strCnt = 0 ; strCnt < strs.length && strCnt < 5; strCnt++)
-						{
-							String contentTmp = strs[strCnt].replace("\"", "").trim();
-							contentMap.put(strCnt, contentTmp);
-						}
-						annotationContent.add(contentMap);
-						
-					}
-					count++;
-				}
-			}		
-			UiGlobals.setAnnotationHeader(headerColumn);
-			UiGlobals.setAnnotationContent(annotationContent);
-			br.close();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
 	}
 
 	private void jbInit() throws Exception {

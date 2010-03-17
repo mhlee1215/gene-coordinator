@@ -61,21 +61,30 @@ import org.ssu.ml.presentation.FigCustomNode;
 import org.ssu.ml.ui.LoadingProgressBarNode.NodeTask;
 
 
-public class LoadingProgressBarAnnotation extends JPanel
+public class LoadingProgressBarSearchAndMark extends JPanel
                               implements ActionListener, 
                                          PropertyChangeListener {
-	Logger logger = Logger.getLogger(LoadingProgressBarAnnotation.class);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -203850379942717505L;
+
+	Logger logger = Logger.getLogger(LoadingProgressBarSearchAndMark.class);
 	
-	private AnnotationTask task;
+	private SearchAndMark task;
 	String filename;
+	String propertyName;
+	boolean isReset = false;
 
-    class AnnotationTask extends SwingWorker<Void, Void> {
+    class SearchAndMark extends SwingWorker<Void, Void> {
     	boolean progressFlag = true;
-    	String filename = "";
+    	String keyword = "";
+    	String propertyName = "";
 
-    	public AnnotationTask(String filename)
+    	public SearchAndMark(String keyword, String propertyName)
     	{
-    		this.filename = filename;
+    		this.keyword = keyword;
+    		this.propertyName = propertyName;
     	}
         /*
          * Main task. Executed in background thread.
@@ -87,63 +96,36 @@ public class LoadingProgressBarAnnotation extends JPanel
             //Initialize progress property.
             setProgress(0);
             
-            String AnnotationFileName = filename;
-    		Vector<String> headerColumn = new Vector<String>();
-    		HashMap<String, HashMap<Integer, String>> annotationContent = new HashMap<String, HashMap<Integer, String>>();
-    	
-    		try {
-    			BufferedReader br = Utils.getInputReader(AnnotationFileName);
-    			
-    			String strTmp = "";
-    			
-    			int count = 0;
-    			
-    			while((strTmp=br.readLine()) != null)
-    			{
-    				
-    				if(!strTmp.startsWith("#"))
-    				{
-    					
-    					if(count == 0){
-    						//Read head.
-    						String[] strs = strTmp.split(",");
-    						for(int headCnt = 0 ; headCnt < strs.length ; headCnt++)
-    						{
-    							headerColumn.add(strs[headCnt]);
-    						}
-    					}else{
-    						String[] strs = strTmp.split(",");
-    						//Target ID
-    						
-    						
-    						
-    						HashMap<Integer, String> contentMap = new HashMap<Integer, String>();
-    						String proveId = strs[0].replace("\"", "").trim();
-    						for(int strCnt = 0 ; strCnt < strs.length ; strCnt++)
-    						{
-    							
-    							String contentTmp = strs[strCnt].replace("\"", "").trim();
-    							contentMap.put(strCnt, contentTmp);
-    						}
-    						annotationContent.put(proveId, contentMap);
-    						
-    						if(count%100 == 0){
-    							System.out.println(strTmp);
-    							String output = String.format("%.0f", ((double)count*100)/UiGlobals.getNodeCount())+"% Annotation file load..";
-    							UiGlobals.getPropertySearchField().setText(output);
-    							System.out.println("["+count+"] :: "+proveId);
-    						}
-    						
-    					}
-    					count++;
-    				}
-    			}		
-    			UiGlobals.setAnnotationHeader(headerColumn);
-    			UiGlobals.setAnnotationContent(annotationContent);
-    			br.close();
-    		}catch(Exception e){
-    			e.printStackTrace();
-    		}
+            Editor editor = UiGlobals.curEditor();
+            java.util.List<Fig> nodes = editor.getLayerManager().getActiveLayer().getContents();
+            
+            HashMap<String, HashMap<Integer, String>> annotationContent = UiGlobals.getAnnotationContent();
+    		int searchIndex = UiGlobals.getPropertySearchCombo().getSelectedIndex();
+    		String searchKeyword = UiGlobals.getPropertySearchField().getText();
+    		System.out.println("index: "+searchIndex+", keyword: "+searchKeyword+", "+nodes.size());
+	        for(int count = 0 ; count < nodes.size() ; count++)
+	        {
+	        	Fig node = nodes.get(count);
+	        	FigCustomNode nodeCustom = (FigCustomNode)node;
+	        	if(isReset){
+	        		nodeCustom.setBorderColor(Color.black);	
+	        		//editor.damageAll();
+	        	}else{
+	        		NodeDescriptor desc = (NodeDescriptor)nodeCustom.getOwner();
+	        		HashMap<Integer, String> propertyMap = annotationContent.get(desc.getName());
+	        		if(propertyMap != null){
+	        			String property = propertyMap.get(searchIndex);
+	        			if(property.contains(searchKeyword)){
+	        				System.out.println("find!");
+	        				nodeCustom.setBorderColor(Color.red);
+	        			}
+	        		}
+	        	}
+	        	
+	        	if(count % 100 == 0)
+	        		editor.damageAll();
+	        	
+	        }
         	
             return null;
         }
@@ -156,30 +138,22 @@ public class LoadingProgressBarAnnotation extends JPanel
         public void done() {
         	UiGlobals.getPropertySearchButton().setEnabled(true);
         	UiGlobals.getPropertySearchCombo().setEnabled(true);
-        	String[] propertyItem = new String[UiGlobals.getAnnotationHeader().size()];
-        	UiGlobals.getAnnotationHeader().toArray(propertyItem);
-        	
-        	for(int i = 0 ; i < propertyItem.length ; i++)
-        		UiGlobals.getPropertySearchCombo().addItem(propertyItem[i]);
         	UiGlobals.getPropertySearchField().setEnabled(true);
-        	UiGlobals.getPropertySearchField().setText("");
         	UiGlobals.getPropertyResetButton().setEnabled(true);
         }
     }
     
-    public LoadingProgressBarAnnotation(String filename) {
+    
+    public LoadingProgressBarSearchAndMark(String keyword, String propertyName) {
+        this(keyword, propertyName, false);
+    }
+    
+    public LoadingProgressBarSearchAndMark(String keyword, String propertyName, boolean isReset) {
         super(new BorderLayout());
-        
+        this.isReset = isReset;
         init();
-
-        
-        
                 
-        //Instances of javax.swing.SwingWorker are not reusuable, so
-        //we create new instances as needed.
-        task = new AnnotationTask(filename);
-        //task.addPropertyChangeListener(this);
-        //status = STATUS_STARTED;
+        task = new SearchAndMark(keyword, propertyName);
         task.execute();
     }
 
@@ -263,6 +237,10 @@ public class LoadingProgressBarAnnotation extends JPanel
     
     public void init()
     {
+    	UiGlobals.getPropertySearchButton().setEnabled(false);
+    	UiGlobals.getPropertySearchCombo().setEnabled(false);
+    	UiGlobals.getPropertySearchField().setEnabled(false);
+    	UiGlobals.getPropertyResetButton().setEnabled(false);
     	logger.debug("public void init");
     	logger.debug("====[S]======================");
     }
