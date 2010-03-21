@@ -842,6 +842,7 @@ public class Editor implements Serializable, MouseListener,
             _selectionManager.mouseClicked(me);
             _modeManager.mouseClicked(me);
         }
+        System.out.println("ms click");
     }
 
     /** Invoked when a mouse button has been pressed. */
@@ -867,6 +868,7 @@ public class Editor implements Serializable, MouseListener,
             _selectionManager.mousePressed(me);
             _modeManager.mousePressed(me);
         }
+        System.out.println("ms press");
     }
 
     /** Invoked when a mouse button has been released. */
@@ -880,6 +882,7 @@ public class Editor implements Serializable, MouseListener,
             _selectionManager.mouseReleased(me);
             _modeManager.mouseReleased(me);
         }
+        
     }
 
     /**

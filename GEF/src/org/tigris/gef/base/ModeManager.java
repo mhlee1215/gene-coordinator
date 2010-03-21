@@ -235,7 +235,7 @@ public class ModeManager implements Serializable, MouseListener,
             FigModifyingModeImpl m = ((FigModifyingModeImpl) _modes.get(i));
             m.mouseReleased(me);
         }
-         fireModeChanged();
+        fireModeChanged();
     }
 
     /** Pass events to all modes in order, until one consumes it. */
