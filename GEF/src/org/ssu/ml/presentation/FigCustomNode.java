@@ -55,6 +55,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Vector;
@@ -79,7 +80,7 @@ import org.tigris.gef.util.Localizer;
  * Primitive Fig for displaying circles and ovals.
  * @author ics125
  */
-public class FigCustomNode extends FigRect {
+public class FigCustomNode extends FigRect implements MouseListener {
 	
 	Color borderColor = Color.black;
 	
@@ -220,6 +221,38 @@ public class FigCustomNode extends FigRect {
     	
     	g2.setColor(old);
     }
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println(this.getOwner()+"in!");
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println(this.getOwner()+"out");
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+    
     
     
     

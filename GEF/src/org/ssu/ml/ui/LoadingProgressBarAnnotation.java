@@ -179,9 +179,11 @@ public class LoadingProgressBarAnnotation extends JPanel
         	UiGlobals.getPropertySearchButton().setEnabled(true);
         	UiGlobals.getPropertySearchCombo().setEnabled(true);
         	UiGlobals.getPropertySearchCombo().setPreferredSize(new Dimension(200, 30));
+        	
+        	//Clear combo items
+        	UiGlobals.getPropertySearchCombo().removeAll();
         	String[] propertyItem = new String[UiGlobals.getAnnotationHeader().size()];
         	UiGlobals.getAnnotationHeader().toArray(propertyItem);
-        	
         	for(int i = 0 ; i < propertyItem.length ; i++)
         		UiGlobals.getPropertySearchCombo().addItem(propertyItem[i]);
         	UiGlobals.getPropertySearchField().setEnabled(true);

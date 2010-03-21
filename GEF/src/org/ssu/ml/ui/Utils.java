@@ -11,6 +11,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -107,18 +109,32 @@ public class Utils {
 	public static BufferedReader getInputReader(String filename) {
 		BufferedReader br = null;
 		
-		try {
-			URL testServlet = new URL(filename);
-			HttpURLConnection servletConnection = (HttpURLConnection) testServlet
-					.openConnection();
-
-			InputStream is = new BufferedInputStream(servletConnection
-					.getInputStream());
+		if(filename.contains("http://")){
+			try {
+				URL testServlet = new URL(filename);
+				HttpURLConnection servletConnection = (HttpURLConnection) testServlet
+						.openConnection();
+	
+				InputStream is = new BufferedInputStream(servletConnection
+						.getInputStream());
+				
+				br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}else{
+			try {
+			File file = new File(filename);
+			FileInputStream fis = new FileInputStream(file);
 			
-			br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			InputStreamReader isr = new InputStreamReader(fis);
+			br = new BufferedReader(isr);
+			}catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+			
 		}
 		return br;
 	}

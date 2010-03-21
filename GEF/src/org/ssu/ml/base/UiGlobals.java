@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
+import org.jdesktop.swingx.JXMultiSplitPane;
+import org.jdesktop.swingx.JXPanel;
 import org.ssu.ml.ui.NodeRenderManager;
 import org.tigris.gef.base.Globals;
 
@@ -46,6 +48,22 @@ public class UiGlobals extends Globals{
 	private static JButton propertySearchButton;
 	private static JButton propertyResetButton;
 	
+	private static JXMultiSplitPane msp = null;
+	private static JXPanel nodeInfoPanel = null;
+	
+	public static JXMultiSplitPane getMsp() {
+		return msp;
+	}
+	public static void setMsp(JXMultiSplitPane msp) {
+		UiGlobals.msp = msp;
+	}
+	public static JXPanel getNodeInfoPanel() {
+		return nodeInfoPanel;
+	}
+	public static void setNodeInfoPanel(JXPanel nodeInfoPanel) {
+		UiGlobals.nodeInfoPanel = nodeInfoPanel;
+	}
+
 	private static int nodeCount = 0;
 	
 	public static int getNodeCount() {

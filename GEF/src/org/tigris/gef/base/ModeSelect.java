@@ -38,6 +38,7 @@ import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ssu.ml.base.UiGlobals;
 import org.tigris.gef.presentation.Fig;
 import org.tigris.gef.presentation.FigGroup;
 import org.tigris.gef.presentation.Handle;
@@ -278,12 +279,27 @@ public class ModeSelect extends FigModifyingModeImpl {
         if (toggleSelection) {
             editor.getSelectionManager().toggle(selectList);
         } else {
-            editor.getSelectionManager().select(selectList);
+            editor.getSelectionManager().selectFigs(selectList);
         }
+        
+        
+        if(selectList.size() > 0){
+        	UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", true);
+        }else{
+        	UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", false);
+        }
+        
+        
 
         selectRect.grow(1, 1); /* make sure it is not empty for redraw */
         editor.scaleRect(selectRect);
-        editor.damaged(selectRect);
+
+        //Fixed
+        Rectangle damageRect = selectRect;
+        damageRect.grow(1, 1);
+        
+        editor.damaged(damageRect);
+        
         if (me.getModifiers() == InputEvent.BUTTON3_MASK) {
             if (LOG.isDebugEnabled())
                 LOG.debug("MouseReleased button 3 detected so not consumed");
