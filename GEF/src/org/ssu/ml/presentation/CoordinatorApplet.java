@@ -23,10 +23,16 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
+import org.jdesktop.animation.timing.Animator;
+import org.jdesktop.animation.timing.interpolation.PropertySetter;
 import org.jdesktop.swingx.JXBusyLabel;
 import org.jdesktop.swingx.JXMultiSplitPane;
 import org.jdesktop.swingx.JXPanel;
@@ -38,6 +44,7 @@ import org.ssu.ml.ui.NodeRenderManager;
 import org.ssu.ml.ui.ResizerPaletteFig;
 import org.ssu.ml.ui.Utils;
 import org.ssu.ml.ui.WestToolBar;
+import org.swingX.util.Stacker;
 import org.tigris.gef.base.AlignAction;
 import org.tigris.gef.base.CmdAdjustGrid;
 import org.tigris.gef.base.CmdAdjustGuide;
@@ -111,6 +118,9 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 	private JXTitledPanel _nodeInfoPanel = new JXTitledPanel();
 	
 	JXMultiSplitPane msp = new JXMultiSplitPane();
+	
+	Stacker dataPanel;
+	JLabel credits;
 
 	public CoordinatorApplet() throws Exception {
 		Localizer.addResource("GefBase",
@@ -247,7 +257,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
         //maskPanel.setPreferredSize(this.getToolkit().getScreenSize());
         maskPanel.setSize(this.getToolkit().getScreenSize());
         //maskPanel.setBackground(Color.white);
-        maskPanel.add(label, BorderLayout.CENTER);
+        //maskPanel.add(label, BorderLayout.CENTER);
         //mask.add(maskPanel, BorderLayout.CENTER);
         
         
@@ -303,6 +313,30 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 		_graph.addModeChangeListener(this);
 
+		
+		credits = new JLabel(); 
+        credits.setName("credits");
+        credits.setText("Welcome to COEX");
+        credits.setFont(UIManager.getFont("Table.font").deriveFont(24f));
+        credits.setHorizontalAlignment(JLabel.CENTER);
+        credits.setBorder(new CompoundBorder(new TitledBorder(""),
+                new EmptyBorder(20,20,20,20)));
+
+        
+        dataPanel = new Stacker(contentPanel);
+        
+        
+        content.add(dataPanel);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	dataPanel.showMessageLayer(credits, 1f);
+            	
+            	
+            	//dataPanel.hideMessageLayer();
+            }
+        });
+        
 		try {
 			jbInit();
 		} catch (Exception e) {
