@@ -48,7 +48,7 @@ public class NodeRenderManager {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				// createAndShowGUI();
-				//new LoadingProgressBarAnnotation(UiGlobals.getAnnotationFileName());
+				new LoadingProgressBarAnnotation(UiGlobals.getAnnotationFileName());
 			}
 		});
 		/*

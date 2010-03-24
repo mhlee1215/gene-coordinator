@@ -11,8 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
+import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXMultiSplitPane;
 import org.jdesktop.swingx.JXPanel;
+import org.ssu.ml.presentation.JNodeInfoPanel;
 import org.ssu.ml.ui.NodeRenderManager;
 import org.tigris.gef.base.Globals;
 
@@ -49,18 +51,33 @@ public class UiGlobals extends Globals{
 	private static JButton propertyResetButton;
 	
 	private static JXMultiSplitPane msp = null;
-	private static JXPanel nodeInfoPanel = null;
+	private static JNodeInfoPanel nodeInfoPanel = null;
+	private static JXFrame nodeInfoFrame = null;
 	
+	
+	/**
+	 * @return the nodeInfoFrame
+	 */
+	public static JXFrame getNodeInfoFrame() {
+		return nodeInfoFrame;
+	}
+	/**
+	 * @param nodeInfoFrame the nodeInfoFrame to set
+	 */
+	public static void setNodeInfoFrame(JXFrame nodeInfoFrame) {
+		UiGlobals.nodeInfoFrame = nodeInfoFrame;
+		UiGlobals.nodeInfoFrame.setSize(500, 300);
+	}
 	public static JXMultiSplitPane getMsp() {
 		return msp;
 	}
 	public static void setMsp(JXMultiSplitPane msp) {
 		UiGlobals.msp = msp;
 	}
-	public static JXPanel getNodeInfoPanel() {
+	public static JNodeInfoPanel getNodeInfoPanel() {
 		return nodeInfoPanel;
 	}
-	public static void setNodeInfoPanel(JXPanel nodeInfoPanel) {
+	public static void setNodeInfoPanel(JNodeInfoPanel nodeInfoPanel) {
 		UiGlobals.nodeInfoPanel = nodeInfoPanel;
 	}
 

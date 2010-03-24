@@ -38,7 +38,9 @@ import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jdesktop.swingx.JXFrame;
 import org.ssu.ml.base.UiGlobals;
+import org.ssu.ml.presentation.JNodeInfoPanel;
 import org.tigris.gef.presentation.Fig;
 import org.tigris.gef.presentation.FigGroup;
 import org.tigris.gef.presentation.Handle;
@@ -284,9 +286,25 @@ public class ModeSelect extends FigModifyingModeImpl {
         
         
         if(selectList.size() > 0){
-        	UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", true);
+        	if(UiGlobals.getNodeInfoFrame() == null){
+        		UiGlobals.setNodeInfoPanel(new JNodeInfoPanel());
+        		UiGlobals.getNodeInfoPanel().removeAll();
+            	
+            	
+            	//UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", true);
+        		UiGlobals.setNodeInfoFrame(new JXFrame("Selected node(s) info."));
+        	}
+        	UiGlobals.getNodeInfoPanel().setColumnData(UiGlobals.getAnnotationHeader());
+        	UiGlobals.getNodeInfoPanel().addList(selectList);
+        	
+        	UiGlobals.getNodeInfoFrame().add(UiGlobals.getNodeInfoPanel());
+        	UiGlobals.getNodeInfoFrame().invalidate();
+        	UiGlobals.getNodeInfoFrame().setVisible(true);
+        	
+        	
         }else{
-        	UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", false);
+        	//UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", false);
+        	
         }
         
         
