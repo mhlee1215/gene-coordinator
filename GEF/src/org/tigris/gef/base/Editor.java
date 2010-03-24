@@ -30,6 +30,9 @@ package org.tigris.gef.base;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jdesktop.swingx.JXFrame;
+import org.ssu.ml.base.UiGlobals;
+import org.ssu.ml.presentation.JNodeInfoPanel;
 import org.tigris.gef.event.GraphSelectionListener;
 import org.tigris.gef.event.ModeChangeListener;
 import org.tigris.gef.graph.GraphEdgeRenderer;
@@ -835,6 +838,7 @@ public class Editor implements Serializable, MouseListener,
         translateMouseEvent(me);
         Globals.curEditor(this);
 
+        System.out.println("fig: "+_curFig);
         // setUnderMouse(me);
         if (_curFig instanceof MouseListener)
             ((MouseListener) _curFig).mouseClicked(me);
@@ -843,6 +847,7 @@ public class Editor implements Serializable, MouseListener,
             _modeManager.mouseClicked(me);
         }
         System.out.println("ms click");
+        
     }
 
     /** Invoked when a mouse button has been pressed. */
@@ -869,6 +874,32 @@ public class Editor implements Serializable, MouseListener,
             _modeManager.mousePressed(me);
         }
         System.out.println("ms press");
+        
+        
+        List<Fig> selectList = this.getSelectionManager().getSelectedFigs();
+        if(selectList.size() > 0){
+        	if(UiGlobals.getNodeInfoFrame() == null){
+        		UiGlobals.setNodeInfoPanel(new JNodeInfoPanel());
+        		UiGlobals.getNodeInfoPanel().removeAll();
+            	
+            	
+            	//UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", true);
+        		UiGlobals.setNodeInfoFrame(new JXFrame("Selected node(s) info."));
+        	}
+        	UiGlobals.getNodeInfoPanel().setColumnData(UiGlobals.getAnnotationHeader());
+        	UiGlobals.getNodeInfoPanel().addList(selectList);
+        	
+        	UiGlobals.getNodeInfoFrame().add(UiGlobals.getNodeInfoPanel());
+        	UiGlobals.getNodeInfoFrame().invalidate();
+        	UiGlobals.getNodeInfoFrame().setVisible(true);
+        	
+        	
+        }else{
+        	//UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", false);
+        	
+        }
+        
+        //System.out.println(this.getSelectionManager().getSelectedFigs().size());
     }
 
     /** Invoked when a mouse button has been released. */

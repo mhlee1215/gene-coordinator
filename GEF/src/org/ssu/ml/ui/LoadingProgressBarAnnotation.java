@@ -93,7 +93,9 @@ public class LoadingProgressBarAnnotation extends JPanel
     		HashMap<String, HashMap<Integer, String>> annotationContent = new HashMap<String, HashMap<Integer, String>>();
     	
     		try {
-    			BufferedReader br = Utils.getInputReader(AnnotationFileName);
+    			BufferedReader br = Utils.getInputReader(AnnotationFileName+".trimmed");
+    			if(br == null)
+    				br = Utils.getInputReader(AnnotationFileName);
     			
     			String strTmp = "";
     			
@@ -110,6 +112,7 @@ public class LoadingProgressBarAnnotation extends JPanel
     						String[] strs = strTmp.split(",");
     						for(int headCnt = 0 ; headCnt < strs.length ; headCnt++)
     						{
+    							System.out.println("header:"+strs[headCnt]);
     							headerColumn.add(strs[headCnt]);
     						}
     					}else{
@@ -181,7 +184,7 @@ public class LoadingProgressBarAnnotation extends JPanel
         	UiGlobals.getPropertySearchCombo().setPreferredSize(new Dimension(200, 30));
         	
         	//Clear combo items
-        	UiGlobals.getPropertySearchCombo().removeAll();
+        	UiGlobals.getPropertySearchCombo().removeAllItems();
         	String[] propertyItem = new String[UiGlobals.getAnnotationHeader().size()];
         	UiGlobals.getAnnotationHeader().toArray(propertyItem);
         	for(int i = 0 ; i < propertyItem.length ; i++)
