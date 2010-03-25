@@ -57,10 +57,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXTaskPane;
 import org.ssu.ml.base.UiGlobals;
@@ -286,40 +289,28 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		scaleResizer.setEnabled(false);
 		
 		
-//		setLayout(new GridBagLayout());
-//		GridBagConstraints c = new GridBagConstraints();
-//		
-//		//c.fill = GridBagConstraints.HORIZONTAL;
-//		c.gridx = 0;
-//		c.gridy = 0;
-//		add(scaleMenuBar, c);
-//		
-//		//c.fill = GridBagConstraints.HORIZONTAL;
-//		c.gridx = 0;
-//		c.gridy = 1;
-//		add(gridResizer, c);
-//		
-//		//c.fill = GridBagConstraints.HORIZONTAL;
-//		c.gridx = 0;
-//		c.gridy = 2;
-//		add(gridSpinner, c);
-//		
-//		//c.fill = GridBagConstraints.HORIZONTAL;
-//		c.gridx = 0;
-//		c.gridy = 3;
-//		add(locControlPanel, c);
+		//Search Option Content Start
+		
+		JPanel searchOptionPanel = new JPanel();
+		searchOptionPanel.setLayout(new MigLayout("insets 0 0 0 0"));
+		JComboBox viewType = new JComboBox();
+		viewType.addItem("With marked");
+		viewType.addItem("Only searched");
+		searchOptionPanel.add(viewType, "wrap");
+		
+		JComboBox markType = new JComboBox();
+		markType.addItem("Auto colored");
+		markType.addItem("Custom colored");
+		searchOptionPanel.add(markType, "wrap");
+		
+		JTextField markColorInput = new JTextField();
+		searchOptionPanel.add(markColorInput, "wrap");
 		
 		
-		//boolean shouldFill = true;
-		//JButton button;
+		//Search Option Content End
 		
 		
-		//if (shouldFill) {
-				//natural height, maximum width
-		//		c.fill = GridBagConstraints.HORIZONTAL;
-		//}
-
-		//button = new JButton("Button 1");
+		
 		setLayout(new GridLayout(1, 1));
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBackground(Color.white);
@@ -467,6 +458,34 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		//button = new JButton("Long-Named Button 4");
 		
 		
+		JXTaskPane searchOptionTask = new JXTaskPane();
+		searchOptionTask.setLayout(new GridBagLayout());
+        Icon searchOptionTaskIcon = ResourceLoader.lookupIconResource("direction_up", "direction_up");
+        searchOptionTask.setTitle("Search Option");
+        searchOptionTask.setCollapsed(true);
+        searchOptionTask.setFocusable(false);
+        searchOptionTask.setIcon(searchOptionTaskIcon);
+        
+        GridBagConstraints searchOptionConstraints = new GridBagConstraints();
+        //locTaskConstraints.fill = GridBagConstraints.HORIZONTAL;
+        locTaskConstraints.anchor = GridBagConstraints.PAGE_START;
+        locTaskConstraints.weightx = 1;
+        locTaskConstraints.insets = new Insets(-4,-8,-6,-8);  //top padding
+        locTaskConstraints.gridx = 0;
+        locTaskConstraints.gridy = 0;
+        searchOptionTask.add(searchOptionPanel, searchOptionConstraints);
+        locControlPanel.setPreferredSize(new Dimension(75, 55));
+		//JLabel locControlLabel = new JLabel(" Grid Ctrl");
+        //gridLabel.set
+		c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.PAGE_START;
+        c.weightx = 0.5;
+        c.gridx = 0;
+        old = c.insets; 
+        c.insets = new Insets(5,0,0,0);  //top padding
+        c.gridy = gridyIndex++;
+		mainPanel.add(searchOptionTask, c);
+		c.insets = old;
 		
 //		c.fill = GridBagConstraints.HORIZONTAL;
 //		c.ipady = 60;      //make this component tall
