@@ -193,6 +193,8 @@ public class LoadingProgressBarAnnotation extends JPanel
         	UiGlobals.getPropertySearchField().setPreferredSize(new Dimension(150, 30));
         	UiGlobals.getPropertySearchField().setText("");
         	UiGlobals.getPropertyResetButton().setEnabled(true);
+        	
+        	UiGlobals.showNodeInfoList(null);
         }
     }
     

@@ -878,22 +878,7 @@ public class Editor implements Serializable, MouseListener,
         
         List<Fig> selectList = this.getSelectionManager().getSelectedFigs();
         if(selectList.size() > 0){
-        	if(UiGlobals.getNodeInfoFrame() == null){
-        		UiGlobals.setNodeInfoPanel(new JNodeInfoPanel());
-        		UiGlobals.getNodeInfoPanel().removeAll();
-            	
-            	
-            	//UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", true);
-        		UiGlobals.setNodeInfoFrame(new JXFrame("Selected node(s) info."));
-        	}
-        	UiGlobals.getNodeInfoPanel().setColumnData(UiGlobals.getAnnotationHeader());
-        	UiGlobals.getNodeInfoPanel().addList(selectList);
-        	
-        	UiGlobals.getNodeInfoFrame().add(UiGlobals.getNodeInfoPanel());
-        	UiGlobals.getNodeInfoFrame().invalidate();
-        	UiGlobals.getNodeInfoFrame().setVisible(true);
-        	
-        	
+        	UiGlobals.showNodeInfoList(selectList);
         }else{
         	//UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", false);
         	

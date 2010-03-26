@@ -35,6 +35,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import net.miginfocom.layout.CC;
+import net.miginfocom.swing.MigLayout;
+
 import org.apache.log4j.Logger;
 import org.ssu.ml.base.CmdGridChart;
 import org.ssu.ml.base.DoublePair;
@@ -96,13 +99,13 @@ public class LoadingProgressBarNode extends JPanel
     	float maxLocy = 0;
     	
     	JGraph _graph = null;
-    	JFrame frame = null; 
+    	JPanel panel = null; 
     	
 
-    	public NodeTask(CNodeData nodeData, JFrame frame, JGraph graph)
+    	public NodeTask(CNodeData nodeData, JPanel panel, JGraph graph)
     	{
     		this.nodeData = nodeData;
-    		this.frame = frame;
+    		this.panel = panel;
     		this._graph = graph;
     		
     		minLocx = nodeData.getMinXValue();
@@ -176,9 +179,10 @@ public class LoadingProgressBarNode extends JPanel
             //taskOutput.append("Node Rendering Finish!\n");
             
             System.out.println("status : "+status);
-            if(status == STATUS_CANCELED || status == STATUS_STARTED)
-            	frame.setVisible(false);
+            //if(status == STATUS_CANCELED || status == STATUS_STARTED)
+            //	frame.setVisible(false);
             
+            UiGlobals.getCoordBottomPanel().remove(panel);
             UiGlobals.setStatusbarText(" Node rendering is completed.");
             
             
@@ -192,7 +196,7 @@ public class LoadingProgressBarNode extends JPanel
     }
     
     public LoadingProgressBarNode(JGraph graph) {
-        super(new BorderLayout());
+        super();
         nodeData = new CNodeData();
         
         this.graph = graph;
@@ -224,39 +228,42 @@ public class LoadingProgressBarNode extends JPanel
         //stays the same whether or not the string is shown.
         progressBar.setStringPainted(true); 
 
-        taskOutput = new JTextArea(5, 20);
-        taskOutput.setMargin(new Insets(5,5,5,5));
-        taskOutput.setEditable(false);
+//        taskOutput = new JTextArea(5, 20);
+//        taskOutput.setMargin(new Insets(5,5,5,5));
+//        taskOutput.setEditable(false);
 
-        JPanel panel = new JPanel();
-        panel.add(startButton);
-        panel.add(stopButton);
-        panel.add(cancelButton);
+        //JPanel panel = new JPanel();
+        //panel.add(startButton);
+        //panel.add(stopButton);
+        //panel.add(cancelButton);
         //panel.add(progressBar);
         
 
-        add(panel, BorderLayout.PAGE_START);
-        add(progressBar, BorderLayout.CENTER);
+        //add(panel, BorderLayout.PAGE_START);
+        this.setLayout(new MigLayout("insets -2 -2 0 0"));
+        int width = UiGlobals.getCoordBottomPanel().getSize().width;
+        add(progressBar, new CC().wrap().width(""+width));
         //add(new JScrollPane(taskOutput), BorderLayout.CENTER);
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        //setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        frame = new JFrame("Node Rendering...");
+        //frame = new JFrame("Node Rendering...");
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
         //JComponent newContentPane = new NodeLoadingProgressBar(frame);
         setOpaque(true); //content panes must be opaque
-        frame.setContentPane(this);
+        //frame.setContentPane(this);
+        UiGlobals.getCoordBottomPanel().add(this);
 
         //Display the window.
-        frame.pack();
-        frame.setVisible(true);
+        //frame.pack();
+        //frame.setVisible(true);
         
         //progressBar.setIndeterminate(true);
         startButton.setEnabled(false);
         //Instances of javax.swing.SwingWorker are not reusuable, so
         //we create new instances as needed.
-        task = new NodeTask(nodeData, frame, this.graph);
+        task = new NodeTask(nodeData, this, this.graph);
         //task.addPropertyChangeListener(this);
         status = STATUS_STARTED;
         task.execute();
@@ -269,7 +276,7 @@ public class LoadingProgressBarNode extends JPanel
     	Object s = evt.getSource();
     	
     	if(s == startButton){
-    		task = new NodeTask(nodeData, frame, this.graph);
+    		task = new NodeTask(nodeData, this, this.graph);
     		status = STATUS_STARTED;
     		task.execute();
     		System.out.println("execute?");
