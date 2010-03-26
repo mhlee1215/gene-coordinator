@@ -150,6 +150,7 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		    strScaleItems[count-scaleMin] = scalePrefix+count;
 		}
 		scaleCombo = new JComboBox(strScaleItems);
+		scaleCombo.setName("scale");
 		scaleCombo.setSelectedIndex(initScale-1);
 		scaleCombo.addActionListener(this);
 		
@@ -294,11 +295,13 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		JPanel searchOptionPanel = new JPanel();
 		searchOptionPanel.setLayout(new MigLayout("insets 0 0 0 0"));
 		JComboBox viewType = new JComboBox();
+		viewType.addActionListener(this);
 		viewType.addItem("With marked");
 		viewType.addItem("Only searched");
 		searchOptionPanel.add(viewType, "wrap");
 		
 		JComboBox markType = new JComboBox();
+		markType.addActionListener(this);
 		markType.addItem("Auto colored");
 		markType.addItem("Custom colored");
 		searchOptionPanel.add(markType, "wrap");
@@ -315,11 +318,12 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBackground(Color.white);
 		add(mainPanel);
-		mainPanel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+		mainPanel.setLayout(new MigLayout("insets 1 1 1 1"));
+		//GridBagConstraints c = new GridBagConstraints();
 		
 		int leftToolbarWidth = 30;
-		int gridyIndex = 0;
+		
+		int taskWidth = 125;
 		
 		
 		JXTaskPane scaleTask = new JXTaskPane();
@@ -342,40 +346,13 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		
 		
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.PAGE_START;
-        c.weightx = 0.5;
-        c.gridx = 0;
-        c.gridy = gridyIndex++;
-		mainPanel.add(scaleTask, c);
+		mainPanel.add(scaleTask, "wrap, width "+taskWidth+"::"+taskWidth+"");
 		
 		
-//		c.fill = GridBagConstraints.HORIZONTAL;
-//        c.anchor = GridBagConstraints.PAGE_START;
-//        c.weightx = 0.5;
-//        c.gridx = 0;
-//        c.gridy = gridyIndex++;
-//        //c.ipady = 20;
-//        scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 30));
-//        mainPanel.add(scaleCombo, c);
-        
-//		c.fill = GridBagConstraints.HORIZONTAL;
-//		c.anchor = GridBagConstraints.PAGE_START;
-//		c.weightx = 0.5;
-//		c.gridx = 0;
-//		c.gridy = 0;
-//		c.ipady = 20;
-//		scaleMenuBar.setPreferredSize(new Dimension(leftToolbarWidth, 30));
-		//add(scaleMenuBar, c);
-
-		//button = new JButton("Button 2");
-        Insets old = c.insets; 
         
         gridResizer.setPreferredSize(new Dimension(leftToolbarWidth, 100));
 		JPanel resizerPanel = new JPanel();
 		resizerPanel.setLayout(new GridBagLayout());
-		//GridBagConstraints cResizer = new GridBagConstraints();
-		//cResizer.insets = new Insets(1000, -5, 0, -50);
 		resizerPanel.setBorder(BorderFactory.createTitledBorder(""));
 		//resizerPanel.setBackground(Color.white);
 		resizerPanel.add(gridResizer);
@@ -407,24 +384,8 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		
 		
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.PAGE_START;
-        c.weightx = 0.5;
-        c.gridx = 0;
-        c.insets = new Insets(5,0,0,0);  //top padding
-        c.gridy = gridyIndex++;
-		mainPanel.add(gridTask, c);
-		c.insets = old;
+		mainPanel.add(gridTask, "wrap, width "+taskWidth+"::"+taskWidth+"");
 		
-
-		//button = new JButton("Button 3");
-//		c.fill = GridBagConstraints.HORIZONTAL;
-//		//c.weightx = 0.5;
-//		c.ipady = 0;
-//		c.gridx = 0;
-//		c.gridy =  gridyIndex++;
-//		gridSpinner.setPreferredSize(new Dimension(leftToolbarWidth, 30));
-//		mainPanel.add(gridSpinner, c);
 
 		JXTaskPane locCtrlTask = new JXTaskPane();
 		locCtrlTask.setLayout(new GridBagLayout());
@@ -444,78 +405,17 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
         locTaskConstraints.gridy = 0;
         locCtrlTask.add(locControlPanel, locTaskConstraints);
         locControlPanel.setPreferredSize(new Dimension(75, 55));
-		//JLabel locControlLabel = new JLabel(" Grid Ctrl");
-        //gridLabel.set
-		c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.PAGE_START;
-        c.weightx = 0.5;
-        c.gridx = 0;
-        old = c.insets; 
-        c.insets = new Insets(5,0,0,0);  //top padding
-        c.gridy = gridyIndex++;
-		mainPanel.add(locCtrlTask, c);
-		c.insets = old;
-		//button = new JButton("Long-Named Button 4");
-		
+		mainPanel.add(locCtrlTask, "wrap, width "+taskWidth+"::"+taskWidth+"");
 		
 		JXTaskPane searchOptionTask = new JXTaskPane();
-		searchOptionTask.setLayout(new GridBagLayout());
-        Icon searchOptionTaskIcon = ResourceLoader.lookupIconResource("direction_up", "direction_up");
+		searchOptionTask.setLayout(new MigLayout("insets -7 -7 -5 -5"));
+        Icon searchOptionTaskIcon = ResourceLoader.lookupIconResource("searchOption", "searchOption");
         searchOptionTask.setTitle("Search Option");
         searchOptionTask.setCollapsed(true);
         searchOptionTask.setFocusable(false);
         searchOptionTask.setIcon(searchOptionTaskIcon);
-        
-        GridBagConstraints searchOptionConstraints = new GridBagConstraints();
-        //locTaskConstraints.fill = GridBagConstraints.HORIZONTAL;
-        locTaskConstraints.anchor = GridBagConstraints.PAGE_START;
-        locTaskConstraints.weightx = 1;
-        locTaskConstraints.insets = new Insets(-4,-8,-6,-8);  //top padding
-        locTaskConstraints.gridx = 0;
-        locTaskConstraints.gridy = 0;
-        searchOptionTask.add(searchOptionPanel, searchOptionConstraints);
-        locControlPanel.setPreferredSize(new Dimension(75, 55));
-		//JLabel locControlLabel = new JLabel(" Grid Ctrl");
-        //gridLabel.set
-		c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.PAGE_START;
-        c.weightx = 0.5;
-        c.gridx = 0;
-        old = c.insets; 
-        c.insets = new Insets(5,0,0,0);  //top padding
-        c.gridy = gridyIndex++;
-		mainPanel.add(searchOptionTask, c);
-		c.insets = old;
-		
-//		c.fill = GridBagConstraints.HORIZONTAL;
-//		c.ipady = 60;      //make this component tall
-//		c.weightx = 0.0;
-//		//c.gridwidth = 3;
-//		c.gridx = 0;
-//		c.gridy = gridyIndex++;
-//		mainPanel.add(locControlPanel, c);
-		
-		c.ipady = 0;       //reset to default
-		c.weighty = 1.0;   //request any extra vertical space
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
-		c.insets = new Insets(0,0,0,0);  //top padding
-		c.gridx = 0;       //aligned with button 2
-		//c.gridwidth = 2;   //2 columns wide
-		c.gridy = gridyIndex++;       //third row
-		mainPanel.add(new JPanel(), c);
-
-//		button = new JButton("5");
-//		c.fill = GridBagConstraints.HORIZONTAL;
-//		c.ipady = 0;       //reset to default
-//		c.weighty = 1.0;   //request any extra vertical space
-//		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
-//		c.insets = new Insets(10,0,0,0);  //top padding
-//		c.gridx = 0;       //aligned with button 2
-//		//c.gridwidth = 2;   //2 columns wide
-//		c.gridy = 4;       //third row
-//		add(button, c);
-		
+        searchOptionTask.add(searchOptionPanel, "wrap");
+		mainPanel.add(searchOptionTask, "wrap, width "+taskWidth+"::"+taskWidth+"");
         
 		UiGlobals.set_scaleSlider(scaleResizer);
 	}
@@ -634,12 +534,14 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		}
 		else if(s instanceof JComboBox){
 		    JComboBox cb = (JComboBox)s;
-		    String scaleName = (String)cb.getSelectedItem();
-		    String[] scaleNamePart = scaleName.split(scalePrefix);
-		    System.out.println("Scale changed to : "+scaleNamePart[1]);
-		    NodeRenderManager manager = UiGlobals.getNodeRenderManager();
-            UiGlobals.setGrid_scale(Integer.parseInt(scaleNamePart[1]));
-            manager.drawNodes(true);
+		    if("scale".equals(cb.getName())){
+			    String scaleName = (String)cb.getSelectedItem();
+			    String[] scaleNamePart = scaleName.split(scalePrefix);
+			    System.out.println("Scale changed to : "+scaleNamePart[1]);
+			    NodeRenderManager manager = UiGlobals.getNodeRenderManager();
+	            UiGlobals.setGrid_scale(Integer.parseInt(scaleNamePart[1]));
+	            manager.drawNodes(true);
+		    }
 		    
 		}
 	}

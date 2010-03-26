@@ -2,12 +2,14 @@ package org.ssu.ml.base;
 
 import java.awt.Font;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
@@ -17,6 +19,7 @@ import org.jdesktop.swingx.JXPanel;
 import org.ssu.ml.presentation.JNodeInfoPanel;
 import org.ssu.ml.ui.NodeRenderManager;
 import org.tigris.gef.base.Globals;
+import org.tigris.gef.presentation.Fig;
 
 public class UiGlobals extends Globals{
 	public static String isExample = "N";
@@ -54,7 +57,42 @@ public class UiGlobals extends Globals{
 	private static JNodeInfoPanel nodeInfoPanel = null;
 	private static JXFrame nodeInfoFrame = null;
 	
+	private static JPanel coordBottomPanel = null;
 	
+	public static void showNodeInfoList(List<Fig> selectedFigList){
+		if(UiGlobals.getNodeInfoFrame() == null){
+    		UiGlobals.setNodeInfoPanel(new JNodeInfoPanel());
+    		UiGlobals.getNodeInfoPanel().removeAll();
+        	
+        	
+        	//UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", true);
+    		UiGlobals.setNodeInfoFrame(new JXFrame("Selected node(s) info."));
+    	}
+    	UiGlobals.getNodeInfoPanel().setColumnData(UiGlobals.getAnnotationHeader());
+    	UiGlobals.getNodeInfoPanel().showList(selectedFigList);
+    	
+    	UiGlobals.getNodeInfoFrame().add(UiGlobals.getNodeInfoPanel());
+    	UiGlobals.getNodeInfoFrame().invalidate();
+    	UiGlobals.getNodeInfoFrame().setVisible(true);
+	}
+	
+	
+	/**
+	 * @return the coordBottomPanel
+	 */
+	public static JPanel getCoordBottomPanel() {
+		return coordBottomPanel;
+	}
+
+
+	/**
+	 * @param coordBottomPanel the coordBottomPanel to set
+	 */
+	public static void setCoordBottomPanel(JPanel coordBottomPanel) {
+		UiGlobals.coordBottomPanel = coordBottomPanel;
+	}
+
+
 	/**
 	 * @return the nodeInfoFrame
 	 */
