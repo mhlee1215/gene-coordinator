@@ -24,6 +24,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EtchedBorder;
 
+import net.miginfocom.swing.MigLayout;
+
 import org.ssu.ml.base.UiGlobals;
 import org.ssu.ml.ui.NodePaletteFig;
 import org.ssu.ml.ui.NodeRenderManager;
@@ -220,8 +222,14 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 		_mainPanel.add(_graphPanel, BorderLayout.CENTER);
 		content.add(_mainPanel, BorderLayout.CENTER);
-		content.add(_statusbar, BorderLayout.SOUTH);
+		
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setLayout(new MigLayout("insets 0 0 0 0"));
+		bottomPanel.add(_statusbar, "wrap");
+		
+		content.add(bottomPanel, BorderLayout.SOUTH);
 		UiGlobals.set_statusBar(_statusbar);
+		UiGlobals.setCoordBottomPanel(bottomPanel);
 		setSize(870, 600);
 		setVisible(true);
 
