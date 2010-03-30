@@ -28,64 +28,54 @@
 
 package org.ssu.ml.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.java.dev.colorchooser.ColorChooser;
 import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXTaskPane;
 import org.ssu.ml.base.UiGlobals;
-import org.tigris.gef.base.CmdSetMode; 
-import org.tigris.gef.base.CmdZoom;
+import org.ssu.ml.presentation.FigCustomNode;
 import org.tigris.gef.base.Editor;
-import org.tigris.gef.base.Layer;
 import org.tigris.gef.base.LayerGrid;
-import org.tigris.gef.base.ModeBroom;
-import org.tigris.gef.base.ModeCreateFigCircle;
-import org.tigris.gef.base.ModeCreateFigInk;
-import org.tigris.gef.base.ModeCreateFigLine;
-import org.tigris.gef.base.ModeCreateFigPoly;
-import org.tigris.gef.base.ModeCreateFigRRect;
-import org.tigris.gef.base.ModeCreateFigRect;
-import org.tigris.gef.base.ModeCreateFigSpline;
-import org.tigris.gef.base.ModeCreateFigText;
-import org.tigris.gef.base.ModeSelect;
+import org.tigris.gef.presentation.Fig;
 import org.tigris.gef.util.ResourceLoader;
 
 
-public class ResizerPaletteFig extends WestToolBar implements ChangeListener, ActionListener{
+public class ResizerPaletteFig extends WestToolBar implements ChangeListener, ActionListener, ItemListener {
 
 	/**
      * 
@@ -102,11 +92,15 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 	
 	
 	JMenu scaleMenu;
+	String scaleNamePrefix = "SCALE_PREFIX";
 	String scalePrefix = "x";
 	int scaleMin = 1;
 	int initScale = 4;
 	int scaleMax = 9;
-
+	
+	private final String LAYER_ORIGINAL = "Original";
+	private final String LAYER_ALL = "All";
+	
 	public ResizerPaletteFig() {
 		defineButtons();
 	}
@@ -133,7 +127,7 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		ButtonGroup group = new ButtonGroup();
 		for(int count = scaleMin ; count < scaleMax ; count++){
 			JRadioButtonMenuItem item = new JRadioButtonMenuItem(scalePrefix+count);
-			item.setName(scalePrefix+count);
+			item.setName(scaleNamePrefix+count);
 			item.addActionListener(this);
 			group.add(item);
 			scaleMenu.add(item);
@@ -294,21 +288,75 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		
 		JPanel searchOptionPanel = new JPanel();
 		searchOptionPanel.setLayout(new MigLayout("insets 0 0 0 0"));
-		JComboBox viewType = new JComboBox();
-		viewType.addActionListener(this);
-		viewType.addItem("With marked");
-		viewType.addItem("Only searched");
-		searchOptionPanel.add(viewType, "wrap");
 		
-		JComboBox markType = new JComboBox();
-		markType.addActionListener(this);
-		markType.addItem("Auto colored");
-		markType.addItem("Custom colored");
-		searchOptionPanel.add(markType, "wrap");
+		JPanel onlyShowSearchedPanel = new JPanel();
+		JLabel onlyShowSearchedLabel = new JLabel("only found: ");
+		onlyShowSearchedPanel.add(onlyShowSearchedLabel);
+		JCheckBox onlyShowSearchedCheck = new JCheckBox();
+		//onlyShowSearchedCheck.setText("only searched:");
+		onlyShowSearchedCheck.setName("onlyShowSearchedCheck");
+		onlyShowSearchedCheck.addItemListener(this);
+		onlyShowSearchedPanel.add(onlyShowSearchedCheck);
+		searchOptionPanel.add(onlyShowSearchedPanel, "wrap");
 		
-		JTextField markColorInput = new JTextField();
-		searchOptionPanel.add(markColorInput, "wrap");
+		JComboBox searchType = new JComboBox();
+		searchType.setName("searchType");
+		searchType.addActionListener(this);
+		searchType.addItem("New");
+		searchType.addItem("Union");
+		searchType.addItem("Intersection");
+		searchType.addItem("Minus");
+		searchOptionPanel.add(searchType, "wrap");
 		
+		JPanel colorChooserPanel = new JPanel();
+		
+		JLabel markColorLabel = new JLabel("Mark color: ");
+		colorChooserPanel.add(markColorLabel);
+		
+		
+		final ColorChooser cc = new ColorChooser();
+		cc.setColor(CNodeData.getDefaultColor());
+		colorChooserPanel.add (cc, "wrap");
+		
+		searchOptionPanel.add(colorChooserPanel, "wrap");
+		
+        cc.addActionListener (new ActionListener() {
+           public void actionPerformed (ActionEvent ae) {
+        	  UiGlobals.setSearchMarkColor(cc.getColor());
+              //something.setColor (cc.getColor());
+           }
+        });
+		
+        JLabel layerLabel = new JLabel(" Show layer: ");
+        searchOptionPanel.add(layerLabel, "wrap");
+		JComboBox layerCombo = new JComboBox();
+		UiGlobals.setShowLayerCombo(layerCombo);
+		layerCombo.addItem(LAYER_ORIGINAL);
+		layerCombo.addItem(LAYER_ALL);
+		layerCombo.setName("layer");
+		layerCombo.setSelectedIndex(0);
+		//layerCombo.addActionListener(this);
+		layerCombo.addItemListener(this);
+		searchOptionPanel.add(layerCombo, "wrap, width 100:100:100");
+		
+        /*
+        JLabel viewLayerLabel = new JLabel("Layer: ");
+        //searchLayerPanel.add(viewLayerLabel);
+        JMenuBar searchLayers = new JMenuBar();
+        searchLayers.setMargin(new Insets(0, 0, 0, 0));
+        JMenu searchLayer = new JMenu("All");
+        searchLayer.setMargin(new Insets(0, 0, 0, 0));
+        JRadioButtonMenuItem searchLayer1 = new JRadioButtonMenuItem();
+        searchLayer1.addActionListener(this);
+        //searchLayer1.setName(layerPrefix+"All");
+        searchLayer1.setMargin(new Insets(0, -5, 0, 0));
+        //searchLayer1.setText(layerPrefix+"All");
+        searchLayer1.setSelected(true);
+        searchLayer.add(searchLayer1);
+        searchLayers.add(searchLayer);
+        */
+        
+        
 		
 		//Search Option Content End
 		
@@ -519,18 +567,23 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		}
 		else if(s instanceof JRadioButtonMenuItem){
 			JRadioButtonMenuItem item = (JRadioButtonMenuItem)s;
-			for(int count = scaleMin ; count < scaleMax ; count++){
-				if(item.getName().equals(scalePrefix+count)){
-					scaleMenu.setText(scalePrefix+count);
-					item.setSelected(true);
-					
-					//UiGlobals.get_scaleSlider().setEnabled(false);
-					NodeRenderManager manager = UiGlobals.getNodeRenderManager();
-					UiGlobals.setGrid_scale(count);
-					manager.drawNodes(true);
-					
+			if(item.getName().contains(scaleNamePrefix)){
+				for(int count = scaleMin ; count < scaleMax ; count++){
+					if(item.getName().equals(scaleNamePrefix+count)){
+						//scaleMenu.setText(scalePrefix+count);
+						item.setSelected(true);
+						
+						//UiGlobals.get_scaleSlider().setEnabled(false);
+						NodeRenderManager manager = UiGlobals.getNodeRenderManager();
+						UiGlobals.setGrid_scale(count);
+						manager.drawNodes(true);
+						
+					}
 				}
-			}
+			}/*else if(item.getName().contains(layerPrefix)){
+				JMenuItem cb = (JMenuItem)s;
+				System.out.println(cb.isSelected());
+			}*/
 		}
 		else if(s instanceof JComboBox){
 		    JComboBox cb = (JComboBox)s;
@@ -542,7 +595,123 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 	            UiGlobals.setGrid_scale(Integer.parseInt(scaleNamePart[1]));
 	            manager.drawNodes(true);
 		    }
-		    
+		    else if("searchType".equals(cb.getName())){
+		    	String searchType = (String)cb.getSelectedItem();
+		    	UiGlobals.setSearchType(searchType);
+		    }else if("layer".equals(cb.getName())){
+		    	String layer = (String)cb.getSelectedItem();
+		    }
 		}
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		//System.out.println(e);
+		Object s = e.getItemSelectable();
+		if(s instanceof JCheckBox){
+			JCheckBox cb = (JCheckBox)s;
+			if("onlyShowSearchedCheck".equals(cb.getName())){
+				UiGlobals.setShowOnlyFound(cb.isSelected());
+				showLayer(UiGlobals.getShowLayerCombo().getSelectedItem().toString());
+			}
+		}else if(s instanceof JComboBox){
+			JComboBox cb = (JComboBox)s;
+			if("layer".equals(cb.getName())){
+				if(e.getStateChange() == ItemEvent.SELECTED){
+					//System.out.println(cb.getSelectedItem());
+					showLayer(cb.getSelectedItem().toString());
+				}
+			}
+			
+		}
+	}
+	
+	public void showLayer(String layerName){
+		System.out.println("showLayer: "+layerName+", showOnly: "+UiGlobals.isShowOnlyFound());
+		Editor editor = UiGlobals.curEditor();
+		if(layerName.contains(LAYER_ORIGINAL)){
+			List<Fig> nodes = editor.getLayerManager().getActiveLayer().getContents();
+			for(int count = 0 ; count < nodes.size() ; count++)
+	        {
+	        	Fig node = nodes.get(count);
+	        	FigCustomNode nodeCustom = (FigCustomNode)node;
+	        	nodeCustom.resetFoundMark();
+	        	if(UiGlobals.isShowOnlyFound()){
+	        		nodeCustom.setVisible(false);
+		        	nodeCustom.setSelectable(false);
+	        	}else{
+	        		nodeCustom.setVisible(true);
+		        	nodeCustom.setSelectable(true);
+	        	}
+	        	
+	        }
+		}
+		else if(layerName.contains(LAYER_ALL)){
+			List<Fig> nodes = editor.getLayerManager().getActiveLayer().getContents();
+			for(int count = 0 ; count < nodes.size() ; count++)
+	        {
+	        	Fig node = nodes.get(count);
+	        	FigCustomNode nodeCustom = (FigCustomNode)node;
+	        	nodeCustom.resetFoundMark();
+	        	if(UiGlobals.isShowOnlyFound()){
+	        		nodeCustom.setVisible(false);
+		        	nodeCustom.setSelectable(false);
+	        	}else{
+	        		nodeCustom.setVisible(true);
+		        	nodeCustom.setSelectable(true);
+	        	}
+	        }
+			
+			Set<String> layerNameSet = UiGlobals.getLayerData().keySet();
+			Iterator<String> keyIter = layerNameSet.iterator();
+			
+			while(keyIter.hasNext()){
+				String layerNameTmp = keyIter.next();
+				Color layerColor = UiGlobals.getLayerColor().get(layerNameTmp);
+				List<Fig> layerNodes  = UiGlobals.getLayerData().get(layerNameTmp);
+				if(nodes != null){
+					for(int count = 0 ; count < layerNodes.size() ; count++)
+			        {
+			        	Fig node = layerNodes.get(count);
+			        	FigCustomNode nodeCustom = (FigCustomNode)node;
+			        	nodeCustom.setFoundMark(layerColor);
+			        	nodeCustom.setVisible(true);
+			        	nodeCustom.setSelectable(true);
+			        }
+				}
+			}
+		}else{
+			
+			List<Fig> nodes = editor.getLayerManager().getActiveLayer().getContents();
+			for(int count = 0 ; count < nodes.size() ; count++)
+	        {
+	        	Fig node = nodes.get(count);
+	        	FigCustomNode nodeCustom = (FigCustomNode)node;
+	        	nodeCustom.resetFoundMark();
+	        	if(UiGlobals.isShowOnlyFound()){
+	        		nodeCustom.setVisible(false);
+		        	nodeCustom.setSelectable(false);
+	        	}else{
+	        		nodeCustom.setVisible(true);
+		        	nodeCustom.setSelectable(true);
+	        	}
+	        }
+			
+			List<Fig> layerNodes  = UiGlobals.getLayerData().get(layerName);
+			Color layerColor = UiGlobals.getLayerColor().get(layerName);
+			if(nodes != null){
+				for(int count = 0 ; count < layerNodes.size() ; count++)
+		        {
+		        	Fig node = layerNodes.get(count);
+		        	FigCustomNode nodeCustom = (FigCustomNode)node;
+		        	nodeCustom.setFoundMark(layerColor);
+		        	nodeCustom.setVisible(true);
+		        	nodeCustom.setSelectable(true);
+		        }
+			}
+		}
+		
+		editor.damageAll();
+		
 	}
 } /* end class PaletteFig */

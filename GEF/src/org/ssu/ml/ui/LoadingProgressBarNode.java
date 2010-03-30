@@ -44,6 +44,7 @@ import org.ssu.ml.base.DoublePair;
 import org.ssu.ml.base.NodeDescriptor;
 import org.ssu.ml.base.UiGlobals;
 import org.tigris.gef.base.Editor;
+import org.tigris.gef.base.Layer;
 import org.tigris.gef.base.LayerGrid;
 import org.tigris.gef.demo.SampleNode;
 import org.tigris.gef.graph.presentation.DefaultGraphModel;
@@ -119,7 +120,6 @@ public class LoadingProgressBarNode extends JPanel
         @Override
         public Void doInBackground() {
             
-         
             //Initialize progress property.
             setProgress(0);
             
@@ -133,34 +133,80 @@ public class LoadingProgressBarNode extends JPanel
             float[] locyArry = nodeData.getLocyArry();
             
             max_work = nodeData.size();
+            Layer cmp = null;
+            
+            editor.getLayerManager().setPaintActiveOnly(true);
+            
+            int inserted = 0;
+            
         	for(int count = cur_work ; count < max_work ; count++){
-            	int locx = (int)((locxArry[count]+Math.abs(minLocx))*nodeData.getPre_scale()) + nodeData.getPadding()/2;
-            	int locy = (int)((locyArry[count]+Math.abs(minLocy))*nodeData.getPre_scale()) + nodeData.getPadding()/2;
-            	
-
-            	NodeDescriptor desc = new NodeDescriptor();
-            	desc.setName(nodeData.getPointerName(count));
-            	desc.setGroup(nodeData.getGroup(count));
-            	FigCustomNode rect = new FigCustomNode(locx, locy, 7, 7, desc);
-            	
-            	rect.setLineColor(nodeData.getColor(count));
-
-            	rect.setLocked(true);
-
-            	editor.add(rect);
-
-            	cur_work++;
-            	if(cur_work%1000 == 0) UiGlobals.setStatusbarText(" Node Rendering... "+cur_work+"/"+max_work);//System.out.println("cur_work! : "+cur_work);
-            	
-            	if(cur_work%100 == 0 ) changeProgress();
-            	
-                //if(cur_work == max_work) break;
-                
-                if(!progressFlag) break;
-                
+        		try{
+	        		inserted++;
+	        		
+	            	int locx = (int)((locxArry[count]+Math.abs(minLocx))*nodeData.getPre_scale()) + nodeData.getPadding()/2;
+	            	int locy = (int)((locyArry[count]+Math.abs(minLocy))*nodeData.getPre_scale()) + nodeData.getPadding()/2;
+	            	
+	
+	            	NodeDescriptor desc = new NodeDescriptor();
+	            	desc.setName(nodeData.getPointerName(count));
+	            	desc.setGroup(nodeData.getGroup(count));
+	            	FigCustomNode rect = new FigCustomNode(locx, locy, 7, 7, desc);
+	            	
+	            	rect.setLineColor(nodeData.getColor(count));
+	
+	            	rect.setLocked(true);
+	
+	            	if(cmp == null)
+	            		cmp = editor.getLayerManager().getActiveLayer();
+	            	else
+	            	{
+	            		if(cmp != editor.getLayerManager().getActiveLayer()){
+	            			System.out.println(cmp);
+	            			System.out.println(editor.getLayerManager().getActiveLayer());
+	            			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!");
+	            			try{ Thread.sleep(3000); }catch(Exception e){}
+	            			//break;
+	            		}
+	            	}
+	            	editor.add(rect);
+	            	cur_work++;
+	            	if(cur_work%1000 == 0){
+	            		UiGlobals.setStatusbarText(" Node Rendering... "+cur_work+"/"+max_work);//System.out.println("cur_work! : "+cur_work);
+	            		
+	            		editor.getLayerManager().setPaintActiveOnly(false);
+	            		
+	            		try{
+	            			Thread.sleep(10);
+	            		}catch(Exception e){}
+	            		
+	            		editor.getLayerManager().setPaintActiveOnly(true);
+	            		
+	            	}
+	            	if(cur_work%100 == 0 ){ 
+	            		
+	            		try{
+	            			Thread.sleep(5);
+	            		}catch(Exception e){}
+	            		changeProgress();
+	            	}
+	                if(!progressFlag) break;
+        		}catch(OutOfMemoryError e){
+        			e.printStackTrace();
+        			JOptionPane.showMessageDialog(UiGlobals.getApplet(),
+        				    "Node loading is fail because your java heap space too small to handle COEX. If you want to increase java heap space, please reference guide in coex website.",
+        				    "Node loading error",
+        				    JOptionPane.ERROR_MESSAGE);
+        		}
             }
+        	editor.getLayerManager().setPaintActiveOnly(false);
+        	//editor.damageAll();
         	
         	
+        	java.util.List<Fig> nodes = editor.getLayerManager().getContents();
+        	System.out.println("inserted : "+inserted+", "+nodes.size());
+        	//for(int i = 0 ;i < nodes.size(); i++){
+        	//	System.out.println((i+1)+", "+nodes.get(i).getOwner());
+        	//}
         	
             return null;
         }

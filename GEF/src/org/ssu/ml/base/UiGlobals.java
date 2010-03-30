@@ -1,5 +1,6 @@
 package org.ssu.ml.base;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ public class UiGlobals extends Globals{
 	private static Font normalFont = new Font("Lucida Grande", Font.PLAIN, 10);
 	private static Font titleFont = new Font("Lucida Grande", Font.BOLD, 25);
 	private static ColorPool constantColor = new ColorPool();
+	private static Color searchMarkColor = null;
 	
 	private static Vector<double[]> gridDatas = new Vector<double[]>();
 	private static Vector<CGridState> gridStes = new Vector<CGridState>();
@@ -59,7 +61,113 @@ public class UiGlobals extends Globals{
 	
 	private static JPanel coordBottomPanel = null;
 	
+	private static String searchType = "New";
+	private static boolean isShowOnlyFound = false;
+	
+	private static JComboBox showLayerCombo;
+	private static HashMap<String, Color> layerColor = new HashMap<String, Color>();
+	private static HashMap<String, List<Fig>> layerData = new HashMap<String, List<Fig>>();
+	
+	
+	/**
+	 * @return the layerColor
+	 */
+	public static HashMap<String, Color> getLayerColor() {
+		return layerColor;
+	}
+
+	/**
+	 * @param layerColor the layerColor to set
+	 */
+	public static void setLayerColor(HashMap<String, Color> layerColor) {
+		UiGlobals.layerColor = layerColor;
+	}
+
+	/**
+	 * @return the layerData
+	 */
+	public static HashMap<String, List<Fig>> getLayerData() {
+		return layerData;
+	}
+
+	/**
+	 * @param layerData the layerData to set
+	 */
+	public static void setLayerData(HashMap<String, List<Fig>> layerData) {
+		UiGlobals.layerData = layerData;
+	}
+
+
+	/**
+	 * @return the showLayerCombo
+	 */
+	public static JComboBox getShowLayerCombo() {
+		return showLayerCombo;
+	}
+
+
+	/**
+	 * @param showLayerCombo the showLayerCombo to set
+	 */
+	public static void setShowLayerCombo(JComboBox showLayerCombo) {
+		UiGlobals.showLayerCombo = showLayerCombo;
+	}
+
+
+	/**
+	 * @return the isShowOnlyFound
+	 */
+	public static boolean isShowOnlyFound() {
+		return isShowOnlyFound;
+	}
+
+
+	/**
+	 * @param isShowOnlyFound the isShowOnlyFound to set
+	 */
+	public static void setShowOnlyFound(boolean isShowOnlyFound) {
+		UiGlobals.isShowOnlyFound = isShowOnlyFound;
+	}
+
+
+	/**
+	 * @return the searchType
+	 */
+	public static String getSearchType() {
+		return searchType;
+	}
+
+
+	/**
+	 * @param searchType the searchType to set
+	 */
+	public static void setSearchType(String searchType) {
+		UiGlobals.searchType = searchType;
+	}
+
+
+	/**
+	 * @return the searchMarkColor
+	 */
+	public static Color getSearchMarkColor() {
+		return searchMarkColor;
+	}
+
+
+	/**
+	 * @param searchMarkColor the searchMarkColor to set
+	 */
+	public static void setSearchMarkColor(Color searchMarkColor) {
+		UiGlobals.searchMarkColor = searchMarkColor;
+	}
+
+
 	public static void showNodeInfoList(List<Fig> selectedFigList){
+		if(selectedFigList == null){
+			if(UiGlobals.getNodeInfoPanel() == null || UiGlobals.getNodeInfoPanel().getFigList() == null)
+				return;
+		}
+		
 		if(UiGlobals.getNodeInfoFrame() == null){
     		UiGlobals.setNodeInfoPanel(new JNodeInfoPanel());
     		UiGlobals.getNodeInfoPanel().removeAll();

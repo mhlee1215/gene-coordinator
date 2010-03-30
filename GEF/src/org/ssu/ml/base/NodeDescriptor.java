@@ -3,6 +3,15 @@ package org.ssu.ml.base;
 public class NodeDescriptor {
 	String name = "";
 	int group = 0;
+	int focusedCount = 0;
+	
+	public void resetFocusCnt(){
+		focusedCount = 0;
+	}
+	
+	public void increaseFocusCnt(){
+		focusedCount++;
+	}
 	
 	public String getName() {
 		return name;

@@ -152,6 +152,7 @@ public class LayerManager implements java.io.Serializable {
 
     /** Make one of my layers the active one. */
     public void setActiveLayer(Layer lay) {
+    	
         if (_activeLayer != null && _activeLayer.isAlwaysOnTop())
             return;
 

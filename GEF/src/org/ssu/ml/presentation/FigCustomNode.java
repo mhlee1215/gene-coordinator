@@ -70,6 +70,7 @@ import org.jdesktop.swingx.graphics.ShadowRenderer;
 import org.ssu.ml.base.CmdGetNodes;
 import org.ssu.ml.base.NodeDescriptor;
 import org.ssu.ml.base.UiGlobals;
+import org.ssu.ml.ui.CNodeData;
 import org.tigris.gef.base.CmdReorder;
 import org.tigris.gef.base.Editor;
 import org.tigris.gef.presentation.Fig;
@@ -84,7 +85,68 @@ public class FigCustomNode extends FigRect implements MouseListener {
 	
 	Color borderColor = Color.black;
 	
-    public Color getBorderColor() {
+	int selectedCountBySearch = 0;
+	float borderSize = 1f;
+	Stroke borderStroke = new BasicStroke(borderSize);
+	boolean increased = false;
+	
+	/**
+	 * @return the selectedCountBySearch
+	 */
+	public int getSelectedCountBySearch() {
+		return selectedCountBySearch;
+	}
+
+	/**
+	 * @param selectedCountBySearch the selectedCountBySearch to set
+	 */
+	public void setSelectedCountBySearch(int selectedCountBySearch) {
+		this.selectedCountBySearch = selectedCountBySearch;
+	}
+
+	public void increaseBorderWidth(){
+		borderSize++;
+		selectedCountBySearch++;
+		//if(increased)
+		//	System.out.println(borderSize+", "+this.getOwner());
+
+		borderStroke = new BasicStroke(borderSize);
+		increased = true;
+	}
+	
+	public void resetBorderWidth(){
+		borderSize = 1;
+		selectedCountBySearch = 0;
+		borderStroke = new BasicStroke(borderSize);
+	}
+	
+	public void setFoundMark(Color markColor){
+		setLineColor(markColor);
+		increaseBorderWidth();
+		setBorderColor(markColor);
+	}
+	public void resetFoundMark(){
+		setBorderColor(Color.black);	
+		resetBorderWidth();
+		setLineColor(CNodeData.getDefaultColor());
+		
+	}
+	
+    /**
+	 * @return the borderStroke
+	 */
+	public Stroke getBorderStroke() {
+		return borderStroke;
+	}
+
+	/**
+	 * @param borderStroke the borderStroke to set
+	 */
+	public void setBorderStroke(Stroke borderStroke) {
+		this.borderStroke = borderStroke;
+	}
+
+	public Color getBorderColor() {
 		return borderColor;
 	}
 
@@ -179,6 +241,7 @@ public class FigCustomNode extends FigRect implements MouseListener {
     
     /** Paint this FigRect */
     public void paint(Graphics g) {
+    	if(visible){
     	//g.draw
        // drawRect(g, isFilled(), getFillColor(), getLineWidth(), getLineColor(), getX(), getY(), getWidth(),
         //        getHeight(), getDashed(), _dashes, _dashPeriod);
@@ -216,10 +279,11 @@ public class FigCustomNode extends FigRect implements MouseListener {
     	g2.fillOval(getX(), getY(), getWidth(), getHeight());
     	
     	g2.setColor(borderColor);
-    	g2.setStroke(new BasicStroke(1f));
+    	g2.setStroke(borderStroke);
     	g2.drawOval(getX(), getY(), getWidth(), getHeight());
     	
     	g2.setColor(old);
+    	}
     }
 
 	@Override
@@ -231,13 +295,11 @@ public class FigCustomNode extends FigRect implements MouseListener {
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println(this.getOwner()+"in!");
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println(this.getOwner()+"out");
 	}
 
 	@Override

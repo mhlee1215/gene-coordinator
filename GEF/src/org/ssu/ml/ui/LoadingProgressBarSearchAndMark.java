@@ -40,6 +40,7 @@ import org.ssu.ml.base.CmdGridChart;
 import org.ssu.ml.base.DoublePair;
 import org.ssu.ml.base.NodeDescriptor;
 import org.ssu.ml.base.UiGlobals;
+import org.tigris.gef.base.CmdReorder;
 import org.tigris.gef.base.Editor;
 import org.tigris.gef.base.LayerGrid;
 import org.tigris.gef.demo.SampleNode;
@@ -105,27 +106,106 @@ public class LoadingProgressBarSearchAndMark extends JPanel
     		System.out.println("index: "+searchIndex+", keyword: "+searchKeyword+", "+nodes.size());
     		
     		int findCount = 0;
+    		
+    		String currentLayer = UiGlobals.getShowLayerCombo().getSelectedItem().toString();
+    		
+    		
+    		Vector<Fig> selectedFig = null;
+    		if(!"New".equalsIgnoreCase(UiGlobals.getSearchType())){
+				selectedFig = (Vector<Fig>) UiGlobals.getLayerData().get(currentLayer);
+			}else
+				selectedFig = new Vector<Fig>();
+    		
+    		Vector<Fig> intersectSelectFig = new Vector<Fig>();
+    		//Vector<Fig> newSelectedFig = new Vector<Fig>();
+    		
 	        for(int count = 0 ; count < nodes.size() ; count++)
 	        {
 	        	Fig node = nodes.get(count);
 	        	FigCustomNode nodeCustom = (FigCustomNode)node;
+	        	
 	        	if(isReset){
-	        		nodeCustom.setBorderColor(Color.black);	
-	        		nodeCustom.setLineColor(CNodeData.getDefaultColor());
+	        		nodeCustom.resetFoundMark();	
+	        		nodeCustom.setVisible(true);
+    	        	nodeCustom.setSelectable(true);
 	        		//editor.damageAll();
 	        	}else{
 	        		NodeDescriptor desc = (NodeDescriptor)nodeCustom.getOwner();
 	        		HashMap<Integer, String> propertyMap = annotationContent.get(desc.getName());
 	        		if(propertyMap != null){
 	        			String property = propertyMap.get(searchIndex);
-	        			if(property.contains(searchKeyword)){
-	        				System.out.println("find!");
-	        				findCount++;
-	        				nodeCustom.setLineColor(Color.red);
-	        				nodeCustom.setBorderColor(Color.red);
-	        			}else{
-	        				nodeCustom.setBorderColor(Color.black);	
-	    	        		nodeCustom.setLineColor(CNodeData.getDefaultColor());
+	        			
+	        			
+	        			
+	        			
+	        			if("New".equalsIgnoreCase(UiGlobals.getSearchType())){
+	        				
+		        			if(property.contains(searchKeyword)){
+		        				findCount++;
+		        				Color markColor = UiGlobals.getSearchMarkColor();
+		        				nodeCustom.setFoundMark(markColor);
+	    	        			nodeCustom.setVisible(true);
+	    	    	        	nodeCustom.setSelectable(true);
+	    	    	        	
+	    	    	        	selectedFig.add(nodeCustom);
+		        			}else{
+		        				nodeCustom.setBorderColor(Color.black);	
+		        				nodeCustom.resetBorderWidth();
+		    	        		nodeCustom.setLineColor(CNodeData.getDefaultColor());
+		    	        		
+		    	        		if(UiGlobals.isShowOnlyFound()){
+		    	        			nodeCustom.setVisible(false);
+		    	    	        	nodeCustom.setSelectable(false);
+		    	        		}
+		        			}
+	        			}else if("Union".equalsIgnoreCase(UiGlobals.getSearchType())){
+		        			if(property.contains(searchKeyword)){
+		        				findCount++;
+		        				Color markColor = UiGlobals.getSearchMarkColor();
+		        				nodeCustom.setFoundMark(markColor);
+		        				
+		        				if(!selectedFig.contains(nodeCustom))
+		        					selectedFig.add(nodeCustom);
+		        				
+		        				if(UiGlobals.isShowOnlyFound()){
+		    	        			nodeCustom.setVisible(true);
+		    	        			nodeCustom.setSelectable(true);
+		        				}
+		        				//
+		        			}
+	        			}else if("Intersection".equalsIgnoreCase(UiGlobals.getSearchType())){
+	        				nodeCustom.resetFoundMark();
+	        				
+		        			if(property.contains(searchKeyword)){
+		        				if(selectedFig.contains(nodeCustom))
+		        				{
+		        					findCount++;
+		        					Color markColor = UiGlobals.getSearchMarkColor();
+			        				nodeCustom.setFoundMark(markColor);
+			        				intersectSelectFig.add(nodeCustom);
+		        				}else{
+		        					if(UiGlobals.isShowOnlyFound()){
+			    	        			nodeCustom.setVisible(false);
+			    	        			nodeCustom.setSelectable(false);
+			    	        		}
+		        				}
+		        			}else{
+	        					if(UiGlobals.isShowOnlyFound()){
+		    	        			nodeCustom.setVisible(false);
+		    	        			nodeCustom.setSelectable(false);
+		    	        		}
+	        				}
+	        			}else if("Minus".equalsIgnoreCase(UiGlobals.getSearchType())){
+		        			if(property.contains(searchKeyword)){
+		        				findCount++;
+		        				selectedFig.remove(nodeCustom);
+		        				nodeCustom.resetFoundMark();
+		        				//
+		    	        		if(UiGlobals.isShowOnlyFound()){
+		    	        			nodeCustom.setVisible(false);
+		    	        			nodeCustom.setSelectable(false);
+		    	        		}
+		        			}
 	        			}
 	        		}
 	        	}
@@ -133,6 +213,20 @@ public class LoadingProgressBarSearchAndMark extends JPanel
 	        	if(count % 100 == 0)
 	        		editor.damageAll();
 	        	
+	        }
+	        if("New".equalsIgnoreCase(UiGlobals.getSearchType())){
+		        String newLayerName = "Layer ";
+				newLayerName+=UiGlobals.getShowLayerCombo().getItemCount();
+				UiGlobals.getLayerColor().put(newLayerName, UiGlobals.getSearchMarkColor());
+				UiGlobals.getLayerData().put(newLayerName, selectedFig);
+				UiGlobals.getShowLayerCombo().addItem(newLayerName);
+				UiGlobals.getShowLayerCombo().setSelectedIndex(UiGlobals.getShowLayerCombo().getItemCount()-1);
+	        }else if("Intersection".equalsIgnoreCase(UiGlobals.getSearchType())){
+	        	selectedFig = intersectSelectFig;
+	        }
+	        
+	        for(Fig fig : selectedFig){
+	        	editor.getLayerManager().getActiveLayer().reorder(fig, CmdReorder.BRING_TO_FRONT);
 	        }
         	
 	        String output = findCount+" gene(s) is found.";
