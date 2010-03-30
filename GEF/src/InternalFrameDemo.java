@@ -38,6 +38,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
+import net.java.dev.colorchooser.ColorChooser;
+
 import java.awt.event.*;
 import java.awt.*;
 
@@ -62,9 +64,6 @@ public class InternalFrameDemo extends JFrame
 
         //Set up the GUI.
         desktop = new JDesktopPane(); //a specialized layered pane
-        createFrame(); //create first "window"
-        createFrame(); //create first "window"
-        createFrame(); //create first "window"
         createFrame(); //create first "window"
         setContentPane(desktop);
         setJMenuBar(createMenuBar());
@@ -114,6 +113,8 @@ public class InternalFrameDemo extends JFrame
     //Create a new internal frame.
     protected void createFrame() {
         MyInternalFrame frame = new MyInternalFrame();
+        
+        
         frame.setLocation(300, 300);
         frame.setVisible(true); //necessary as of 1.3
         desktop.add(frame);

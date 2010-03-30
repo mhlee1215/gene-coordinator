@@ -75,6 +75,7 @@ import org.tigris.gef.util.Localizer;
 public abstract class Fig implements GraphicElement, Cloneable,
         java.io.Serializable, PropertyChangeListener, PopupGenerator {
 
+	protected boolean isSelectable = true;
     /** The smallest size that the user can drag this Fig. */
     public final int MIN_SIZE = 4;
 
@@ -172,7 +173,7 @@ public abstract class Fig implements GraphicElement, Cloneable,
     /**
      * True if the Fig is visible
      */
-    private boolean visible = true;
+    protected boolean visible = true;
 
     protected boolean _allowsSaving = true;
 
@@ -1446,7 +1447,11 @@ public abstract class Fig implements GraphicElement, Cloneable,
      * @return true if this Fig can be selected by the user.
      */
     public boolean isSelectable() {
-        return true;
+        return isSelectable;
+    }
+    
+    public void setSelectable(boolean isSelectable) {
+        this.isSelectable = isSelectable;
     }
 
     /** Returns true if this Fig can be rotated by the user. */

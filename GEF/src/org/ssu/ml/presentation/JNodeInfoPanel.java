@@ -25,6 +25,20 @@ public class JNodeInfoPanel extends JXTitledPanel {
 	JScrollPane scrollPane = null;
 	List<Fig> figList = null;
 	
+	
+	
+	/**
+	 * @return the figList
+	 */
+	public List<Fig> getFigList() {
+		return figList;
+	}
+	/**
+	 * @param figList the figList to set
+	 */
+	public void setFigList(List<Fig> figList) {
+		this.figList = figList;
+	}
 	public JNodeInfoPanel(){
 		//this.setTitle("Node(s) Info.");
 	}
