@@ -5,11 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+
+import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
@@ -40,6 +45,8 @@ public class JNodeInfoPanel extends JXTitledPanel {
 		this.figList = figList;
 	}
 	public JNodeInfoPanel(){
+		//this.setLayout(new MigLayout());
+		//setLayout(new FlowLayout);
 		//this.setTitle("Node(s) Info.");
 	}
 	/**
@@ -103,10 +110,13 @@ public class JNodeInfoPanel extends JXTitledPanel {
 				if(scrollPane != null)
 					this.remove(scrollPane);
 				revalidate();
-				nodeTable = new JTable(data, columnStr);
+				nodeTable = new JTable(new JNodeInfoTableModel(columnStr, data));
+				nodeTable.setAutoCreateRowSorter(true);
 				nodeTable.setPreferredScrollableViewportSize(new Dimension(500, 70));
 				nodeTable.setFillsViewportHeight(true);
 				scrollPane = new JScrollPane(nodeTable);
+				
+				
 			}
 		}
 		catch(Exception e){
@@ -118,6 +128,9 @@ public class JNodeInfoPanel extends JXTitledPanel {
 			empty.add(new JLabel("After annotation file loaded, then this windows will be activated."));
 			scrollPane = new JScrollPane(empty);
 		}
+		
+		//JTextField filterText = new JTextField();
+		//this.add(filterText);
 		this.add(scrollPane);
 		
 		
@@ -135,5 +148,14 @@ public class JNodeInfoPanel extends JXTitledPanel {
 		showList(null);
 	}
 	
+	public static void main(String[] argv){
+		JFrame frame = new JFrame();
+		JNodeInfoPanel panel = new JNodeInfoPanel();
+		panel.setSize(500, 300);
+		panel.showList(null);
+		frame.add(panel);
+		frame.setSize(500, 300);
+		frame.setVisible(true);
+	}
 	
 }

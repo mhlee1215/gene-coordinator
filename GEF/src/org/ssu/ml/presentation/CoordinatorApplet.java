@@ -144,6 +144,23 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 	private void jbInit() throws Exception {
 
+		long mega = (long) Math.pow(2, 20);
+		// Get current size of heap in bytes
+		long heapSize = Runtime.getRuntime().totalMemory();
+
+		// Get maximum size of heap in bytes. The heap cannot grow beyond this size.
+		// Any attempt will result in an OutOfMemoryException.
+		long heapMaxSize = Runtime.getRuntime().maxMemory();
+
+		// Get amount of free memory within the heap in bytes. This size will increase
+		// after garbage collection and decrease as new objects are created.
+		long heapFreeSize = Runtime.getRuntime().freeMemory();
+		System.out.println("===VM INFO=START===");
+		System.out.println("heapSize: "+heapSize/mega+"MB");
+		System.out.println("heapMaxSize: "+heapMaxSize/mega+"MB");
+		System.out.println("heapFreeSize: "+heapFreeSize/mega+"MB");
+		System.out.println("===VM INFO=END===");
+		
 		try{
 			System.out.println("this.getCodeBase() : "+this.getCodeBase());
 		}catch(Exception e){
@@ -169,8 +186,8 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		if(isExample == null) isExample = "N";
 		UiGlobals.setIsExample(isExample);
 		UiGlobals.setExampleType(this.getParameter("type"));
-		System.out.println("isExample : "+UiGlobals.getIsExample());
-		System.out.println("exampleType : "+UiGlobals.getExampleType());
+		//System.out.println("isExample : "+UiGlobals.getIsExample());
+		//System.out.println("exampleType : "+UiGlobals.getExampleType());
 		
 		//Start to read annotation file
 		//initAnnotation(UiGlobals.getAnnotationFileName());
@@ -180,6 +197,8 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		nodeRenderManager.init(_width, _height);
 		nodeRenderManager.drawNodes(true);
 		UiGlobals.setNodeRenderManager(nodeRenderManager);
+		
+		
 		
 	}
 
