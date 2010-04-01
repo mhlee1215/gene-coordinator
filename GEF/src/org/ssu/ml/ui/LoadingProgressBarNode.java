@@ -176,7 +176,8 @@ public class LoadingProgressBarNode extends JPanel
 	            		editor.getLayerManager().setPaintActiveOnly(false);
 	            		
 	            		try{
-	            			Thread.sleep(10);
+	            			editor.damageAll();
+	            			Thread.sleep(50);
 	            		}catch(Exception e){}
 	            		
 	            		editor.getLayerManager().setPaintActiveOnly(true);
