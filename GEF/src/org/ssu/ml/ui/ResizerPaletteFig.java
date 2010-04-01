@@ -64,6 +64,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.java.dev.colorchooser.ColorChooser;
+import net.miginfocom.layout.AC;
+import net.miginfocom.layout.CC;
+import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXTaskPane;
@@ -287,17 +290,23 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		//Search Option Content Start
 		
 		JPanel searchOptionPanel = new JPanel();
-		searchOptionPanel.setLayout(new MigLayout("insets 0 0 0 0"));
+		
+		MigLayout layout = new MigLayout(new LC().insets("-5 -3 -3 -2"),
+		 new AC().align("left").gap("rel").grow(1f).fill(),
+		 new AC().gap("-1"));
+		searchOptionPanel.setLayout(layout);
 		
 		JPanel onlyShowSearchedPanel = new JPanel();
 		JLabel onlyShowSearchedLabel = new JLabel("only found: ");
 		onlyShowSearchedPanel.add(onlyShowSearchedLabel);
+		onlyShowSearchedPanel.setPreferredSize(new Dimension(10, 10));
 		JCheckBox onlyShowSearchedCheck = new JCheckBox();
 		//onlyShowSearchedCheck.setText("only searched:");
 		onlyShowSearchedCheck.setName("onlyShowSearchedCheck");
 		onlyShowSearchedCheck.addItemListener(this);
 		onlyShowSearchedPanel.add(onlyShowSearchedCheck);
-		searchOptionPanel.add(onlyShowSearchedPanel, "wrap");
+		
+		searchOptionPanel.add(onlyShowSearchedPanel, "wrap, gaptop 0, gapbottom 0");
 		
 		JComboBox searchType = new JComboBox();
 		searchType.setName("searchType");
