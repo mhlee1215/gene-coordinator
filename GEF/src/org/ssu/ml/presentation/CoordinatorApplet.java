@@ -239,7 +239,8 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		_graphPanel.add(_graph, BorderLayout.CENTER);
 		_graphPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 
-		_mainPanel.add(_graphPanel, BorderLayout.CENTER);
+		UiGlobals.setGraphPane(_graphPanel);
+		//_mainPanel.add(_graphPanel, BorderLayout.CENTER);
 		content.add(_mainPanel, BorderLayout.CENTER);
 		
 		JPanel bottomPanel = new JPanel();
@@ -253,6 +254,8 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		setVisible(true);
 
 		_graph.addModeChangeListener(this);
+		
+		UiGlobals.setMainPane(_mainPanel);
 
 		try {
 			jbInit();

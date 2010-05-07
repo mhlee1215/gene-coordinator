@@ -103,12 +103,9 @@ public class LoadingProgressBarSearchAndMark extends JPanel
             HashMap<String, HashMap<Integer, String>> annotationContent = UiGlobals.getAnnotationContent();
     		int searchIndex = UiGlobals.getPropertySearchCombo().getSelectedIndex();
     		String searchKeyword = UiGlobals.getPropertySearchField().getText();
-    		System.out.println("index: "+searchIndex+", keyword: "+searchKeyword+", "+nodes.size());
     		
     		int findCount = 0;
-    		
-    		String currentLayer = UiGlobals.getShowLayerCombo().getSelectedItem().toString();
-    		
+    		String currentLayer = "SelectedLayer";//UiGlobals.getShowLayerCombo().getSelectedItem().toString();
     		
     		Vector<Fig> selectedFig = null;
     		if(!"New".equalsIgnoreCase(UiGlobals.getSearchType())){
@@ -118,7 +115,7 @@ public class LoadingProgressBarSearchAndMark extends JPanel
     		
     		Vector<Fig> intersectSelectFig = new Vector<Fig>();
     		//Vector<Fig> newSelectedFig = new Vector<Fig>();
-    		
+    		System.out.println("UiGlobals.getSearchType(): "+UiGlobals.getSearchType());
 	        for(int count = 0 ; count < nodes.size() ; count++)
 	        {
 	        	Fig node = nodes.get(count);
@@ -215,12 +212,12 @@ public class LoadingProgressBarSearchAndMark extends JPanel
 	        	
 	        }
 	        if("New".equalsIgnoreCase(UiGlobals.getSearchType())){
-		        String newLayerName = "Layer ";
-				newLayerName+=UiGlobals.getShowLayerCombo().getItemCount();
+		        String newLayerName = "SelectedLayer";
+				//newLayerName+=UiGlobals.getShowLayerCombo().getItemCount();
 				UiGlobals.getLayerColor().put(newLayerName, UiGlobals.getSearchMarkColor());
 				UiGlobals.getLayerData().put(newLayerName, selectedFig);
-				UiGlobals.getShowLayerCombo().addItem(newLayerName);
-				UiGlobals.getShowLayerCombo().setSelectedIndex(UiGlobals.getShowLayerCombo().getItemCount()-1);
+				//UiGlobals.getShowLayerCombo().addItem(newLayerName);
+				//UiGlobals.getShowLayerCombo().setSelectedIndex(UiGlobals.getShowLayerCombo().getItemCount()-1);
 	        }else if("Intersection".equalsIgnoreCase(UiGlobals.getSearchType())){
 	        	selectedFig = intersectSelectFig;
 	        }

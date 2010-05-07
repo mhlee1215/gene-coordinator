@@ -76,6 +76,7 @@ public class LoadingProgressBarNode extends JPanel
 	private int pre_scaled;
 	
 	private CNodeData nodeData = null;
+	private CEdgeData edgeData = null;
 	
     private JProgressBar progressBar;
     private JButton startButton;
@@ -89,6 +90,8 @@ public class LoadingProgressBarNode extends JPanel
     
     private JFrame frame = null;
     private JGraph graph = null;
+    
+    private HashMap<String, FigCustomNode> nodeHash = new HashMap<String, FigCustomNode>();
   
 
     class NodeTask extends SwingWorker<Void, Void> {
@@ -132,23 +135,46 @@ public class LoadingProgressBarNode extends JPanel
             float[] locxArry = nodeData.getLocxArry();
             float[] locyArry = nodeData.getLocyArry();
             
+            
+            HashMap<String, DoublePair> nodeLocMap = nodeData.getHashMap();
+            String[] srcNames = edgeData.getSrcNameArry();
+        	String[] destNames = edgeData.getDestNameArry();
+        	
+            
             max_work = nodeData.size();
-            Layer cmp = null;
+            Layer cmp = editor.getLayerManager().getActiveLayer();
             
             editor.getLayerManager().setPaintActiveOnly(true);
             
             int inserted = 0;
+            double preScale = nodeData.getPre_scale();
+            int padding = nodeData.getPadding();
+            
+            /*for(int count = 0 ; count < srcNames.length ; count++){
+            	DoublePair srcLoc = nodeLocMap.get(srcNames[count]);
+        		DoublePair destLoc = nodeLocMap.get(destNames[count]);
+        		int srcLocx = (int)((srcLoc.x+Math.abs(minLocx))*preScale) + padding/2;
+            	int srcLocy = (int)((srcLoc.y+Math.abs(minLocy))*preScale) + padding/2;
+            	int destLocx = (int)((destLoc.x+Math.abs(minLocx))*preScale) + padding/2;
+            	int destLocy = (int)((destLoc.y+Math.abs(minLocy))*preScale) + padding/2;
+            	
+            	FigLine line = new FigLine(srcLocx, srcLocy, destLocx, destLocy, Color.blue);
+            	line.setLineColor(Color.blue);
+            	editor.add(line);
+            	
+            	if(count % 100 == 0) System.out.println(count+"/"+srcNames.length);
+            }*/
             
         	for(int count = cur_work ; count < max_work ; count++){
         		try{
 	        		inserted++;
 	        		
-	            	int locx = (int)((locxArry[count]+Math.abs(minLocx))*nodeData.getPre_scale()) + nodeData.getPadding()/2;
-	            	int locy = (int)((locyArry[count]+Math.abs(minLocy))*nodeData.getPre_scale()) + nodeData.getPadding()/2;
+	            	int locx = (int)((locxArry[count]+Math.abs(minLocx))*preScale) + padding/2;
+	            	int locy = (int)((locyArry[count]+Math.abs(minLocy))*preScale) + padding/2;
 	            	
-	
+	            	String nodeName = nodeData.getPointerName(count);
 	            	NodeDescriptor desc = new NodeDescriptor();
-	            	desc.setName(nodeData.getPointerName(count));
+	            	desc.setName(nodeName);
 	            	desc.setGroup(nodeData.getGroup(count));
 	            	FigCustomNode rect = new FigCustomNode(locx, locy, 7, 7, desc);
 	            	
@@ -156,29 +182,25 @@ public class LoadingProgressBarNode extends JPanel
 	
 	            	rect.setLocked(true);
 	
-	            	if(cmp == null)
-	            		cmp = editor.getLayerManager().getActiveLayer();
-	            	else
-	            	{
-	            		if(cmp != editor.getLayerManager().getActiveLayer()){
-	            			System.out.println(cmp);
-	            			System.out.println(editor.getLayerManager().getActiveLayer());
-	            			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!");
-	            			try{ Thread.sleep(3000); }catch(Exception e){}
-	            			//break;
-	            		}
-	            	}
+//	            	if(cmp == null)
+//	            		cmp = editor.getLayerManager().getActiveLayer();
+//	            	else
+//	            	{
+//	            		if(cmp != editor.getLayerManager().getActiveLayer()){
+//	            			System.out.println(cmp);
+//	            			System.out.println(editor.getLayerManager().getActiveLayer());
+//	            			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!");
+//	            			try{ Thread.sleep(3000); }catch(Exception e){}
+//	            			//break;
+//	            		}
+//	            	}
 	            	editor.add(rect);
+	            	nodeHash.put(nodeName, rect);
 	            	cur_work++;
 	            	if(cur_work%1000 == 0){
 	            		UiGlobals.setStatusbarText(" Node Rendering... "+cur_work+"/"+max_work);//System.out.println("cur_work! : "+cur_work);
 	            		
 	            		editor.getLayerManager().setPaintActiveOnly(false);
-	            		
-	            		try{
-	            			editor.damageAll();
-	            			Thread.sleep(50);
-	            		}catch(Exception e){}
 	            		
 	            		editor.getLayerManager().setPaintActiveOnly(true);
 	            		
@@ -239,17 +261,24 @@ public class LoadingProgressBarNode extends JPanel
             		cmdGridChart.doIt();
             	}
             }
+            
+            UiGlobals.setNodeHash(nodeHash);
+            
+            JPanel mainPanel = UiGlobals.getMainPane();
+            mainPanel.add(UiGlobals.getGraphPane(), BorderLayout.CENTER);
         }
     }
     
     public LoadingProgressBarNode(JGraph graph) {
         super();
         nodeData = new CNodeData();
+        edgeData = new CEdgeData();
         
         this.graph = graph;
         this.pre_scaled = UiGlobals.getPre_scaled();
       
         int readCount = readCoordData();
+        int readEdgeCount = readEdgeData();
         UiGlobals.setNodeCount(readCount);
         init();
 
@@ -400,6 +429,48 @@ public class LoadingProgressBarNode extends JPanel
 
 				lineCount++;
 
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		UiGlobals.setcNodeData(nodeData);
+		return lineCount;
+	}
+    
+    public int readEdgeData() {
+    	String filename = UiGlobals.getFileName()+".edges";
+		//int totalCount = getFileLineCount(filename);
+		//if(totalCount <= 0) return -1;
+		
+		//edgeData.setPointCount(totalCount);
+		//edgeData.init();
+
+		int lineCount = 0;
+		try {
+			BufferedReader br = Utils.getInputReader(filename);
+			
+			String str = null;
+			String sep = "\0";
+			String[] seps = { "\t", ",", ".", " " };
+			while ((str = br.readLine()) != null) {
+				if (lineCount == 0) {
+					// Find Separator
+					for (int count = 0; count < seps.length; count++) {
+						if (str.contains(seps[count])) {
+							sep = seps[count];
+							break;
+						}
+					}
+				}
+
+				String[] subStrs = str.split(sep);
+				
+				if(Float.parseFloat(subStrs[2]) < 0.999) continue;
+				edgeData.insertItem(subStrs[0], subStrs[1], Float.parseFloat(subStrs[2]));
+
+				//if(lineCount%100 == 0) System.out.println("read edge.. : "+lineCount);
+				lineCount++;
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

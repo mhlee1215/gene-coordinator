@@ -370,7 +370,7 @@ public class LoadingProgressBarEdge extends JPanel
 				if(Float.parseFloat(subStrs[2]) < 0.8) continue;
 				edgeData.insertItem(subStrs[0], subStrs[1], Float.parseFloat(subStrs[2]));
 
-				if(lineCount%100 == 0) System.out.println("read edge.. : "+lineCount);
+				//if(lineCount%100 == 0) System.out.println("read edge.. : "+lineCount);
 				lineCount++;
 				
 			}

@@ -25,8 +25,11 @@ public class NodeRenderManager {
 		this.height = height;
 	}
 	
+	public void drawNodes(boolean removeExistedNodes){
+		drawNodes(removeExistedNodes, true);
+	}
 	
-	public void drawNodes(boolean removeExistedNodes)
+	public void drawNodes(boolean removeExistedNodes, boolean readAnnotation)
 	{
 		Editor editor = graph.getEditor();
 		
@@ -51,14 +54,6 @@ public class NodeRenderManager {
 				new LoadingProgressBarAnnotation(UiGlobals.getAnnotationFileName());
 			}
 		});
-		/*
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				// createAndShowGUI();
-				new EdgeLoadingProgressBar(nodeData, edgeData, graph);
-			}
-		});
-		*/
 		
 	}
 }

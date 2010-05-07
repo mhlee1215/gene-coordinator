@@ -38,6 +38,7 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 import org.ssu.ml.base.CmdGridChart;
 import org.ssu.ml.base.DoublePair;
+import org.ssu.ml.base.GeneFunctionSet;
 import org.ssu.ml.base.NodeDescriptor;
 import org.ssu.ml.base.UiGlobals;
 import org.tigris.gef.base.Editor;
@@ -56,6 +57,7 @@ import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Vector;
+import java.util.List;
 
 import org.ssu.ml.presentation.FigCustomNode;
 import org.ssu.ml.ui.LoadingProgressBarNode.NodeTask;
@@ -91,15 +93,19 @@ public class LoadingProgressBarAnnotation extends JPanel
             System.out.println("Annotation file name: "+filename);
     		Vector<String> headerColumn = new Vector<String>();
     		HashMap<String, HashMap<Integer, String>> annotationContent = new HashMap<String, HashMap<Integer, String>>();
+    		HashMap<String, HashMap<Integer, List<String>>> functionUniverse = new HashMap<String, HashMap<Integer, List<String>>>();
     	
     		try {
     			BufferedReader br = Utils.getInputReader(AnnotationFileName+".trimmed");
-    			if(br == null)
+    			if(br == null){
+    				System.out.println("Cannot find trimmed annotation file.");
     				br = Utils.getInputReader(AnnotationFileName);
+    			}
     			
     			String strTmp = "";
     			
     			int count = 0;
+    			String delimiter = "\t";
     			
     			while((strTmp=br.readLine()) != null)
     			{
@@ -109,27 +115,45 @@ public class LoadingProgressBarAnnotation extends JPanel
     					
     					if(count == 0){
     						//Read head.
-    						String[] strs = strTmp.split(",");
+    						String[] strs = strTmp.split(delimiter);
+    						//구분자가 탭이 아닌경우 콤마로 읽어들임
+    						if(strs.length <= 1) delimiter = ",";
+    						strs = strTmp.split(delimiter);
+    						
     						for(int headCnt = 0 ; headCnt < strs.length ; headCnt++)
     						{
     							System.out.println("header:"+strs[headCnt]);
     							headerColumn.add(strs[headCnt]);
     						}
     					}else{
-    						String[] strs = strTmp.split(",");
+    						String[] strs = strTmp.split(delimiter);
     						//Target ID
     						
     						
     						
     						HashMap<Integer, String> contentMap = new HashMap<Integer, String>();
+    						HashMap<Integer, List<String>> functionAttributes = new HashMap<Integer, List<String>>();
     						String proveId = strs[0].replace("\"", "").trim();
     						for(int strCnt = 0 ; strCnt < strs.length ; strCnt++)
     						{
     							
     							String contentTmp = strs[strCnt].replace("\"", "").trim();
     							contentMap.put(strCnt, contentTmp);
+    							
+    							List<String> funcList = new Vector<String>();
+    							String[] funcAttribute = contentTmp.split("///");
+    							for(int funcCount = 0 ; funcCount < funcAttribute.length ; funcCount++){
+    								String[] funcPart = funcAttribute[funcCount].split("//");
+    								//3개가 온전히 있을 경우 두번째만 취함
+    								if(funcPart.length == 3)
+    									funcList.add(funcPart[1].trim());
+    							}
+    							functionAttributes.put(strCnt, funcList);
+    							
     						}
+    						
     						annotationContent.put(proveId, contentMap);
+    						functionUniverse.put(proveId, functionAttributes);
     						
     						if(count%100 == 0){
     							//System.out.println(strTmp);
@@ -145,6 +169,9 @@ public class LoadingProgressBarAnnotation extends JPanel
     			}		
     			UiGlobals.setAnnotationHeader(headerColumn);
     			UiGlobals.setAnnotationContent(annotationContent);
+    			UiGlobals.setFunctionUniverse(new GeneFunctionSet(functionUniverse));
+    			//UiGlobals.getFunctionUniverse().start();
+    			
     			br.close();
     			
     			Editor editor = UiGlobals.curEditor();
