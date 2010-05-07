@@ -104,6 +104,12 @@ public class FigCustomNode extends FigRect implements MouseListener {
 		this.selectedCountBySearch = selectedCountBySearch;
 	}
 
+	public void markByInfoPanel(){
+		borderStroke = new BasicStroke(50);
+	}
+	public void resetbyInfoPanel(){
+		borderStroke = new BasicStroke(borderSize);
+	}
 	public void increaseBorderWidth(){
 		borderSize++;
 		selectedCountBySearch++;

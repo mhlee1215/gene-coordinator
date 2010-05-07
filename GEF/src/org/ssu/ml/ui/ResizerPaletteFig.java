@@ -28,6 +28,7 @@
 
 package org.ssu.ml.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -335,18 +336,26 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
               //something.setColor (cc.getColor());
            }
         });
-		
-        JLabel layerLabel = new JLabel(" Show layer: ");
-        searchOptionPanel.add(layerLabel, "wrap");
+        
+        //JLabel layerLabel = new JLabel(" Show layer: ");
+        //searchOptionPanel.add(layerLabel, "wrap");
 		JComboBox layerCombo = new JComboBox();
 		UiGlobals.setShowLayerCombo(layerCombo);
-		layerCombo.addItem(LAYER_ORIGINAL);
-		layerCombo.addItem(LAYER_ALL);
-		layerCombo.setName("layer");
-		layerCombo.setSelectedIndex(0);
+		//layerCombo.addItem(LAYER_ORIGINAL);
+		//layerCombo.addItem(LAYER_ALL);
+		//layerCombo.setName("layer");
+		//layerCombo.setSelectedIndex(0);
 		//layerCombo.addActionListener(this);
-		layerCombo.addItemListener(this);
-		searchOptionPanel.add(layerCombo, "wrap, width 100:100:100");
+		//layerCombo.addItemListener(this);
+		//searchOptionPanel.add(layerCombo, "wrap, width 100:100:100");
+		
+		
+		JButton showCurrentlySelectedNode = new JButton("<html>Show selected<br>nodes Info.</html>");
+		showCurrentlySelectedNode.setName("ShowSelectedNodeInfo");
+		showCurrentlySelectedNode.setPreferredSize(new Dimension(125, 45));
+		showCurrentlySelectedNode.addActionListener(this);
+		searchOptionPanel.add(showCurrentlySelectedNode, "wrap");
+		
 		
         /*
         JLabel viewLayerLabel = new JLabel("Layer: ");
@@ -503,10 +512,13 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 						System.out.println("scale Value : "+slider.getValue());
 						scaleCurValue = slider.getValue();
 						
+						//JPanel mainPanel = UiGlobals.getMainPane();
+			            //mainPanel.remove(UiGlobals.getGraphPane());
+			            
 						UiGlobals.get_scaleSlider().setEnabled(false);
 						NodeRenderManager manager = UiGlobals.getNodeRenderManager();
 						UiGlobals.setPre_scaled(scaleCurValue);
-						manager.drawNodes(true);
+						manager.drawNodes(true, false);
 					}
 				}
 			}
@@ -550,29 +562,35 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		if(s instanceof JButton){
 			JButton button = (JButton)s;
 			
-			Editor editor = UiGlobals.curEditor();
-			LayerGrid grid = (LayerGrid) editor.getLayerManager()
-					.findLayerNamed("Grid");
-			HashMap params = grid.getParameters();
-			int spacing = (Integer)params.get("spacing");
-			
-			double moveSize = .1; 
-			int distence = (int)(spacing*moveSize);
-			if(distence == 0) distence = 1;
-	
-			
-			HashMap map = new HashMap();	
-			if(button.getActionCommand().equals("gridUp")){
-				map.put("yOffset", -distence);
-			}else if(button.getActionCommand().equals("gridDown")){
-				map.put("yOffset", distence);
-			}else if(button.getActionCommand().equals("gridLeft")){
-				map.put("xOffset", -distence);
-			}else if(button.getActionCommand().equals("gridRight")){
-				map.put("xOffset", +distence);
+			if("ShowSelectedNodeInfo".equals(button.getName())){
+				String selectedLayer = "SelectedLayer";//UiGlobals.getShowLayerCombo().getSelectedItem().toString();
+				List<Fig> layerNodes  = UiGlobals.getLayerData().get(selectedLayer);
+				UiGlobals.showNodeInfoList(layerNodes);
+			}else{
+				Editor editor = UiGlobals.curEditor();
+				LayerGrid grid = (LayerGrid) editor.getLayerManager()
+						.findLayerNamed("Grid");
+				HashMap params = grid.getParameters();
+				int spacing = (Integer)params.get("spacing");
+				
+				double moveSize = .1; 
+				int distence = (int)(spacing*moveSize);
+				if(distence == 0) distence = 1;
+		
+				
+				HashMap map = new HashMap();	
+				if(button.getActionCommand().equals("gridUp")){
+					map.put("yOffset", -distence);
+				}else if(button.getActionCommand().equals("gridDown")){
+					map.put("yOffset", distence);
+				}else if(button.getActionCommand().equals("gridLeft")){
+					map.put("xOffset", -distence);
+				}else if(button.getActionCommand().equals("gridRight")){
+					map.put("xOffset", +distence);
+				}
+				
+				grid.adjust(map);
 			}
-			
-			grid.adjust(map);
 		}
 		else if(s instanceof JRadioButtonMenuItem){
 			JRadioButtonMenuItem item = (JRadioButtonMenuItem)s;
@@ -621,7 +639,7 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 			JCheckBox cb = (JCheckBox)s;
 			if("onlyShowSearchedCheck".equals(cb.getName())){
 				UiGlobals.setShowOnlyFound(cb.isSelected());
-				showLayer(UiGlobals.getShowLayerCombo().getSelectedItem().toString());
+				showLayer("SelectedLayer");
 			}
 		}else if(s instanceof JComboBox){
 			JComboBox cb = (JComboBox)s;

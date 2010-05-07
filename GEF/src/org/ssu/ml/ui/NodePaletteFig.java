@@ -44,6 +44,7 @@ import javax.swing.JTextField;
 import org.ssu.ml.base.CGridHistogramData;
 import org.ssu.ml.base.CmdGridChart;
 import org.ssu.ml.base.CmdShowAbout;
+import org.ssu.ml.base.CmdShowFuncAssociate;
 import org.ssu.ml.base.CmdZoom;
 import org.ssu.ml.base.UiGlobals;
 import org.ssu.ml.presentation.FigCustomNode;
@@ -108,6 +109,7 @@ public class NodePaletteFig extends WestToolBar implements ActionListener, Prope
         add(new CmdZoom(0.5), "Zoom-out", "zoomOut", ToolBar.BUTTON_TYPE_TEXT);
         //this.addSeparator();
         add(new CmdGridChart(), "Gene-set size distribution", "siGraph", ToolBar.BUTTON_TYPE_TEXT);
+        add(new CmdShowFuncAssociate(), "FuncAssociatie", "siGraph", ToolBar.BUTTON_TYPE_TEXT);
         //add(new CmdShowAbout(), "Show About", "about1", ToolBar.BUTTON_TYPE_NO_TEXT);
         
         

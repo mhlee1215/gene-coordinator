@@ -1,5 +1,7 @@
 package org.ssu.ml.presentation;
 
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 public class JNodeInfoTableModel extends AbstractTableModel {
@@ -87,6 +89,4 @@ public class JNodeInfoTableModel extends AbstractTableModel {
         }
         System.out.println("--------------------------");
     }
-
-	
 }

@@ -19,6 +19,8 @@ import javax.swing.JTextField;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
 import net.miginfocom.layout.AC;
@@ -29,8 +31,9 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.ssu.ml.base.NodeDescriptor;
 import org.ssu.ml.base.UiGlobals;
+import org.tigris.gef.base.CmdReorder;
+import org.tigris.gef.base.Editor;
 import org.tigris.gef.presentation.Fig;
-
 
 public class JNodeInfoPanel extends JXTitledPanel {
 	
@@ -116,7 +119,7 @@ public class JNodeInfoPanel extends JXTitledPanel {
 		else
 			this.figList = selectedInputFig;
 		
-		System.out.println("::::::"+figList);
+		System.out.println("::::::"+figList.size());
 		
 		try{
 			if(column == null && (columnData == null || columnData.size() == 0)){
@@ -134,7 +137,7 @@ public class JNodeInfoPanel extends JXTitledPanel {
 				}
 				
 				
-				if(data == null){
+				//if(data == null){
 					data = new Object[selectedFig.size()][columnData.size()];
 					
 					HashMap<String, HashMap<Integer, String>> annotationContent = UiGlobals.getAnnotationContent();
@@ -154,7 +157,7 @@ public class JNodeInfoPanel extends JXTitledPanel {
 						count++;
 					}
 				
-				}
+				//}
 				
 				if(scrollPane != null)
 					this.remove(scrollPane);
@@ -169,6 +172,7 @@ public class JNodeInfoPanel extends JXTitledPanel {
 				//nodeTable.setAutoCreateRowSorter(true);
 				nodeTable.setPreferredScrollableViewportSize(new Dimension(2000, 2000));
 				nodeTable.setFillsViewportHeight(true);
+				nodeTable.getSelectionModel().addListSelectionListener(new RowListener());
 				scrollPane = new JScrollPane(nodeTable);
 				
 				
@@ -283,4 +287,33 @@ public class JNodeInfoPanel extends JXTitledPanel {
 		frame.setVisible(true);
 	}
 	
+	private class RowListener implements ListSelectionListener {
+        public void valueChanged(ListSelectionEvent event) {
+            if (event.getValueIsAdjusting()) {
+                return;
+            }
+            outputSelection();
+        }
+    }
+	
+	private void outputSelection() {
+		for(FigCustomNode node : UiGlobals.getInfoMarkedNode())
+			node.resetbyInfoPanel();
+		UiGlobals.getInfoMarkedNode().clear();
+        for (int c : nodeTable.getSelectedRows()) {
+            System.out.println(nodeTable.getModel().getValueAt(c, 0));
+            Fig selectedNode = UiGlobals.getNodeHash().get(nodeTable.getModel().getValueAt(c, 0));
+            FigCustomNode selectedNodeCustom = (FigCustomNode)selectedNode;
+            selectedNodeCustom.markByInfoPanel();
+            UiGlobals.getInfoMarkedNode().add(selectedNodeCustom);
+            Editor editor = UiGlobals.curEditor();
+            editor.getLayerManager().getActiveLayer().reorder(selectedNodeCustom, CmdReorder.BRING_TO_FRONT);
+            editor.damaged(selectedNodeCustom);
+        }
+        
+	}
 }
+
+
+
+

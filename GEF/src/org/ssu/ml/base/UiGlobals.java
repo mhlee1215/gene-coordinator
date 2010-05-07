@@ -17,7 +17,9 @@ import javax.swing.JTextField;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXMultiSplitPane;
 import org.jdesktop.swingx.JXPanel;
+import org.ssu.ml.presentation.FigCustomNode;
 import org.ssu.ml.presentation.JNodeInfoPanel;
+import org.ssu.ml.ui.CNodeData;
 import org.ssu.ml.ui.NodeRenderManager;
 import org.tigris.gef.base.Globals;
 import org.tigris.gef.presentation.Fig;
@@ -37,6 +39,7 @@ public class UiGlobals extends Globals{
 	
 	private static Vector<String> annotationHeader = new Vector<String>();
 	private static HashMap<String, HashMap<Integer, String>> annotationContent = new HashMap<String, HashMap<Integer, String>>();
+	private static GeneFunctionSet functionUniverse = null;
 	
 	private static String fileName = "";
 	private static String annotationFileName = "";
@@ -68,7 +71,98 @@ public class UiGlobals extends Globals{
 	private static HashMap<String, Color> layerColor = new HashMap<String, Color>();
 	private static HashMap<String, List<Fig>> layerData = new HashMap<String, List<Fig>>();
 	
+	private static HashMap<String, FigCustomNode> nodeHash = null;
+	private static Vector<FigCustomNode> infoMarkedNode = new Vector<FigCustomNode>();
 	
+	private static JPanel graphPane = null;
+	private static JPanel mainPane = null;
+	
+	private static CNodeData cNodeData = null;
+	
+	/**
+	 * @return the functionUniverse
+	 */
+	public static GeneFunctionSet getFunctionUniverse() {
+		return functionUniverse;
+	}
+
+	/**
+	 * @param functionUniverse the functionUniverse to set
+	 */
+	public static void setFunctionUniverse(GeneFunctionSet functionUniverse) {
+		UiGlobals.functionUniverse = functionUniverse;
+	}
+
+	/**
+	 * @return the cNodeData
+	 */
+	public static CNodeData getcNodeData() {
+		return cNodeData;
+	}
+
+	/**
+	 * @param cNodeData the cNodeData to set
+	 */
+	public static void setcNodeData(CNodeData cNodeData) {
+		UiGlobals.cNodeData = cNodeData;
+	}
+
+	/**
+	 * @return the mainPane
+	 */
+	public static JPanel getMainPane() {
+		return mainPane;
+	}
+
+	/**
+	 * @param mainPane the mainPane to set
+	 */
+	public static void setMainPane(JPanel mainPane) {
+		UiGlobals.mainPane = mainPane;
+	}
+
+	/**
+	 * @return the graphPane
+	 */
+	public static JPanel getGraphPane() {
+		return graphPane;
+	}
+
+	/**
+	 * @param graphPane the graphPane to set
+	 */
+	public static void setGraphPane(JPanel graphPane) {
+		UiGlobals.graphPane = graphPane;
+	}
+
+	/**
+	 * @return the infoMarkedNode
+	 */
+	public static Vector<FigCustomNode> getInfoMarkedNode() {
+		return infoMarkedNode;
+	}
+
+	/**
+	 * @param infoMarkedNode the infoMarkedNode to set
+	 */
+	public static void setInfoMarkedNode(Vector<FigCustomNode> infoMarkedNode) {
+		UiGlobals.infoMarkedNode = infoMarkedNode;
+	}
+
+	/**
+	 * @return the nodeHash
+	 */
+	public static HashMap<String, FigCustomNode> getNodeHash() {
+		return nodeHash;
+	}
+
+	/**
+	 * @param nodeHash the nodeHash to set
+	 */
+	public static void setNodeHash(HashMap<String, FigCustomNode> nodeHash) {
+		UiGlobals.nodeHash = nodeHash;
+	}
+
 	/**
 	 * @return the layerColor
 	 */
