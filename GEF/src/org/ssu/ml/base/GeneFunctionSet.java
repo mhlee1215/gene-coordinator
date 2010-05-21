@@ -4,8 +4,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
+import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -14,9 +18,12 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -33,9 +40,13 @@ import net.miginfocom.layout.CC;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.jdesktop.swingx.JXPanel;
 import org.ssu.ml.presentation.CustomCellRenderer1;
 import org.ssu.ml.presentation.FigCustomNode;
+import org.ssu.ml.presentation.JGridChartPanel;
 import org.ssu.ml.presentation.JNodeInfoTableModel;
 import org.ssu.ml.presentation.MultiLineCellRenderer;
 import org.tigris.gef.base.CmdReorder;
@@ -43,7 +54,7 @@ import org.tigris.gef.base.Editor;
 import org.tigris.gef.base.LayerGrid;
 import org.tigris.gef.presentation.Fig;
 
-public class GeneFunctionSet extends JFrame implements Runnable {
+public class GeneFunctionSet extends JFrame implements Runnable, ActionListener {
 	
 	static final Color COLOR_STANDBY = new Color(209, 209, 209);
 	static final Color COLOR_EMPTY = new Color(247, 247, 247);
@@ -84,12 +95,18 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 	JTextField filterText = null;
 	private JComboBox filterColumn;
 	private TableRowSorter<JNodeInfoTableModel> sorter;
-	LinkedHashMap<String, Double>[][] resultMap = null;
+	SortedListForFunctionData[][][] resultMap = null;
 	JTable nodeTable = null;
 	
 	
 	int[][] process = null;
 	JXPanel[][] processPanel = null;
+	
+	int maxColumnCnt = 0;//UiGlobals.getAnnotationHeader().size();
+	
+	Vector<String> columnData = null;
+	Object[][] dataFilled = null;
+	int largestFuncListSize = 0;
 	
 	public GeneFunctionSet(HashMap<String, HashMap<Integer, List<String>>> functionUniverse){
 		this.functionUniverse = functionUniverse;
@@ -103,12 +120,12 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 		preLogCal(N);
 		
 		
-		setSize(new Dimension(500, 500));
+		setSize(new Dimension(700, 600));
 		
 	}
 	
 	public void paint(Graphics g){
-		System.out.println("paint, size: "+this.getSize());
+		//System.out.println("paint, size: "+this.getSize());
 		super.paint(g);
 		mainPanel.removeAll();
 		//System.out.println("P: "+process.length+", "+process[0].length);
@@ -137,8 +154,10 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 	
 	public void run(){
 		init();
+		setVisible(false);
 		setVisible(true);
 		invalidate();
+		mainPanel.revalidate();
 		
 		long start = System.currentTimeMillis();
 		int n = this.getContainAttributeGeneSize(1, "transport");
@@ -148,7 +167,10 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 			getAdjPValue(data, qSize, 1, "transport", n);
 		}*/
 		
-		genGeneFunctionByGrid(1);
+		
+		for(int i = 1 ; i < maxColumnCnt ; i++)
+			genGeneFunctionByGrid(i);
+		
 		getGeneSetByGrid();
 		int columnIndex = 1;
 		int itorCnt = 0;
@@ -159,7 +181,9 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 		int filledGridCnt = 0;
 		for(int i = 0 ; i <= maxGridY ; i++){
          	for(int j = 0 ; j <= maxGridX ; j++){
+         		//ID 모음
          		List<String> curGeneSet = gridGeneSetData.get(new Point(j, i));
+         		//Ontology 모음
          		HashMap<Integer, List<String>> curFuncSet = gridFuncData.get(new Point(j, i));
          		if(curGeneSet != null && curFuncSet != null)
          		{
@@ -175,6 +199,8 @@ public class GeneFunctionSet extends JFrame implements Runnable {
          }
 		
 		int calculatedGridCnt = 0;
+		
+		largestFuncListSize = 0;
 		for(int i = 0 ; i <= maxGridY ; i++){
          	for(int j = 0 ; j <= maxGridX ; j++){
          		//System.out.println("GRID: "+i+", "+j);
@@ -182,37 +208,54 @@ public class GeneFunctionSet extends JFrame implements Runnable {
          		HashMap<Integer, List<String>> curFuncSet = gridFuncData.get(new Point(j, i));
          		if(curGeneSet != null && curFuncSet != null)
          		{
-         			List<String> funcList = curFuncSet.get(columnIndex);
-         			if(funcList != null){
-         				System.out.print("O");
-         				
-         				process[i][j] = VALUE_PROCESSING;
-         				processPanel[i][j].setBackground(COLOR_PROCESSING);
-         				//this.repaint();
-         				//mainPanel.getComponent(i*(maxGridX+1)+j).setBackground(Color.blue);
-         				calculatedGridCnt++;
-         				for(int k = 0 ; k < funcList.size() ; k++){
-         					double pvalue = getAdjPValue(curGeneSet, curGeneSet.size(), 1, funcList.get(k), n);
-         					resultMap[i][j].put(funcList.get(k), Math.exp(pvalue));
-         					itorCnt++;
-         					
-         				}
-         				process[i][j] = VALUE_FINISH;
-         				processPanel[i][j].setBackground(COLOR_FINISH);
-         			}else{
-         				System.out.print("X");
-         				process[i][j] = VALUE_EMPTY;
-         				//mainPanel.getComponent(i*maxGridX+1+j).setBackground(Color.white);
-         				processPanel[i][j].setBackground(COLOR_EMPTY);
+         			calculatedGridCnt++;
+         			for(int l = 1 ; l < maxColumnCnt ; l++){
+	         			List<String> funcList = curFuncSet.get(l);
+	         			
+	         			if(funcList != null){
+	         				largestFuncListSize = Math.max(largestFuncListSize, funcList.size());
+	         				//System.out.print("O");
+	         				
+	         				process[i][j] = VALUE_PROCESSING;
+	         				processPanel[i][j].setBackground(COLOR_PROCESSING);
+	         				
+	         				//this.repaint();
+	         				//mainPanel.getComponent(i*(maxGridX+1)+j).setBackground(Color.blue);
+	         				if(j == 13 && i == 0)
+	         					System.out.println("funcList["+l+"]: "+funcList.size());
+	         				for(int k = 0 ; k < funcList.size() ; k++){
+	         					double pvalue = getAdjPValue(curGeneSet, curGeneSet.size(), l, funcList.get(k), n);
+	         					
+	         					resultMap[i][j][l-1].add(new CFunctionData(funcList.get(k), pvalue));
+	         					itorCnt++;
+	         					
+	         				}
+	         				process[i][j] = VALUE_FINISH;
+	         				processPanel[i][j].setBackground(COLOR_FINISH);
+	         			}else{
+	         				//System.out.print("X");
+	         				process[i][j] = VALUE_EMPTY;
+	         				//mainPanel.getComponent(i*maxGridX+1+j).setBackground(Color.white);
+	         				processPanel[i][j].setBackground(COLOR_EMPTY);
+	         			}
          			}
          		}else{
-         			System.out.print("X");
+         			
+         			//System.out.print("X");
          			process[i][j] = VALUE_EMPTY;
          			//mainPanel.getComponent(i*maxGridX+1+j).setBackground(Color.white);
          			processPanel[i][j].setBackground(COLOR_EMPTY);
          		}
+         		
+         		String dots = "";
+             	if(calculatedGridCnt%3 == 0) dots = ".  ";
+             	else if(calculatedGridCnt%3 == 1) dots = ".. ";
+             	else if(calculatedGridCnt%3 == 2) dots = "...";
+             	this.setTitle("Processing"+dots+" Grid cnt: "+calculatedGridCnt+"/"+filledGridCnt+", itorCnt: "+itorCnt);
          	}
-         	System.out.println(" validCnt: "+calculatedGridCnt+"/"+filledGridCnt+", itorCnt: "+itorCnt);
+         	
+         	
+         	//System.out.println(" validCnt: "+calculatedGridCnt+"/"+filledGridCnt+", itorCnt: "+itorCnt);
          }
 		
 		long elapsedTimeMillis = System.currentTimeMillis()-start;
@@ -223,11 +266,11 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 	}
 	
 	public void init(){
-		
 		System.out.println("init");
 		
 		maxGridX = 0;
 		maxGridY = 0;
+		maxColumnCnt = UiGlobals.getAnnotationHeader().size();
 		
 		mainPanel = new JXPanel();
 		resultPanel = new JXPanel();
@@ -239,7 +282,7 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 		mainPanel.invalidate();
 		System.out.println("size: "+mainPanel.getSize());
 		
-		MigLayout layout = new MigLayout(new LC().insets("5").gridGapX("1").gridGapY("1"));
+		MigLayout layout = new MigLayout(new LC().insets("15").gridGapX("1").gridGapY("1"));
 		mainPanel.setLayout(layout);
 		
 		Editor editor = UiGlobals.curEditor();
@@ -266,16 +309,20 @@ public class GeneFunctionSet extends JFrame implements Runnable {
     	//그리드별 작업 진행여부 저장 빈
     	System.out.println("maxGridX: "+maxGridX);
 		System.out.println("maxGridY: "+maxGridY);
+		System.out.println("maxColumnCnt: "+maxColumnCnt);
     	process = new int[maxGridY+1][maxGridX+1];
     	processPanel = new JXPanel[maxGridY+1][maxGridX+1];
-    	resultMap = new LinkedHashMap[maxGridY+1][maxGridX+1];
+    	
+    	resultMap = new SortedListForFunctionData[maxGridY+1][maxGridX+1][maxColumnCnt+1];
     	
     	for(int i = 0 ; i <= maxGridY ; i++)
     		for(int j = 0 ; j <= maxGridX ; j++){
     			process[i][j] = VALUE_STANDBY;
     			processPanel[i][j] = new JXPanel();
     			processPanel[i][j].setBackground(COLOR_STANDBY);
-    			resultMap[i][j] = new LinkedHashMap<String, Double>();
+    			
+    			for(int l = 0 ; l < maxColumnCnt ; l++)
+    				resultMap[i][j][l] = new SortedListForFunctionData();
     		}
     	
     	invalidate();
@@ -341,6 +388,7 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 	 * @param functionName
 	 * @return
 	 */
+	
 	public double getPValue(List<String> querySet, int q, int columnIndex, String functionName, int n){
 		/**
 		 * The number of genes in the Query Set
@@ -359,19 +407,19 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 		 */
 		int N = functionUniverse.keySet().size();
 		
-		
 		double overPresentPValue = 0.0;
 		double devider = (binom(N, n));
 		//System.out.println("q: "+q+", n: "+n+", m: "+m+", N: "+N);
 		for(int a = m ; a <= Math.min(q, n) ; a++){
 			//System.out.println("overPresentPValue: "+overPresentPValue+", (binom(1, q, a): "+binom(1, q, a)+", binom(2, N-q, n-a): "+binom(2, N-q, n-a)+", binom(3, N, n): "+binom(3, N, n));
 			//overPresentPValue += (binom(1, q, a).multiply(binom(2, N-q, n-a))).divide(binom(3, N, n)).doubleValue();
-			overPresentPValue += (binom(q, a)*binom(N-q, n-a))/devider;
+			overPresentPValue += Math.exp((binom(q, a)+binom(N-q, n-a))-devider);
 		}
 		//System.out.println("overPresentPValue: "+overPresentPValue);
 		double underPresentPValue = 0.0;
 		for(int a = 0 ; a <= m ; a++){
-			underPresentPValue += (binom(q, a)*binom(N-a, n-a))/devider;
+			//underPresentPValue += (binom(q, a)*binom(N-a, n-a))/devider;
+			underPresentPValue += Math.exp((binom(q, a)+binom(N-q, n-a))-devider);
 		}
 		
 		return Math.min(overPresentPValue, underPresentPValue);
@@ -434,7 +482,7 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 	public double getLog(int val){
 		//if(logMap.get(val) == null)
 		//	return Math.log(val);
-		return logMap[val];//.get(val);
+		return logMap[val] == null ? Math.log(val) : logMap[val];//.get(val);
 	}
 	
 	public void preCal(BigInteger[] data, int n){
@@ -483,6 +531,23 @@ public class GeneFunctionSet extends JFrame implements Runnable {
     	//return factorial(n)/(factorial(m)*factorial(n-m));
     }
     
+    public static double binomTest (int N, int n)
+    {
+    	
+    	double result = 0.0;
+    	for(int i = N ; i >= N - n + 1 && i >= 1; i--){
+    		result += Math.log(i);
+    	}
+    	for(int i = n-1 ; i >= 1 ; i--){
+    		result -= Math.log(i);
+    	}
+    	
+    	return result;
+    	
+    	//double result = 0;
+    	//return factorial(n)/(factorial(m)*factorial(n-m));
+    }
+    
     public static int factorial(int n){
     	if(n == 1) return 1;
     	else return n * factorial(n-1);
@@ -521,46 +586,38 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 	}
     
     public static void main(String[] argv){
-    	int aa = 0;
-    	JFrame a = new JFrame(){
-    		public int gridX = 300;
-    		public int gridY = 500;
-    		JXPanel mainPanel = new JXPanel(); 
-    		
-    		{
-    			setSize(new Dimension(500, 500));
-    			mainPanel.setBackground(Color.white);
-    			this.setContentPane(mainPanel);
-    			
-    			MigLayout layout = new MigLayout(new LC().insets("5").gridGapX("1").gridGapY("1"));
-    			mainPanel.setLayout(layout);
-    		}
-    		
-    		public void paint(Graphics g){
-    			super.paint(g);
-    			System.out.println("aa");
-    			mainPanel.removeAll();
-    			
-    			for(int i = 0 ; i < gridY ; i++){
-    				for(int j = 0 ; j < gridX ; j++){
-    					JXPanel panel = new JXPanel();
-    	    			panel.setBackground(Color.red);
-    	    			panel.setPreferredSize(new Dimension(this.getSize().width/gridX, this.getSize().height/gridY));
-    	    			if(j+1 == gridX )
-    	    				mainPanel.add(panel, "wrap, width 1::, height 1::");
-    	    			else
-    	    				mainPanel.add(panel, "width 1::, height 1::");
-    				}
-    			}
-    			
-    			mainPanel.getComponent(2*gridX+5).setBackground(Color.blue);
-    		}
-    		
-    	};
+//    	System.out.println(Math.exp(binomTest(155, 154)+binomTest(9180, 793)-binomTest(9335, 947)));
+//    	System.out.println(Math.exp(binomTest(9180, 793)));
+//    	System.out.println(Math.exp(binomTest(9335, 947)));
+    	JFrame main = new JFrame();
+    	main.setSize(100, 100);
+    	main.setVisible(true);
     	
-    	a.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		a.setVisible(true);
-		a.invalidate();
+    	JPanel optionPane = new JPanel();
+    	optionPane.setLayout(new MigLayout(new LC().insets("5").gridGapX("1").gridGapY("1")));
+		
+    	JLabel xGridText = new JLabel("X: ");
+    	optionPane.add(xGridText, "width 15::15");
+		JTextField xGrid = new JTextField();
+		optionPane.add(xGrid, "width 30::30");
+		
+		JButton submit = new JButton("Download");
+		optionPane.add(submit, "span 1 2, wrap, height 38::38");
+		
+		JLabel yGridText = new JLabel("Y: ");
+    	optionPane.add(yGridText, "width 15::15");
+		JTextField yGrid = new JTextField();
+		optionPane.add(yGrid, "width 30::30");
+		
+		final JDialog dialog = new JDialog(main, 
+                "Insert grid location.",
+                true);
+		dialog.setContentPane(optionPane);
+		dialog.setDefaultCloseOperation(
+			    JDialog.HIDE_ON_CLOSE);
+				
+		dialog.pack();
+		dialog.setVisible(true);
     }
     
     /**
@@ -615,7 +672,8 @@ public class GeneFunctionSet extends JFrame implements Runnable {
      */
     public void genGeneFunctionByGrid(int columnIndex){
     	
-        gridFuncData = new HashMap<Point, HashMap<Integer, List<String>>>();
+    	if(gridFuncData == null)
+    		gridFuncData = new HashMap<Point, HashMap<Integer, List<String>>>();
         
         for(int count = 0 ; count < nodes.size() ; count++)
         {
@@ -665,13 +723,18 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 		}
 		
 		String[] column = null;
-		Vector<String> columnData = new Vector<String>();
+		
+		columnData = new Vector<String>();
 		columnData.add("X");
 		columnData.add("Y");
-		columnData.add("Gene Ontology Biological Process");
+		
+		for(int i = 1 ; 1==1 && i < UiGlobals.getAnnotationHeader().size() ; i++)
+			columnData.add(UiGlobals.getAnnotationHeader().get(i));
+		//columnData.add(UiGlobals.getAnnotationHeader().get(1));
+		//columnData.add(UiGlobals.getAnnotationHeader().get(2));
 		
 		Object[][] data = null;
-		Integer[] dataHeight = null;
+		Integer[][] dataHeight = null;
 		
 		try{
 			if(column == null && (columnData == null || columnData.size() == 0)){
@@ -689,8 +752,8 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 				}
 				
 				
-				data = new Object[total][columnData.size()];
-				dataHeight = new Integer[total];
+				data = new Object[total][columnData.size()+1];
+				dataHeight = new Integer[total][columnData.size()+1];
 				
 				HashMap<String, HashMap<Integer, String>> annotationContent = UiGlobals.getAnnotationContent();
 				
@@ -701,30 +764,52 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 //		    			System.out.println("i: "+i+", j: "+j+".."+resultMap[i][j].size());
 //		    		}
 //				}
+				
+				boolean isHaveRowData = false;
+				
 				for(int i = 0 ; i <= maxGridY ; i++){
 		    		for(int j = 0 ; j <= maxGridX ; j++){
-		    			data[filledCount][0] = i;
-		    			data[filledCount][1] = j;
-		    			dataHeight[filledCount] = 0;
-		    			LinkedHashMap function = resultMap[i][j];
-		    			if(function.size() == 0) continue;
+		    			isHaveRowData = false;
 		    			
-		    			Set<String> keys = function.keySet();
-		    			//System.out.println("i: "+i+", j: "+j+", "+function.size());
+		    			data[filledCount][0] = j;
+		    			data[filledCount][1] = i;
 		    			
-		    			int keyCnt = 0;
-		    			for(String key : keys){
-		    				dataHeight[filledCount]++;
-		    				if(keyCnt == 0)
-		    					data[filledCount][2] = key+": "+function.get(key);
-		    				else
-		    					data[filledCount][2] = data[filledCount][2].toString()+"\n"+key+": "+function.get(key);
-		    				
-		    				keyCnt++;
+		    			
+		    			for(int l = 2 ; l < columnData.size() ; l++){
+		    				dataHeight[filledCount][l] = 0;
+		    				//System.out.println("i: "+i+", j: "+j+"l: "+l);
+		    				SortedListForFunctionData function = resultMap[i][j][l-2];
+			    			if(function.size() == 0) continue;
+			    			
+			    			//Set<String> keys = function.keySet();
+			    			//System.out.println("i: "+i+", j: "+j+", "+function.size());
+			    			
+			    			int keyCnt = 0;
+			    			
+			    			data[filledCount][l] = "";
+			    			for(CFunctionData functionData : function){
+			    				isHaveRowData = true;
+			    				//System.out.println("dataHeight["+filledCount+"]["+l+"]: "+dataHeight[filledCount][l]);
+			    				dataHeight[filledCount][l]++;
+			    				if(keyCnt == 0)
+			    					data[filledCount][l] = functionData.toString();
+			    				else
+			    					data[filledCount][l] = data[filledCount][l].toString()+"\n"+functionData.toString();
+			    				
+			    				keyCnt++;
+			    			}
+			    			//System.out.println("l: "+l+", keys: "+keys.size());
+			    			
+			    			
 		    			}
-						filledCount++;
+		    			
+		    			if(isHaveRowData) filledCount++;
+		    			
+		    			
+						
 		    		}
 				}
+				
 				
 //				for(Fig fig : selectedFig){
 //					if( fig.getOwner() instanceof NodeDescriptor){
@@ -752,13 +837,26 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 //				for(Object d : data)
 //					System.out.println("data: "+d.toString());
 				
-				Object[][] dataFilled = new Object[filledCount][3];
+				dataFilled = new Object[filledCount][columnData.size()];
+				//System.out.println("column.length: "+column.length);
 				
 				for(int i = 0 ; i < filledCount ; i++){
 					dataFilled[i][0] = data[i][0];
 					dataFilled[i][1] = data[i][1];
-					dataFilled[i][2] = data[i][2];
+					for(int j = 2 ; j < columnData.size() ; j++){
+						dataFilled[i][j] = data[i][j];
+						if(dataFilled[i][j] == null) dataFilled[i][j] = "";
+					}
 				}
+				
+				
+				//for(int i = 0 ; i < dataFilled[0].length ; i++){
+				//	System.out.println("dataFilled[[0]["+i+"].length: "+dataFilled[0][i]);
+				//}
+				
+				//for(int i = 0 ; i < dataFilled.length ; i++){
+				//	System.out.println("dataFilled[i].length: "+dataFilled[i].length+", ");
+				//}
 				
 				JNodeInfoTableModel model = new JNodeInfoTableModel(column, dataFilled);
 				sorter = new TableRowSorter<JNodeInfoTableModel>(model);
@@ -773,7 +871,8 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 			    //cellRenderer.setLineWrap(true);
 			    //cellRenderer.setWrapStyleWord(true);
 			      
-				nodeTable.getColumnModel().getColumn(2).setCellRenderer(cellRenderer);
+				for(int i = 2 ; i < columnData.size(); i++)
+					nodeTable.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
 				
 				//System.out.println("cs: "+nodeTable.getColumnModel().getColumnCount());
 				//nodeTable.setRowMargin(10);
@@ -784,13 +883,13 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 				//for(int i = 0 ; i < filledCount ; i++)
 				//	if(dataHeight[i] > 0)
 				//		nodeTable.setRowHeight(i, 30 * dataHeight[i]);
-				nodeTable.setRowHeight(nodeTable.getRowHeight() * 3);
+				nodeTable.setRowHeight(nodeTable.getRowHeight() * Math.min(largestFuncListSize, 40));
 				nodeTable.setRowSorter(sorter);
 				nodeTable.setEnabled(true);
 				//nodeTable.setAutoCreateRowSorter(true);
 				nodeTable.setPreferredScrollableViewportSize(new Dimension(5000, 5000));
 				//nodeTable.setFillsViewportHeight(true);
-				//nodeTable.getSelectionModel().addListSelectionListener(new RowListener());
+				nodeTable.getSelectionModel().addListSelectionListener(new RowListener());
 				scrollPane = new JScrollPane(nodeTable);
 				
 				
@@ -802,7 +901,7 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 		}
 		
 		
-		MigLayout layout = new MigLayout(new LC().fillX().insets("0 0 0 0"),
+		MigLayout layout = new MigLayout(new LC().insets("5").gridGapX("1").gridGapY("1"),
 				 new AC().align("left").gap("rel").grow(1f).fill(),
 				 new AC().gap("0"));
 		resultPanel = new JXPanel();
@@ -822,11 +921,10 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 			filterColumn = new JComboBox();
 			for(String columSr : column)
 				filterColumn.addItem(columSr);
-			resultPanel.add(filterColumn, "wrap");
+			resultPanel.add(filterColumn);
 			JLabel filterTextLabel = new JLabel("Filter value: ");
-			resultPanel.add(filterTextLabel);
+			resultPanel.add(filterTextLabel, "align right, width 70::70");
 			filterText = new JTextField();
-			
 			filterText.getDocument().addDocumentListener(
 	                new DocumentListener() {
 	                    public void changedUpdate(DocumentEvent e) {
@@ -839,11 +937,17 @@ public class GeneFunctionSet extends JFrame implements Runnable {
 	                        newFilter();
 	                    }
 	                });
-			resultPanel.add(filterText, "wrap");
+			resultPanel.add(filterText, "align left, width 100::");
+			
+			JButton exportBtn = new JButton("Export As CSV");
+			exportBtn.setName("exportAsCsv");
+			exportBtn.addActionListener(this);
+			resultPanel.add(exportBtn, "wrap");
+			
 		}
 		
 		CC cc = new CC();
-		resultPanel.add(scrollPane, cc.wrap().spanX(2));
+		resultPanel.add(scrollPane, cc.wrap().spanX(5));
 		
 		//this.add(main);
 		this.setContentPane(resultPanel);
@@ -869,6 +973,108 @@ public class GeneFunctionSet extends JFrame implements Runnable {
             }
         }
     }
+    
+    private void outputSelection() {
+		for(FigCustomNode node : UiGlobals.getInfoMarkedNode())
+			node.resetbyInfoPanel();
+		UiGlobals.getInfoMarkedNode().clear();
+        for (int c : nodeTable.getSelectedRows()) {
+            System.out.println(nodeTable.getModel().getValueAt(c, 0));
+            Fig selectedNode = UiGlobals.getNodeHash().get(nodeTable.getModel().getValueAt(c, 0));
+            FigCustomNode selectedNodeCustom = (FigCustomNode)selectedNode;
+            selectedNodeCustom.markByInfoPanel();
+            UiGlobals.getInfoMarkedNode().add(selectedNodeCustom);
+            Editor editor = UiGlobals.curEditor();
+            editor.getLayerManager().getActiveLayer().reorder(selectedNodeCustom, CmdReorder.BRING_TO_FRONT);
+            editor.damaged(selectedNodeCustom);
+        }
+        
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+		if(source instanceof JButton){
+			JButton btnSrc = (JButton)source;
+			if("exportAsCsv".equals(btnSrc.getName())){
+				
+				
+				for (int c : nodeTable.getSelectedRows()) {
+					
+				}
+				
+				Calendar cal = Calendar.getInstance();
+		        String filename = "funcAssociation_"+String.format("%04d%02d%02d%02d%02d%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND));
+		        filename += ".csv";
+		        
+		        //String result = gridData.generateData();
+		        String result = "";//gridData.generateDataSquare();
+		        
+		        for(int i = 0 ; i < columnData.size() ; i++){
+		        	if(i == 0) result += "\""+columnData.get(i)+"\"";
+        			else result += ",\""+columnData.get(i)+"\"";
+		        }
+		        
+		        result += "\n";
+		        
+		        if(dataFilled != null && nodeTable.getSelectedRows().length > 0){
+		        	for (int i : nodeTable.getSelectedRows()) {
+		        		for(int j = 0 ; j < dataFilled[i].length ; j++){
+		        			if(j == 0) result += "\""+dataFilled[i][j].toString()+"\"";
+		        			else result += ",\""+dataFilled[i][j].toString()+"\"";
+		        		}
+		        		result += "\n";
+					}
+//		        	for(int i = 0 ; i < dataFilled.length ; i++){
+//		        		
+//		        	}
+		        }else{
+		        	JOptionPane.showMessageDialog(this,
+		        		    "Please select more than a row to download.", 
+		        		    "Info", JOptionPane.INFORMATION_MESSAGE);
+		        	return;
+		        }
+		        
+		        System.out.println("filename : "+filename);
+		        System.out.println(result);
+		        
+		        //Attach Filename on top of reuslt file.
+		        result = filename+"\n"+result;
+		        
+		        byte[] data = result.getBytes();
+				
+				ByteArrayInputStream bis = new ByteArrayInputStream(data);
+				//System.out.println(data);
+				
+				
+				
+				String url = UiGlobals.getApplet().getCodeBase().toString() + "coordinator/writeGridData.jsp";
+				//String url = "http://localhost:8080/coordinator/writeImage.jsp";
+				HttpClient httpClient = new HttpClient();
+				System.out.println("code base to Write : "+url);
+				PostMethod postMethod = new PostMethod(url);
+				
+				//System.out.println("send filename : "+filename);
+				postMethod.setRequestEntity(new InputStreamRequestEntity(bis));
+				
+				try{
+					//Execute
+					httpClient.executeMethod(postMethod);
+					
+					System.out.println(postMethod.getResponseBody());
+				}catch(Exception ee){
+					ee.printStackTrace();
+				}
+				
+				String[] params = {filename}; 
+		        CallJSObject jsObject = new CallJSObject("callGridDownloader", params, UiGlobals.getApplet());
+		        Thread thread = new Thread(jsObject);
+		        thread.run();
+			}
+		}
+		// TODO Auto-generated method stub
+		
+	}
     
 
 }
