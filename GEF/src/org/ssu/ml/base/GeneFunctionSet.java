@@ -58,8 +58,10 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	
 	static final Color COLOR_STANDBY = new Color(209, 209, 209);
 	static final Color COLOR_EMPTY = new Color(247, 247, 247);
-	static final Color COLOR_FINISH = new Color(130, 184, 255);
+	static final Color COLOR_FINISH = new Color(196, 222, 255);
+	static final Color COLOR_FINISH_MAX = new Color(7, 118, 255);
 	static final Color COLOR_PROCESSING = new Color(255, 96, 43);
+	static final Color COLOR_SELECTED = new Color(220, 96, 43);
 	
 	static final int VALUE_STANDBY = 1;
 	static final int VALUE_EMPTY = 2;
@@ -93,6 +95,12 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	JXPanel resultPanel = null;
 	JScrollPane scrollPane = null;
 	JTextField filterText = null;
+	JTextField thresholdText = null;
+	double thresholdValue = 0.05;
+	
+	JComboBox heightCombo = null;
+	int heightValue = 20;
+	
 	private JComboBox filterColumn;
 	private TableRowSorter<JNodeInfoTableModel> sorter;
 	SortedListForFunctionData[][][] resultMap = null;
@@ -101,16 +109,19 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	
 	int[][] process = null;
 	JXPanel[][] processPanel = null;
+	Color[][] processPanelColor = null;
 	
 	int maxColumnCnt = 0;//UiGlobals.getAnnotationHeader().size();
 	
 	Vector<String> columnData = null;
 	Object[][] dataFilled = null;
+	
 	int largestFuncListSize = 0;
+	
+	JFrame tableFrame = null;
 	
 	public GeneFunctionSet(HashMap<String, HashMap<Integer, List<String>>> functionUniverse){
 		this.functionUniverse = functionUniverse;
-		
 		Set<String> keys = functionUniverse.keySet();
 		for(String id : keys){
 			geneIds.add(id);
@@ -120,7 +131,7 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 		preLogCal(N);
 		
 		
-		setSize(new Dimension(700, 600));
+		setSize(new Dimension(400, 400));
 		
 	}
 	
@@ -133,14 +144,21 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 			for(int j = 0 ; j <= maxGridX ; j++){
 				//JXPanel panel = processPanel[i][j];
 				
-				if(process[i][j] == VALUE_FINISH)
-					processPanel[i][j].setBackground(COLOR_FINISH);
-				else if(process[i][j] == VALUE_STANDBY)
+				if(process[i][j] == VALUE_FINISH){
+					processPanel[i][j].setBackground(processPanelColor[i][j]);
+				}
+				else if(process[i][j] == VALUE_STANDBY){
 					processPanel[i][j].setBackground(COLOR_STANDBY);
-				else if(process[i][j] == VALUE_EMPTY)
+					processPanelColor[i][j] = COLOR_STANDBY;
+				}
+				else if(process[i][j] == VALUE_EMPTY){
 					processPanel[i][j].setBackground(COLOR_EMPTY);
-				else if(process[i][j] == VALUE_PROCESSING)
+					processPanelColor[i][j] = COLOR_EMPTY;
+				}
+				else if(process[i][j] == VALUE_PROCESSING){
 					processPanel[i][j].setBackground(COLOR_PROCESSING);
+					processPanelColor[i][j] = COLOR_PROCESSING;
+				}
 				
 				processPanel[i][j].setPreferredSize(new Dimension(this.getSize().width/maxGridX, this.getSize().height/maxGridY));
     			//System.out.println("add.. i: "+i+", j: "+j);
@@ -200,11 +218,26 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 		
 		int calculatedGridCnt = 0;
 		
+		int maxGeneSetSize = 0;
+		int minGeneSetSize = 10000000;
+		
+		for(int i = 0 ; i <= maxGridY ; i++){
+         	for(int j = 0 ; j <= maxGridX ; j++){
+         		List<String> curGeneSet = gridGeneSetData.get(new Point(j, i));
+         		if(curGeneSet != null){
+         		maxGeneSetSize = Math.max(maxGeneSetSize, curGeneSet.size());
+         		if(curGeneSet.size() > 0)
+         			minGeneSetSize = Math.min(minGeneSetSize, curGeneSet.size());
+         		}
+         	}
+		}
+		
 		largestFuncListSize = 0;
 		for(int i = 0 ; i <= maxGridY ; i++){
          	for(int j = 0 ; j <= maxGridX ; j++){
          		//System.out.println("GRID: "+i+", "+j);
          		List<String> curGeneSet = gridGeneSetData.get(new Point(j, i));
+         		
          		HashMap<Integer, List<String>> curFuncSet = gridFuncData.get(new Point(j, i));
          		if(curGeneSet != null && curFuncSet != null)
          		{
@@ -214,10 +247,10 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	         			
 	         			if(funcList != null){
 	         				largestFuncListSize = Math.max(largestFuncListSize, funcList.size());
-	         				//System.out.print("O");
 	         				
 	         				process[i][j] = VALUE_PROCESSING;
 	         				processPanel[i][j].setBackground(COLOR_PROCESSING);
+	         				processPanelColor[i][j] = COLOR_PROCESSING;
 	         				
 	         				//this.repaint();
 	         				//mainPanel.getComponent(i*(maxGridX+1)+j).setBackground(Color.blue);
@@ -231,12 +264,32 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	         					
 	         				}
 	         				process[i][j] = VALUE_FINISH;
-	         				processPanel[i][j].setBackground(COLOR_FINISH);
+	         				
+	         				
+	         				int curGeneSize = curGeneSet.size();
+	         				//System.out.println("maxGeneSetSize-minGeneSetSize: "+maxGeneSetSize+", "+minGeneSetSize);
+	         				//System.out.println("curGeneSize:"+curGeneSize+", ratio: "+(((double)(curGeneSize-minGeneSetSize)) / (maxGeneSetSize-minGeneSetSize)));
+	         				int colorR = COLOR_FINISH.getRed();
+	         				//System.out.println("R VAR: "+(COLOR_FINISH_MAX.getRed() - COLOR_FINISH.getRed())*((curGeneSize-minGeneSetSize)*0.1*10/(maxGeneSetSize-minGeneSetSize)));
+	         				colorR += (COLOR_FINISH_MAX.getRed() - COLOR_FINISH.getRed())*((curGeneSize-minGeneSetSize)*0.1*10/(maxGeneSetSize-minGeneSetSize)); 
+	         				int colorG = COLOR_FINISH.getGreen();
+	         				//System.out.println("G VAR: "+(COLOR_FINISH_MAX.getGreen() - COLOR_FINISH.getGreen())*((curGeneSize-minGeneSetSize)*0.1*10/(maxGeneSetSize-minGeneSetSize)));
+	         				colorG += (COLOR_FINISH_MAX.getGreen() - COLOR_FINISH.getGreen())*((curGeneSize-minGeneSetSize)*0.1*10/(maxGeneSetSize-minGeneSetSize));
+	         				int colorB = COLOR_FINISH.getBlue();
+	         				//System.out.println("B VAR: "+(COLOR_FINISH_MAX.getBlue() - COLOR_FINISH.getBlue())*((curGeneSize-minGeneSetSize)*0.1*10/(maxGeneSetSize-minGeneSetSize)));
+	         				colorB += (COLOR_FINISH_MAX.getBlue() - COLOR_FINISH.getBlue())*((curGeneSize-minGeneSetSize)*0.1*10/(maxGeneSetSize-minGeneSetSize));
+	         				
+	         				//System.out.println(colorR+" "+colorG+" "+colorB);
+	         				Color finishColor = new Color(colorR, colorG, colorB);
+	         				
+	         				processPanel[i][j].setBackground(finishColor);
+	         				processPanelColor[i][j] = finishColor;
 	         			}else{
 	         				//System.out.print("X");
 	         				process[i][j] = VALUE_EMPTY;
 	         				//mainPanel.getComponent(i*maxGridX+1+j).setBackground(Color.white);
 	         				processPanel[i][j].setBackground(COLOR_EMPTY);
+	         				processPanelColor[i][j] = COLOR_EMPTY;
 	         			}
          			}
          		}else{
@@ -245,13 +298,14 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
          			process[i][j] = VALUE_EMPTY;
          			//mainPanel.getComponent(i*maxGridX+1+j).setBackground(Color.white);
          			processPanel[i][j].setBackground(COLOR_EMPTY);
+         			processPanelColor[i][j] = COLOR_EMPTY;
          		}
          		
          		String dots = "";
              	if(calculatedGridCnt%3 == 0) dots = ".  ";
              	else if(calculatedGridCnt%3 == 1) dots = ".. ";
              	else if(calculatedGridCnt%3 == 2) dots = "...";
-             	this.setTitle("Processing"+dots+" Grid cnt: "+calculatedGridCnt+"/"+filledGridCnt+", itorCnt: "+itorCnt);
+             	this.setTitle("Processing"+dots+" "+String.format("%.2f", (calculatedGridCnt*0.1*1000/filledGridCnt))+"%, Grid cnt: "+calculatedGridCnt+"/"+filledGridCnt);
          	}
          	
          	
@@ -312,6 +366,7 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 		System.out.println("maxColumnCnt: "+maxColumnCnt);
     	process = new int[maxGridY+1][maxGridX+1];
     	processPanel = new JXPanel[maxGridY+1][maxGridX+1];
+    	processPanelColor = new Color[maxGridY+1][maxGridX+1];
     	
     	resultMap = new SortedListForFunctionData[maxGridY+1][maxGridX+1][maxColumnCnt+1];
     	
@@ -320,6 +375,7 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
     			process[i][j] = VALUE_STANDBY;
     			processPanel[i][j] = new JXPanel();
     			processPanel[i][j].setBackground(COLOR_STANDBY);
+    			processPanelColor[i][j] = COLOR_STANDBY;
     			
     			for(int l = 0 ; l < maxColumnCnt ; l++)
     				resultMap[i][j][l] = new SortedListForFunctionData();
@@ -785,17 +841,22 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 			    			//System.out.println("i: "+i+", j: "+j+", "+function.size());
 			    			
 			    			int keyCnt = 0;
-			    			
+			    			int addedCnt = 0;
 			    			data[filledCount][l] = "";
+			    			
 			    			for(CFunctionData functionData : function){
 			    				isHaveRowData = true;
 			    				//System.out.println("dataHeight["+filledCount+"]["+l+"]: "+dataHeight[filledCount][l]);
 			    				dataHeight[filledCount][l]++;
-			    				if(keyCnt == 0)
-			    					data[filledCount][l] = functionData.toString();
-			    				else
-			    					data[filledCount][l] = data[filledCount][l].toString()+"\n"+functionData.toString();
-			    				
+			    				if(functionData.getPvalue() < thresholdValue){
+			    					
+				    				if(addedCnt == 0)
+				    					data[filledCount][l] = functionData.toString();
+				    				else
+				    					data[filledCount][l] = data[filledCount][l].toString()+"\n"+functionData.toString();
+				    				
+				    				addedCnt++;
+				    			}
 			    				keyCnt++;
 			    			}
 			    			//System.out.println("l: "+l+", keys: "+keys.size());
@@ -883,9 +944,10 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 				//for(int i = 0 ; i < filledCount ; i++)
 				//	if(dataHeight[i] > 0)
 				//		nodeTable.setRowHeight(i, 30 * dataHeight[i]);
-				nodeTable.setRowHeight(nodeTable.getRowHeight() * Math.min(largestFuncListSize, 40));
+				nodeTable.setRowHeight(nodeTable.getRowHeight() * Math.min(largestFuncListSize, heightValue));
 				nodeTable.setRowSorter(sorter);
 				nodeTable.setEnabled(true);
+				
 				//nodeTable.setAutoCreateRowSorter(true);
 				nodeTable.setPreferredScrollableViewportSize(new Dimension(5000, 5000));
 				//nodeTable.setFillsViewportHeight(true);
@@ -939,6 +1001,26 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	                });
 			resultPanel.add(filterText, "align left, width 100::");
 			
+			JLabel thresholdLabel = new JLabel("Threshold: ");
+			resultPanel.add(thresholdLabel, "align right, width 70::70");
+			thresholdText = new JTextField();
+			thresholdText.setName("thresholdText");
+			thresholdText.setText(Double.toString(thresholdValue));
+			thresholdText.addActionListener(this);
+			resultPanel.add(thresholdText, "align left, width 50::");
+			
+			JLabel heightLabel = new JLabel("Height: ");
+			resultPanel.add(heightLabel, "align right, width 60::60");
+			String[] strHeightItems = {"5", "10", "20", "30", "40", "50", "60"};
+			if(heightCombo == null){
+				heightCombo = new JComboBox(strHeightItems);
+				heightCombo.setSelectedIndex(2);
+			}
+			heightCombo.setName("heightCombo");
+			
+			heightCombo.addActionListener(this);
+			resultPanel.add(heightCombo, "align left, width 40::");
+			
 			JButton exportBtn = new JButton("Export As CSV");
 			exportBtn.setName("exportAsCsv");
 			exportBtn.addActionListener(this);
@@ -947,10 +1029,15 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 		}
 		
 		CC cc = new CC();
-		resultPanel.add(scrollPane, cc.wrap().spanX(5));
+		resultPanel.add(scrollPane, cc.wrap().spanX(9));
 		
 		//this.add(main);
-		this.setContentPane(resultPanel);
+		if(tableFrame == null){ 
+			tableFrame = new JFrame();
+			tableFrame.setSize(900, 700);
+		}
+		tableFrame.setVisible(true);
+		tableFrame.setContentPane(resultPanel);
 		
 	}
     
@@ -971,24 +1058,24 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
             if (event.getValueIsAdjusting()) {
                 return;
             }
+            outputSelection();
         }
     }
     
     private void outputSelection() {
-		for(FigCustomNode node : UiGlobals.getInfoMarkedNode())
-			node.resetbyInfoPanel();
-		UiGlobals.getInfoMarkedNode().clear();
-        for (int c : nodeTable.getSelectedRows()) {
-            System.out.println(nodeTable.getModel().getValueAt(c, 0));
-            Fig selectedNode = UiGlobals.getNodeHash().get(nodeTable.getModel().getValueAt(c, 0));
-            FigCustomNode selectedNodeCustom = (FigCustomNode)selectedNode;
-            selectedNodeCustom.markByInfoPanel();
-            UiGlobals.getInfoMarkedNode().add(selectedNodeCustom);
-            Editor editor = UiGlobals.curEditor();
-            editor.getLayerManager().getActiveLayer().reorder(selectedNodeCustom, CmdReorder.BRING_TO_FRONT);
-            editor.damaged(selectedNodeCustom);
-        }
-        
+    	int[] selectionIndex = nodeTable.getSelectedRows();
+    	
+    	
+    	
+    	for(int i = 0 ; i < maxGridY ; i++){
+    		for(int j = 0 ; j < maxGridX ; j++)
+    			processPanel[i][j].setBackground(processPanelColor[i][j]);
+    	}
+    	for(int i = 0 ; i < selectionIndex.length ; i++){
+    		int x = Integer.parseInt(nodeTable.getModel().getValueAt(selectionIndex[i], 0).toString());
+    		int y = Integer.parseInt(nodeTable.getModel().getValueAt(selectionIndex[i], 1).toString());
+    		processPanel[y][x].setBackground(COLOR_SELECTED);
+    	}
 	}
 
 	@Override
@@ -1070,6 +1157,30 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 		        CallJSObject jsObject = new CallJSObject("callGridDownloader", params, UiGlobals.getApplet());
 		        Thread thread = new Thread(jsObject);
 		        thread.run();
+			}
+		}else if(source instanceof JTextField){
+			JTextField textSrc = (JTextField)source;
+			if("thresholdText".equals(textSrc.getName())){
+				try{
+					thresholdValue = Double.parseDouble(textSrc.getText());
+					showList();
+				}catch(Exception ee){
+					System.out.println("it is not a number.");
+				}
+				
+				
+			}
+		}else if(source instanceof JComboBox){
+			JComboBox comboSrc = (JComboBox)source;
+			if("heightCombo".equals(comboSrc.getName())){
+				try{
+					heightValue = Integer.parseInt(comboSrc.getSelectedItem().toString());
+					showList();
+				}catch(Exception ee){
+					System.out.println("it is not a number.");
+				}
+				
+				
 			}
 		}
 		// TODO Auto-generated method stub

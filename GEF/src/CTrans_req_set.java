@@ -321,10 +321,10 @@ public class CTrans_req_set {
 			if(argv.length < 5){
 				conv_argv = new String[5];
 				conv_argv[0] = argv[0];
-				conv_argv[1] = argv[1].replace("_/", "");
-				conv_argv[2] = argv[2].replace("_/", "");
+				conv_argv[1] = argv[1].replace("_/", " ");
+				conv_argv[2] = argv[2].replace("_/", " ");
 				conv_argv[3] = argv[3];
-				conv_argv[3] = argv[3]+".trans";
+				conv_argv[4] = argv[3]+".trans";
 			}else{
 				conv_argv = argv;
 			}
