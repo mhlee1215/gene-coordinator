@@ -120,6 +120,9 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	
 	JFrame tableFrame = null;
 	
+	
+	int testCount = 0;
+	
 	public GeneFunctionSet(HashMap<String, HashMap<Integer, List<String>>> functionUniverse){
 		this.functionUniverse = functionUniverse;
 		Set<String> keys = functionUniverse.keySet();
@@ -257,6 +260,7 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	         				if(j == 13 && i == 0)
 	         					System.out.println("funcList["+l+"]: "+funcList.size());
 	         				for(int k = 0 ; k < funcList.size() ; k++){
+	         					n = this.getContainAttributeGeneSize(l, funcList.get(k));
 	         					double pvalue = getAdjPValue(curGeneSet, curGeneSet.size(), l, funcList.get(k), n);
 	         					
 	         					resultMap[i][j][l-1].add(new CFunctionData(funcList.get(k), pvalue));
@@ -463,6 +467,7 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 		 */
 		int N = functionUniverse.keySet().size();
 		
+		
 		double overPresentPValue = 0.0;
 		double devider = (binom(N, n));
 		//System.out.println("q: "+q+", n: "+n+", m: "+m+", N: "+N);
@@ -476,6 +481,11 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 		for(int a = 0 ; a <= m ; a++){
 			//underPresentPValue += (binom(q, a)*binom(N-a, n-a))/devider;
 			underPresentPValue += Math.exp((binom(q, a)+binom(N-q, n-a))-devider);
+		}
+		
+		if(testCount < 100){
+			System.out.println("function: "+functionName+", N: "+N+", n: "+n+", q: "+q+", Math.min(q, n): "+Math.min(q, n)+", result: "+Math.min(overPresentPValue, underPresentPValue));
+			testCount++;
 		}
 		
 		return Math.min(overPresentPValue, underPresentPValue);
@@ -761,10 +771,12 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
         		curGridFunc.put(columnIndex, funcList);
         	}
         	
-        	//System.out.println(functionUniverse.get(name).get(columnIndex));
-        	for(String funcName : functionUniverse.get(name).get(columnIndex)){
-        		if(!funcList.contains(funcName))
-        			funcList.add(funcName);
+        	if(functionUniverse.get(name) != null){
+        		if(functionUniverse.get(name).get(columnIndex) != null)
+		        	for(String funcName : functionUniverse.get(name).get(columnIndex)){
+		        		if(!funcList.contains(funcName))
+		        			funcList.add(funcName);
+		        	}
         	}
         }
     	
