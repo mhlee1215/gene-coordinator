@@ -123,6 +123,8 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	
 	int testCount = 0;
 	
+	Vector<HashMap<String, Integer>> nSearchHash = new Vector<HashMap<String, Integer>>();
+	
 	public GeneFunctionSet(HashMap<String, HashMap<Integer, List<String>>> functionUniverse){
 		this.functionUniverse = functionUniverse;
 		Set<String> keys = functionUniverse.keySet();
@@ -483,10 +485,10 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 			underPresentPValue += Math.exp((binom(q, a)+binom(N-q, n-a))-devider);
 		}
 		
-		if(testCount < 100){
-			System.out.println("function: "+functionName+", N: "+N+", n: "+n+", q: "+q+", Math.min(q, n): "+Math.min(q, n)+", result: "+Math.min(overPresentPValue, underPresentPValue));
-			testCount++;
-		}
+//		if(testCount < 100){
+//			System.out.println("function: "+functionName+", N: "+N+", n: "+n+", q: "+q+", Math.min(q, n): "+Math.min(q, n)+", result: "+Math.min(overPresentPValue, underPresentPValue));
+//			testCount++;
+//		}
 		
 		return Math.min(overPresentPValue, underPresentPValue);
 	}
