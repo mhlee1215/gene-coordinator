@@ -325,7 +325,7 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		
 		
 		final ColorChooser cc = new ColorChooser();
-		cc.setColor(CNodeData.getDefaultColor());
+		cc.setColor(new Color(255, 140, 68));
 		colorChooserPanel.add (cc, "wrap");
 		
 		searchOptionPanel.add(colorChooserPanel, "wrap");

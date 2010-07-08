@@ -174,25 +174,50 @@ public class LoadingProgressBarAnnotation extends JPanel
     			
     			br.close();
     			
-    			Editor editor = UiGlobals.curEditor();
-    			java.util.List<Fig> nodes = editor.getLayerManager().getActiveLayer().getContents();
-    			String prefix = "<html><body style=\"background-color: #ffffdd\"><h3><font color=#000000><span >";
-	            String postfix = "</span></font></h3></body></html>";
-    			for(int count1 = 0 ; count1 < nodes.size() ; count1++)
-    	        {
-    	        	Fig node = nodes.get(count1);
-    	        	FigCustomNode nodeCustom = (FigCustomNode)node;
-    	        	NodeDescriptor desc = (NodeDescriptor)nodeCustom.getOwner();
-    	        	String resultToolTipContent = "";
-    	        	
-    	        	
-    	        	resultToolTipContent = prefix;
-    	        	resultToolTipContent += postfix;
-    	        	
-    	        	
-    	        	
-    	            
-    	        }
+    			
+    			////////////////////////////////////////////////////
+    			BufferedReader brPrecal = Utils.getInputReader(AnnotationFileName+".trimmed.precal");
+    			if(brPrecal == null){
+    				System.out.println("Cannot find trimmed annotation file.");
+    			}else{
+    				HashMap<String, HashMap<String, Integer>> preCalFunctionData = new HashMap<String, HashMap<String, Integer>>();
+    				
+    				String headerName = "";
+    				HashMap<String, Integer> columnFuncData = null;
+    				while((strTmp=brPrecal.readLine()) != null)
+        			{
+    					//System.out.println(strTmp);
+        				if(strTmp.startsWith("@"))
+        				{
+        					headerName = strTmp.substring(1);
+        					columnFuncData = new HashMap<String, Integer>();
+        					preCalFunctionData.put(headerName, columnFuncData);
+        					String output = "Load '"+headerName+"' column function data...";
+							UiGlobals.getPropertySearchField().setText(output);
+							UiGlobals.setStatusbarText(output);
+        				}else{
+        					if("".equals(headerName)){
+        						System.out.println("Header name is empty!!!!");
+        						break;
+        					}else{
+        						String[] strParts = strTmp.split("\t");
+        						if(strParts.length == 2){
+        							String funcName = strParts[0];
+        							int funcCnt = 0;
+        							try{ funcCnt = Integer.parseInt(strParts[1]); }catch(Exception e){};
+        							
+        							if(columnFuncData != null){
+        								//System.out.println("put: ["+funcName+"] : "+funcCnt);
+        								columnFuncData.put(funcName, funcCnt);
+        							}
+        						}
+        					}
+        				}
+        			}
+    				UiGlobals.setPreCalFunctionData(preCalFunctionData);
+    			}
+    			
+    			
     		}catch(Exception e){
     			e.printStackTrace();
     		}

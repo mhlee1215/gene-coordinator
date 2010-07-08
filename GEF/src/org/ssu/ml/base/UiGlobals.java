@@ -79,6 +79,18 @@ public class UiGlobals extends Globals{
 	
 	private static CNodeData cNodeData = null;
 	
+	private static HashMap<String, HashMap<String, Integer>> preCalFunctionData = null;
+	
+	
+	public static HashMap<String, HashMap<String, Integer>> getPreCalFunctionData() {
+		return preCalFunctionData;
+	}
+
+	public static void setPreCalFunctionData(
+			HashMap<String, HashMap<String, Integer>> preCalFunctionData) {
+		UiGlobals.preCalFunctionData = preCalFunctionData;
+	}
+
 	/**
 	 * @return the functionUniverse
 	 */

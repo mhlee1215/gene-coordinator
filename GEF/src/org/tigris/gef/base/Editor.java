@@ -848,6 +848,14 @@ public class Editor implements Serializable, MouseListener,
         }
         System.out.println("ms click");
         
+        List<Fig> selectList = this.getSelectionManager().getSelectedFigs();
+        if(selectList.size() > 0){
+        	UiGlobals.showNodeInfoList(selectList);
+        }else{
+        	//UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", false);
+        	
+        }
+        
     }
 
     /** Invoked when a mouse button has been pressed. */
@@ -876,13 +884,7 @@ public class Editor implements Serializable, MouseListener,
         System.out.println("ms press");
         
         
-        List<Fig> selectList = this.getSelectionManager().getSelectedFigs();
-        if(selectList.size() > 0){
-        	UiGlobals.showNodeInfoList(selectList);
-        }else{
-        	//UiGlobals.getMsp().getMultiSplitLayout().displayNode("left.middle", false);
-        	
-        }
+        
         
         //System.out.println(this.getSelectionManager().getSelectedFigs().size());
     }

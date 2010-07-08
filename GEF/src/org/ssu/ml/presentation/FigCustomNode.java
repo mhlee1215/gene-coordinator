@@ -83,10 +83,10 @@ import org.tigris.gef.util.Localizer;
  */
 public class FigCustomNode extends FigRect implements MouseListener {
 	
-	Color borderColor = Color.black;
+	Color borderColor = new Color(160, 196, 255);//Color.black;
 	
 	int selectedCountBySearch = 0;
-	float borderSize = 1f;
+	float borderSize = 1.5f;
 	Stroke borderStroke = new BasicStroke(borderSize);
 	boolean increased = false;
 	
