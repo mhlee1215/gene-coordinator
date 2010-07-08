@@ -25,7 +25,7 @@ public class CNodeData {
 	double pre_scale = 1;
 	int padding = 10;
 	
-	static final Color defaultColor = new Color(100, 163, 194);
+	static final Color defaultColor = new Color(132, 179, 255);
 	
 	
 	public static Color getDefaultColor() {

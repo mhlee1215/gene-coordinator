@@ -7,6 +7,8 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.util.Calendar;
@@ -54,7 +56,7 @@ import org.tigris.gef.base.Editor;
 import org.tigris.gef.base.LayerGrid;
 import org.tigris.gef.presentation.Fig;
 
-public class GeneFunctionSet extends JFrame implements Runnable, ActionListener {
+public class GeneFunctionSet extends JFrame implements Runnable, ActionListener, MouseListener {
 	
 	static final Color COLOR_STANDBY = new Color(209, 209, 209);
 	static final Color COLOR_EMPTY = new Color(247, 247, 247);
@@ -125,6 +127,9 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	
 	Vector<HashMap<String, Integer>> nSearchHash = new Vector<HashMap<String, Integer>>();
 	
+	HashMap<String, HashMap<String, Integer>> preCalFunctionData = null;
+	HashMap<String, Integer> tableIndexMap = null;
+	
 	public GeneFunctionSet(HashMap<String, HashMap<Integer, List<String>>> functionUniverse){
 		this.functionUniverse = functionUniverse;
 		Set<String> keys = functionUniverse.keySet();
@@ -137,7 +142,6 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 		
 		
 		setSize(new Dimension(400, 400));
-		
 	}
 	
 	public void paint(Graphics g){
@@ -327,6 +331,8 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	
 	public void init(){
 		System.out.println("init");
+		preCalFunctionData = UiGlobals.getPreCalFunctionData();
+		System.out.println("preCalFunctionData: "+preCalFunctionData);
 		
 		maxGridX = 0;
 		maxGridY = 0;
@@ -383,6 +389,8 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
     			processPanel[i][j].setBackground(COLOR_STANDBY);
     			processPanelColor[i][j] = COLOR_STANDBY;
     			
+    			processPanel[i][j].addMouseListener(this);
+    			processPanel[i][j].setName(j+","+i);
     			for(int l = 0 ; l < maxColumnCnt ; l++)
     				resultMap[i][j][l] = new SortedListForFunctionData();
     		}
@@ -398,6 +406,27 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 	 * @return
 	 */
 	public int getContainAttributeGeneSize(int columnIndex, String functionName){
+		if(preCalFunctionData != null){
+			String header = UiGlobals.getAnnotationHeader().get(columnIndex);
+			HashMap<String, Integer> columnFuncData = preCalFunctionData.get(header);
+			//System.out.println("header:: "+header);
+			if(columnFuncData != null){
+				System.out.println("columnFuncData: "+columnFuncData);
+				System.out.println("functionName: "+functionName);
+				int result = columnFuncData.get(functionName);
+				if(result > 0){
+					//System.out.println("found in pre-calculated data.");
+					return result; 
+				}else{
+					//System.out.println("result is less than or equal to zero");
+				}
+			}else{
+				//System.out.println("columnFuncData is null");
+			}
+		}else{
+			//System.out.println("preCalFunctionData is null");
+		}
+		
 		Set<String> keys = functionUniverse.keySet();
 		int resultCnt = 0;
 		
@@ -837,13 +866,15 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 				
 				boolean isHaveRowData = false;
 				
+				tableIndexMap = new HashMap<String, Integer>();
+				
 				for(int i = 0 ; i <= maxGridY ; i++){
 		    		for(int j = 0 ; j <= maxGridX ; j++){
 		    			isHaveRowData = false;
 		    			
 		    			data[filledCount][0] = j;
 		    			data[filledCount][1] = i;
-		    			
+		    			tableIndexMap.put(Integer.toString(j)+","+Integer.toString(i), filledCount);
 		    			
 		    			for(int l = 2 ; l < columnData.size() ; l++){
 		    				dataHeight[filledCount][l] = 0;
@@ -1081,8 +1112,8 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
     	
     	
     	
-    	for(int i = 0 ; i < maxGridY ; i++){
-    		for(int j = 0 ; j < maxGridX ; j++)
+    	for(int i = 0 ; i <= maxGridY ; i++){
+    		for(int j = 0 ; j <= maxGridX ; j++)
     			processPanel[i][j].setBackground(processPanelColor[i][j]);
     	}
     	for(int i = 0 ; i < selectionIndex.length ; i++){
@@ -1199,6 +1230,46 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener 
 		}
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		//System.out.println("mouseClicked!");
+		//System.out.println(e.getSource());
+		if(e.getSource() instanceof JPanel){
+			JPanel src = (JPanel)e.getSource();
+			if(nodeTable != null)
+				nodeTable.changeSelection(tableIndexMap.get(src.getName()), 0, false, false);
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		//System.out.println("mouseEntered!");
+		//System.out.println(e.getSource());
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		//System.out.println("mouseExited!");
+		//System.out.println(e.getSource());
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		//System.out.println("mousePressed!");
+		//System.out.println(e.getSource());
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		//System.out.println("mouseReleased!");
+		//System.out.println(e.getSource());
 	}
     
 
