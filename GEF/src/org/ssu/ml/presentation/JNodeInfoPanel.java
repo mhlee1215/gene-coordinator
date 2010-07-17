@@ -1,14 +1,19 @@
 package org.ssu.ml.presentation;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,10 +22,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
 import net.miginfocom.layout.AC;
@@ -165,8 +177,32 @@ public class JNodeInfoPanel extends JXTitledPanel {
 				
 				System.out.println("tableCreated");
 				JNodeInfoTableModel model = new JNodeInfoTableModel(column, data);
+				
+				
 				sorter = new TableRowSorter<JNodeInfoTableModel>(model);
 				nodeTable = new JTable(model);
+
+				MultiLineHeaderRenderer headerRenderer = new MultiLineHeaderRenderer(
+						SwingConstants.CENTER, SwingConstants.BOTTOM);
+				headerRenderer.setBackground(Color.gray);
+				headerRenderer.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+				headerRenderer.setForeground(Color.white);
+				headerRenderer.setMinimumSize(new Dimension(10, 100));
+				headerRenderer.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+
+				TableColumnModel tcm = nodeTable.getColumnModel();
+				for (int i = 0; i < tcm.getColumnCount(); i++){
+					tcm.getColumn(i).setHeaderRenderer(headerRenderer);
+					String header = tcm.getColumn(i).getHeaderValue().toString();
+					String[] headParts = header.split(" ");//{"11", "22"};
+					String[] newHeader = new String[(headParts.length / 2) + 1];
+					for(int j = 0 ; j < headParts.length ; j++){
+						if(newHeader[j/2] == null) newHeader[j/2] = "";
+						newHeader[j/2] = newHeader[j/2]+" "+headParts[j];
+					}
+					tcm.getColumn(i).setHeaderValue(newHeader);
+				}
+				
 				nodeTable.setRowSorter(sorter);
 				nodeTable.setEnabled(true);
 				//nodeTable.setAutoCreateRowSorter(true);

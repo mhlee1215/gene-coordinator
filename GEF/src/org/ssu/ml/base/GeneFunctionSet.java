@@ -2,6 +2,7 @@ package org.ssu.ml.base;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -31,10 +32,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
+import javax.swing.SwingConstants;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
 import net.miginfocom.layout.AC;
@@ -51,10 +55,14 @@ import org.ssu.ml.presentation.FigCustomNode;
 import org.ssu.ml.presentation.JGridChartPanel;
 import org.ssu.ml.presentation.JNodeInfoTableModel;
 import org.ssu.ml.presentation.MultiLineCellRenderer;
+import org.ssu.ml.presentation.MultiLineHeaderRenderer;
+
 import org.tigris.gef.base.CmdReorder;
 import org.tigris.gef.base.Editor;
 import org.tigris.gef.base.LayerGrid;
 import org.tigris.gef.presentation.Fig;
+
+//import org.ssu.ml.presentation.
 
 public class GeneFunctionSet extends JFrame implements Runnable, ActionListener, MouseListener {
 	
@@ -411,8 +419,9 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener,
 			HashMap<String, Integer> columnFuncData = preCalFunctionData.get(header);
 			//System.out.println("header:: "+header);
 			if(columnFuncData != null){
-				System.out.println("columnFuncData: "+columnFuncData);
-				System.out.println("functionName: "+functionName);
+				//System.out.println("");
+				//System.out.println("columnFuncData: "+columnFuncData);
+				//System.out.println("functionName: "+functionName);
 				int result = columnFuncData.get(functionName);
 				if(result > 0){
 					//System.out.println("found in pre-calculated data.");
@@ -969,6 +978,27 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener,
 				nodeTable = new JTable(model);
 				//nodeTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 				//nodeTable.setDefaultRenderer(String.class, new CustomCellRenderer1());
+				
+				MultiLineHeaderRenderer headerRenderer = new MultiLineHeaderRenderer(
+						SwingConstants.CENTER, SwingConstants.BOTTOM);
+				headerRenderer.setBackground(Color.gray);
+				headerRenderer.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+				headerRenderer.setForeground(Color.white);
+				headerRenderer.setMinimumSize(new Dimension(10, 100));
+				headerRenderer.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+
+				TableColumnModel tcm = nodeTable.getColumnModel();
+				for (int i = 0; i < tcm.getColumnCount(); i++){
+					tcm.getColumn(i).setHeaderRenderer(headerRenderer);
+					String header = tcm.getColumn(i).getHeaderValue().toString();
+					String[] headParts = header.split(" ");//{"11", "22"};
+					String[] newHeader = new String[(headParts.length / 2) + 1];
+					for(int j = 0 ; j < headParts.length ; j++){
+						if(newHeader[j/2] == null) newHeader[j/2] = "";
+						newHeader[j/2] = newHeader[j/2]+" "+headParts[j];
+					}
+					tcm.getColumn(i).setHeaderValue(newHeader);
+				}
 				
 				nodeTable.getColumnModel().getColumn(0).setMaxWidth(30);
 				nodeTable.getColumnModel().getColumn(1).setMaxWidth(30);
