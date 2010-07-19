@@ -160,10 +160,11 @@ public class JNodeInfoPanel extends JXTitledPanel {
 							NodeDescriptor des = (NodeDescriptor)fig.getOwner();
 							HashMap<Integer, String> property = annotationContent.get(des.getName());
 							
-							Set<Integer> keys = property.keySet();
-							for(int key = 0 ; key < columnData.size() ; key++){
-								
-								data[count][key] = property.get(key);
+							if(property != null){
+								for(int key = 0 ; key < columnData.size() ; key++){
+									
+									data[count][key] = property.get(key);
+								}
 							}
 						}
 						count++;
