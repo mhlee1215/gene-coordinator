@@ -39,6 +39,10 @@ import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXBusyLabel;
+import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.util.PaintUtils;
 import org.ssu.ml.base.CmdGridChart;
 import org.ssu.ml.base.DoublePair;
 import org.ssu.ml.base.NodeDescriptor;
@@ -85,13 +89,16 @@ public class LoadingProgressBarNode extends JPanel
     private JTextArea taskOutput;
     private NodeTask task;
     
-    private int max_work = 50000;
+    private int max_work = 0;
     private int cur_work = 0;
     
     private JFrame frame = null;
     private JGraph graph = null;
     
     private HashMap<String, FigCustomNode> nodeHash = new HashMap<String, FigCustomNode>();
+    
+    JXPanel loadingPanel = null;
+    String loadingText = "Now loading node info...";
   
 
     class NodeTask extends SwingWorker<Void, Void> {
@@ -122,13 +129,11 @@ public class LoadingProgressBarNode extends JPanel
          */
         @Override
         public Void doInBackground() {
-            
+        	 JPanel mainPanel = UiGlobals.getMainPane();
+             mainPanel.remove(UiGlobals.getGraphPane());
+             mainPanel.add(loadingPanel, BorderLayout.CENTER);
             //Initialize progress property.
             setProgress(0);
-            
-         
-
-        	
            
             Editor editor = _graph.getEditor();
             
@@ -265,7 +270,9 @@ public class LoadingProgressBarNode extends JPanel
             UiGlobals.setNodeHash(nodeHash);
             
             JPanel mainPanel = UiGlobals.getMainPane();
+            mainPanel.remove(loadingPanel);
             mainPanel.add(UiGlobals.getGraphPane(), BorderLayout.CENTER);
+            
         }
     }
     
@@ -277,9 +284,20 @@ public class LoadingProgressBarNode extends JPanel
         this.graph = graph;
         this.pre_scaled = UiGlobals.getPre_scaled();
       
-        int readCount = readCoordData();
-        int readEdgeCount = readEdgeData();
-        UiGlobals.setNodeCount(readCount);
+       
+        
+        if(UiGlobals.getcNodeData() == null){
+        	int readCount = -1;
+        	readCount = readCoordData();
+        	UiGlobals.setNodeCount(readCount);
+        	int readEdgeCount = -1;
+        	readEdgeCount = readEdgeData();
+        }else{
+        	nodeData = UiGlobals.getcNodeData();
+        }
+        	
+        
+        
         init();
 
         
@@ -319,23 +337,24 @@ public class LoadingProgressBarNode extends JPanel
         this.setLayout(new MigLayout("insets -2 -2 0 0"));
         int width = UiGlobals.getCoordBottomPanel().getSize().width;
         add(progressBar, new CC().wrap().width(""+width));
-        //add(new JScrollPane(taskOutput), BorderLayout.CENTER);
-        //setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
-        //frame = new JFrame("Node Rendering...");
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //Create and set up the content pane.
-        //JComponent newContentPane = new NodeLoadingProgressBar(frame);
         setOpaque(true); //content panes must be opaque
-        //frame.setContentPane(this);
         UiGlobals.getCoordBottomPanel().add(this);
 
-        //Display the window.
-        //frame.pack();
-        //frame.setVisible(true);
-        
-        //progressBar.setIndeterminate(true);
+        loadingPanel = new JXPanel();
+		loadingPanel.setBackgroundPainter(new MattePainter(PaintUtils.AERITH, true));
+		JXBusyLabel label = new JXBusyLabel(new Dimension(25, 25));
+		label.getBusyPainter().setPoints(25);
+		label.getBusyPainter().setTrailLength(12);
+		label.setName("busyLabel");
+        label.getBusyPainter().setHighlightColor(new Color(44, 61, 146).darker());
+        label.getBusyPainter().setBaseColor(new Color(168, 204, 241).brighter());
+        label.setBusy(true);
+        label.setText(loadingText);
+        label.setFont(new Font("Lucida Grande", Font.BOLD, 20));
+        loadingPanel.setLayout(new BorderLayout(UiGlobals.getMainPane().getWidth()/2-180, 0));
+        loadingPanel.add(BorderLayout.WEST, new JLabel(""));
+		loadingPanel.add(BorderLayout.CENTER, label);
+		
         startButton.setEnabled(false);
         //Instances of javax.swing.SwingWorker are not reusuable, so
         //we create new instances as needed.

@@ -104,6 +104,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 	private JMenuBar _menubar = new JMenuBar();
 
 	public CoordinatorApplet() throws Exception {
+		
 		Localizer.addResource("GefBase",
 				"org.tigris.gef.base.BaseResourceBundle");
 		Localizer.addResource("GefPres",
@@ -116,7 +117,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		ResourceLoader.addResourceLocation("/org/tigris/gef/Images");
 		
 		UiGlobals.init();
-		
+
 		try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (UnsupportedLookAndFeelException e) {
@@ -139,19 +140,54 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 
 		//UiGlobals.set_curApplet(this);
 		UiGlobals.setApplet(this);
-
+		
+	}
+	
+	private void initParam() {
+		if (getParameter("prescaled") == null)
+			pre_scaled = 1;
+		else
+			pre_scaled = Integer.parseInt(getParameter("prescaled"));
+		
+		if (getParameter("isusetargetconversion") == null)
+			UiGlobals.setUseTargetConversion(false);
+		else{
+			if("Y".equals(getParameter("isusetargetconversion")) || "1".equals(getParameter("isusetargetconversion")))
+				UiGlobals.setUseTargetConversion(true);
+			else
+				UiGlobals.setUseTargetConversion(false);
+		}
+		
+		if(this.getParameter("tocolumn") != null)
+			UiGlobals.setTargetColumnName(this.getParameter("tocolumn"));
+		else
+			UiGlobals.setTargetColumnName("");
+		
+		//UiGlobals.setPre_scaled(pre_scaled);
+		UiGlobals.setFileName(this.getParameter("fileName"));
+		UiGlobals.setAnnotationFileName(this.getParameter("annotationFileName"));
+		
+		String isExample = this.getParameter("isExample");
+		if(isExample == null) isExample = "N";
+		UiGlobals.setIsExample(isExample);
+		UiGlobals.setExampleType(this.getParameter("type"));
+		
+		System.out.println("===PARAMETER INFO===");
+		System.out.println("isUseConversion: "+UiGlobals.isUseTargetConversion());
+		System.out.println("fileName: "+UiGlobals.getFileName());
+		System.out.println("annotationFileName: "+UiGlobals.getAnnotationFileName());
+		System.out.println("tocolumn: "+this.getParameter("tocolumn"));
+		System.out.println("===PARAMETER INFO END===");
 	}
 
 	private void jbInit() throws Exception {
-
+		
 		long mega = (long) Math.pow(2, 20);
 		// Get current size of heap in bytes
 		long heapSize = Runtime.getRuntime().totalMemory();
-
 		// Get maximum size of heap in bytes. The heap cannot grow beyond this size.
 		// Any attempt will result in an OutOfMemoryException.
 		long heapMaxSize = Runtime.getRuntime().maxMemory();
-
 		// Get amount of free memory within the heap in bytes. This size will increase
 		// after garbage collection and decrease as new objects are created.
 		long heapFreeSize = Runtime.getRuntime().freeMemory();
@@ -169,23 +205,14 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 		// paths.setCodebase(this.getCodeBase().toString());
 		// this.
 
-		if (getParameter("prescaled") == null)
-			pre_scaled = 1;
-		else
-			pre_scaled = Integer.parseInt(getParameter("prescaled"));
+		
+			
 		
 		
 		
 		
 		
-		//UiGlobals.setPre_scaled(pre_scaled);
-		UiGlobals.setFileName(this.getParameter("fileName"));
-		UiGlobals.setAnnotationFileName(this.getParameter("annotationFileName"));
 		
-		String isExample = this.getParameter("isExample");
-		if(isExample == null) isExample = "N";
-		UiGlobals.setIsExample(isExample);
-		UiGlobals.setExampleType(this.getParameter("type"));
 		//System.out.println("isExample : "+UiGlobals.getIsExample());
 		//System.out.println("exampleType : "+UiGlobals.getExampleType());
 		
@@ -212,6 +239,7 @@ public class CoordinatorApplet extends JApplet implements ModeChangeListener {
 	}
 
 	public void init(JGraph jg) {
+		initParam();
 		setDefaultFont(UiGlobals.getNormalFont());
 		this.setToolBar(new NodePaletteFig()); // needs-more-work
 		this.setWestToolBar(new ResizerPaletteFig());

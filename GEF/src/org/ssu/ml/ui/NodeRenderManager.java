@@ -1,10 +1,7 @@
 package org.ssu.ml.ui;
 
-import java.util.HashMap;
-
 import org.ssu.ml.base.UiGlobals;
 import org.tigris.gef.base.Editor;
-import org.tigris.gef.base.LayerGrid;
 import org.tigris.gef.graph.presentation.JGraph;
 
 public class NodeRenderManager {
@@ -36,11 +33,8 @@ public class NodeRenderManager {
 		if(removeExistedNodes)
 			editor.getLayerManager().getActiveLayer().removeAll();
 		
-		
-
-		
-		//int maxNodeNum = data.getPointCount();
-		
+		//Node load
+		//스케일이 바뀔때마다 로드해야 함.
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				// createAndShowGUI();
@@ -48,12 +42,16 @@ public class NodeRenderManager {
 			}
 		});
 		
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				// createAndShowGUI();
-				new LoadingProgressBarAnnotation(UiGlobals.getAnnotationFileName());
-			}
-		});
+		//annotation load
+		//이미 로드한 경우는 로드하지 않는다.
+		if(UiGlobals.getAnnotationHeader().size() == 0){
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					// createAndShowGUI();
+					new LoadingProgressBarAnnotation(UiGlobals.getAnnotationFileName());
+				}
+			});
+		}
 		
 	}
 }
