@@ -174,4 +174,8 @@ public class CNodeData {
 	{
 		return groups.get(count);
 	}
+	
+	public int getSize(){
+		return pointerName.size();
+	}
 }

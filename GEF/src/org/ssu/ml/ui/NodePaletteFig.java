@@ -109,7 +109,9 @@ public class NodePaletteFig extends WestToolBar implements ActionListener, Prope
         add(new CmdZoom(0.5), "", "zoomOut", ToolBar.BUTTON_TYPE_TEXT);
         //this.addSeparator();
         add(new CmdGridChart(), "Gene-set size distribution", "siGraph", ToolBar.BUTTON_TYPE_TEXT);
-        add(new CmdShowFuncAssociate(), "FuncAssociatie", "funcAssociate", ToolBar.BUTTON_TYPE_TEXT);
+        
+        if(!UiGlobals.isUseTargetConversion())
+        	add(new CmdShowFuncAssociate(), "FuncAssociatie", "funcAssociate", ToolBar.BUTTON_TYPE_TEXT);
         //add(new CmdShowAbout(), "Show About", "about1", ToolBar.BUTTON_TYPE_NO_TEXT);
         
         
@@ -123,6 +125,8 @@ public class NodePaletteFig extends WestToolBar implements ActionListener, Prope
 		searchCombo.setPreferredSize(new Dimension(50, 30));
 		searchCombo.setEnabled(false);
 		searchCombo.addActionListener(this);
+		if(UiGlobals.isUseTargetConversion())
+			searchCombo.setVisible(false);
 		UiGlobals.setPropertySearchCombo(searchCombo);
 		add(searchCombo);
 		
@@ -131,6 +135,8 @@ public class NodePaletteFig extends WestToolBar implements ActionListener, Prope
         searchField.setPreferredSize(new Dimension(300, 30));
         UiGlobals.setPropertySearchField(searchField);
         searchField.addActionListener(this);
+        if(UiGlobals.isUseTargetConversion())
+        	searchField.setVisible(false);
 		add(searchField);
 		
 		JButton searchButton = new JButton("Search");
@@ -138,6 +144,8 @@ public class NodePaletteFig extends WestToolBar implements ActionListener, Prope
 		searchButton.setEnabled(false);
 		UiGlobals.setPropertySearchButton(searchButton);
 		searchButton.addActionListener(this);
+		if(UiGlobals.isUseTargetConversion())
+			searchButton.setVisible(false);
 		add(searchButton);
 		
 		JButton resetButton = new JButton("Reset");
@@ -145,6 +153,8 @@ public class NodePaletteFig extends WestToolBar implements ActionListener, Prope
 		resetButton.setEnabled(false);
 		UiGlobals.setPropertyResetButton(resetButton);
 		resetButton.addActionListener(this);
+		if(UiGlobals.isUseTargetConversion())
+			resetButton.setVisible(false);
 		add(resetButton);
 		
 		

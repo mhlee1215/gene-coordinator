@@ -80,8 +80,26 @@ public class UiGlobals extends Globals{
 	private static CNodeData cNodeData = null;
 	
 	private static HashMap<String, HashMap<String, Integer>> preCalFunctionData = null;
+
+	private static boolean isUseTargetConversion = false;
+	private static String targetColumnName = "";
 	
-	
+	public static String getTargetColumnName() {
+		return targetColumnName;
+	}
+
+	public static void setTargetColumnName(String targetColumnName) {
+		UiGlobals.targetColumnName = targetColumnName;
+	}
+
+	public static boolean isUseTargetConversion() {
+		return isUseTargetConversion;
+	}
+
+	public static void setUseTargetConversion(boolean isUseTargetConversion) {
+		UiGlobals.isUseTargetConversion = isUseTargetConversion;
+	}
+
 	public static HashMap<String, HashMap<String, Integer>> getPreCalFunctionData() {
 		return preCalFunctionData;
 	}
@@ -372,6 +390,9 @@ public class UiGlobals extends Globals{
 	    gridDatas.clear();
 	    gridStes.clear();
 	    gridCategories.clear();
+	    nodeInfoPanel = null;
+	    nodeInfoFrame = null;
+	    annotationHeader.clear();
 	}
 	
 	

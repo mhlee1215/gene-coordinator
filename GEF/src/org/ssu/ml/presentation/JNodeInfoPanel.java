@@ -133,6 +133,15 @@ public class JNodeInfoPanel extends JXTitledPanel {
 		
 		System.out.println("::::::"+figList.size());
 		
+		if(UiGlobals.isUseTargetConversion())
+		{
+			columnData = new Vector<String>();
+			columnData.add(UiGlobals.getTargetColumnName());
+//			if(columnData != null)
+//				for( ; columnData.size() > 1 ; )
+//					columnData.remove(1);
+		}
+		
 		try{
 			if(column == null && (columnData == null || columnData.size() == 0)){
 				//JOptionPane.showMessageDialog(UiGlobals.getNodeInfoFrame(),
@@ -162,8 +171,14 @@ public class JNodeInfoPanel extends JXTitledPanel {
 							
 							if(property != null){
 								for(int key = 0 ; key < columnData.size() ; key++){
-									
 									data[count][key] = property.get(key);
+								}
+							}else{
+								for(int key = 0 ; key < columnData.size() ; key++){
+									if(key == 0)
+										data[count][key] = des.getName();
+									else
+										data[count][key] = "N/A";
 								}
 							}
 						}
