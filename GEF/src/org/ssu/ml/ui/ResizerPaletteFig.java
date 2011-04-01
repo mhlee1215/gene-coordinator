@@ -553,6 +553,11 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		UiGlobals.setGrid_spacing(space);
 		map.put("spacing_include_stamp", (int) (space)*UiGlobals.getGrid_scale());
 		
+		//Offset init.
+		map.put("yOffset", 0);
+		map.put("xOffset", 0);
+		UiGlobals.setStatusbarText("x-offset: "+0+", y-offset: "+0);
+		
 		grid.adjust(map);
 	}
 
@@ -588,8 +593,18 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 				}else if(button.getActionCommand().equals("gridRight")){
 					map.put("xOffset", +distence);
 				}
-				
 				grid.adjust(map);
+				
+				HashMap paramsAfter = grid.getParameters();
+				int yOffset = (Integer)paramsAfter.get("yOffset");
+				int xOffset = (Integer)paramsAfter.get("xOffset");
+				UiGlobals.setStatusbarText("x-offset: "+xOffset+", y-offset: "+yOffset);
+				
+				
+				
+				
+				
+				
 			}
 		}
 		else if(s instanceof JRadioButtonMenuItem){

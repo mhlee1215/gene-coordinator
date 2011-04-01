@@ -60,8 +60,11 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.miginfocom.swing.MigLayout;
+
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -117,10 +120,14 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	double data[];            
 	//int precise = 10;
 	
-	JSlider maxRanger;
-	JSlider minRanger;
-	int rangeMax = 100;
-	int rangeMin = 0;
+	JSlider upperBoundRanger;
+	JXTextField upperBoundText;
+	JSlider lowerBoundRanger;
+	JXTextField lowerBoundText;
+	int upperRangeMax = 1000;
+	int upperRangeMin = 100;
+	int lowerRangeMax = 100;
+	int lowerRangeMin = 1;
 	int maxCurValue;
 	int minCurValue;
 	int minimum_interval = 5;
@@ -200,10 +207,10 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     	
     	toolbar.add(new CmdSaveChart(this, "aa"), "Save chart image", "Save", ToolBar.BUTTON_TYPE_TEXT);
     	toolbar.addSeparator();
-    	JLabel label = new JLabel("Gene-set data format : ");
+    	JLabel label = new JLabel("Geneset data format : ");
     	toolbar.add(label);
     	toolbar.add(typeCombo);
-    	toolbar.add(new CmdSaveGridData(this), "Save gene-set data", "Save", ToolBar.BUTTON_TYPE_TEXT);
+    	toolbar.add(new CmdSaveGridData(this), "Save geneset data", "Save", ToolBar.BUTTON_TYPE_TEXT);
     	mainPanel.add(toolbar, BorderLayout.NORTH);
     }
     
@@ -214,80 +221,92 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     {
     	leftSideToolbar = new WestToolBar();
     	
-		maxCurValue = 50;
-		minCurValue = 10;
+		maxCurValue = upperRangeMin;
+		minCurValue = lowerRangeMin;
 		leftSideToolbar.setLayout(new GridLayout(2, 1));
 		
 		{
 			
-			maxRanger = new JSlider(JSlider.VERTICAL,
-					rangeMin+minimum_interval, rangeMax, maxCurValue);
-			maxRanger.setName("maxRanger");
-			maxRanger.setBackground(Color.white);
-			JLabel minLabel = new JLabel(Integer.toString(rangeMin+minimum_interval));
-			JLabel maxLabel = new JLabel(Integer.toString(rangeMax));
+			upperBoundRanger = new JSlider(JSlider.VERTICAL,
+					upperRangeMin, upperRangeMax, maxCurValue);
+			upperBoundRanger.setName("maxRanger");
+			upperBoundRanger.setBackground(Color.white);
+			JLabel minLabel = new JLabel(Integer.toString(upperRangeMin));
+			JLabel maxLabel = new JLabel(Integer.toString(upperRangeMax));
 			Hashtable<Integer, JLabel> labelTable = 
 	            new Hashtable<Integer, JLabel>();
-			labelTable.put(new Integer( rangeMin+minimum_interval ),
+			labelTable.put(new Integer( upperRangeMin ),
 					minLabel );
-			labelTable.put(new Integer( rangeMax ),
+			labelTable.put(new Integer( upperRangeMax ),
 					maxLabel );
-			maxRanger.setLabelTable(labelTable);
-			maxRanger.setPaintLabels(false);
+			upperBoundRanger.setLabelTable(labelTable);
+			upperBoundRanger.setPaintLabels(false);
 			//gridResizer.setFont(font);
-	        maxRanger.setPaintLabels(true);
-	        maxRanger.setMajorTickSpacing(10);
-	        maxRanger.setMinorTickSpacing(5);
-	        maxRanger.addChangeListener(this);
-	        maxRanger.setPaintTicks(true);
-	        maxRanger.setMinorTickSpacing(5);
-	        maxRanger.setPreferredSize(new Dimension(60, 130));
+	        upperBoundRanger.setPaintLabels(true);
+	        upperBoundRanger.setMajorTickSpacing(100);
+	        upperBoundRanger.setMinorTickSpacing(50);
+	        upperBoundRanger.addChangeListener(this);
+	        upperBoundRanger.setPaintTicks(true);
+	        upperBoundRanger.setMinorTickSpacing(50);
+	        upperBoundRanger.setPreferredSize(new Dimension(60, 130));
 	        JPanel maxRangerPanel = new JPanel();
-	        maxRangerPanel.setLayout(new GridBagLayout());
+	        maxRangerPanel.setLayout(new MigLayout("insets 1 1 1 1"));
 			GridBagConstraints cResizer = new GridBagConstraints();
 			cResizer.insets = new Insets(0, -8, 0, 0);
 			//BorderFactory.createt
 			Font borderFont = new Font("Lucida Grande", Font.PLAIN, 9);
 			maxRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Upper boundary", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, borderFont));
+			maxRangerPanel.add(upperBoundRanger, "wrap");
 			
-			maxRangerPanel.add(maxRanger, cResizer);
+			upperBoundText = new JXTextField();
+			upperBoundText.setName("upperBoundText");
+			upperBoundText.addActionListener(this);
+			upperBoundText.setText(Integer.toString(maxCurValue));
+			upperBoundText.setPreferredSize(new Dimension(60, 3));
+			maxRangerPanel.add(upperBoundText);
+			
 	        leftSideToolbar.add(maxRangerPanel);
 		}
         
 		{
-	        minRanger = new JSlider(JSlider.VERTICAL,
-					rangeMin, rangeMax-minimum_interval, minCurValue);
-			minRanger.setName("minRanger");
-			minRanger.setBackground(Color.white);
+	        lowerBoundRanger = new JSlider(JSlider.VERTICAL,
+					lowerRangeMin, lowerRangeMax, minCurValue);
+			lowerBoundRanger.setName("minRanger");
+			lowerBoundRanger.setBackground(Color.white);
 			
-			JLabel minLabel = new JLabel(Integer.toString(rangeMin));
-			JLabel maxLabel = new JLabel(Integer.toString(rangeMax-minimum_interval));
+			JLabel minLabel = new JLabel(Integer.toString(lowerRangeMin));
+			JLabel maxLabel = new JLabel(Integer.toString(lowerRangeMax));
 			Hashtable<Integer, JLabel> labelTable = 
 	            new Hashtable<Integer, JLabel>();
-			labelTable.put(new Integer( rangeMin ),
+			labelTable.put(new Integer( lowerRangeMin ),
 					minLabel );
-			labelTable.put(new Integer( rangeMax-minimum_interval ),
+			labelTable.put(new Integer( lowerRangeMax ),
 					maxLabel );
-			minRanger.setLabelTable(labelTable);
-			minRanger.setPaintLabels(false);
+			lowerBoundRanger.setLabelTable(labelTable);
+			lowerBoundRanger.setPaintLabels(false);
 			//gridResizer.setFont(font);
-	        minRanger.setPaintLabels(true);
-	        minRanger.setMajorTickSpacing(10);
-	        minRanger.setMinorTickSpacing(5);
-	        minRanger.addChangeListener(this);
+	        lowerBoundRanger.setPaintLabels(true);
+	        lowerBoundRanger.setMajorTickSpacing(10);
+	        lowerBoundRanger.setMinorTickSpacing(5);
+	        lowerBoundRanger.addChangeListener(this);
 	        
-	        minRanger.setPaintTicks(true);
-	        minRanger.setMinorTickSpacing(5);
-	        minRanger.setPreferredSize(new Dimension(50, 130));
+	        lowerBoundRanger.setPaintTicks(true);
+	        lowerBoundRanger.setMinorTickSpacing(5);
+	        lowerBoundRanger.setPreferredSize(new Dimension(50, 130));
 	        JPanel minRangerPanel = new JPanel();
-	        minRangerPanel.setLayout(new GridBagLayout());
-			GridBagConstraints cResizer = new GridBagConstraints();
-			cResizer.insets = new Insets(0, -8, 0, 0);
+	        minRangerPanel.setLayout(new MigLayout("insets 1 1 1 1"));
 			
 			Font borderFont = new Font("Lucida Grande", Font.PLAIN, 9);
 			minRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Lower \nboundary", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, borderFont));
 			
-			minRangerPanel.add(minRanger, cResizer);
+			minRangerPanel.add(lowerBoundRanger, "wrap");
+			
+			lowerBoundText = new JXTextField();
+			lowerBoundText.setName("lowerBoundText");
+			lowerBoundText.setText(Integer.toString(minCurValue));
+			lowerBoundText.addActionListener(this);
+			lowerBoundText.setPreferredSize(new Dimension(60, 3));
+			minRangerPanel.add(lowerBoundText);
 			
 			leftSideToolbar.add(minRangerPanel);
 			
@@ -690,20 +709,24 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 					if (maxCurValue != slider.getValue()) {
 						maxCurValue = slider.getValue();
 
-						if (maxCurValue - minimum_interval < minCurValue) {
-							minCurValue = maxCurValue - minimum_interval;
-							minRanger.setValue(minCurValue);
-						}
+						upperBoundText.setText(Integer.toString(maxCurValue));
+						
+//						if (maxCurValue - minimum_interval < minCurValue) {
+//							minCurValue = maxCurValue - minimum_interval;
+//							minRanger.setValue(minCurValue);
+//						}
 					}
 				} else if (sliderName.equals("minRanger")) {
 
 					if (minCurValue != slider.getValue()) {
 						minCurValue = slider.getValue();
 
-						if (maxCurValue < minCurValue + minimum_interval) {
-							maxCurValue = minCurValue + minimum_interval;
-							maxRanger.setValue(maxCurValue);
-						}
+						lowerBoundText.setText(Integer.toString(minCurValue));
+						
+//						if (maxCurValue < minCurValue + minimum_interval) {
+//							maxCurValue = minCurValue + minimum_interval;
+//							maxRanger.setValue(maxCurValue);
+//						}
 					}
 				}
 				clean();
@@ -714,7 +737,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 				mainPanel.add(chartPanel);
 				mainPanel.revalidate();
 
-				this.showStatus("Size of good gene-sets : [" + minCurValue + " to "
+				this.showStatus("Size of good genesets : [" + minCurValue + " to "
 						+ maxCurValue + "]");
 
 			}
@@ -824,6 +847,32 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			System.out.println(combo.getSelectedItem());
 			if(combo.getName().equals("typeCombo")){
 			    this.geneDataType = (String)combo.getSelectedItem();
+			}
+		}
+		else if(s instanceof JXTextField){
+			JXTextField text = (JXTextField)s;
+			if(text.getName().equals("upperBoundText")){
+				System.out.println("upper text value: "+text.getText());
+				maxCurValue = Integer.parseInt(text.getText());
+				if(maxCurValue > upperRangeMax){
+					maxCurValue = upperRangeMax;
+					
+				}else if(maxCurValue < upperRangeMin){
+					maxCurValue = upperRangeMin;
+				}
+				
+				text.setText(Integer.toString(maxCurValue));
+				upperBoundRanger.setValue(maxCurValue);
+			}else if(text.getName().equals("lowerBoundText")){
+				System.out.println("lower text value: "+text.getText());
+				minCurValue = Integer.parseInt(text.getText());
+				if(minCurValue > lowerRangeMax){
+					minCurValue = lowerRangeMax;
+				}else if(minCurValue < lowerRangeMin){
+					minCurValue = lowerRangeMin;
+				}
+				text.setText(Integer.toString(minCurValue));
+				lowerBoundRanger.setValue(minCurValue);
 			}
 			
 		}
