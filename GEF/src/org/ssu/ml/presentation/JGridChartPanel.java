@@ -54,6 +54,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -64,7 +65,6 @@ import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -121,9 +121,9 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 	//int precise = 10;
 	
 	JSlider upperBoundRanger;
-	JXTextField upperBoundText;
+	JTextField upperBoundText;
 	JSlider lowerBoundRanger;
-	JXTextField lowerBoundText;
+	JTextField lowerBoundText;
 	int upperRangeMax = 1000;
 	int upperRangeMin = 100;
 	int lowerRangeMax = 100;
@@ -258,7 +258,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			maxRangerPanel.setBorder(BorderFactory.createTitledBorder(null,"Upper boundary", TitledBorder.CENTER, TitledBorder.ABOVE_TOP, borderFont));
 			maxRangerPanel.add(upperBoundRanger, "wrap");
 			
-			upperBoundText = new JXTextField();
+			upperBoundText = new JTextField();
 			upperBoundText.setName("upperBoundText");
 			upperBoundText.addActionListener(this);
 			upperBoundText.setText(Integer.toString(maxCurValue));
@@ -301,7 +301,7 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			
 			minRangerPanel.add(lowerBoundRanger, "wrap");
 			
-			lowerBoundText = new JXTextField();
+			lowerBoundText = new JTextField();
 			lowerBoundText.setName("lowerBoundText");
 			lowerBoundText.setText(Integer.toString(minCurValue));
 			lowerBoundText.addActionListener(this);
@@ -849,8 +849,8 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
 			    this.geneDataType = (String)combo.getSelectedItem();
 			}
 		}
-		else if(s instanceof JXTextField){
-			JXTextField text = (JXTextField)s;
+		else if(s instanceof JTextField){
+			JTextField text = (JTextField)s;
 			if(text.getName().equals("upperBoundText")){
 				System.out.println("upper text value: "+text.getText());
 				maxCurValue = Integer.parseInt(text.getText());
