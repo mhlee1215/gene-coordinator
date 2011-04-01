@@ -99,7 +99,7 @@ public class CmdGridChart extends Cmd implements ComponentListener {
         if(result_1.length > 0){
         	//histoFrame = new JGridTabbedFrame("title");
         	if(UiGlobals.getDistFrame()!=null) UiGlobals.getDistFrame().setVisible(false);
-        	histoFrame = new JFrame("Gene-set size distribution"); 
+        	histoFrame = new JFrame("Geneset size distribution"); 
         	UiGlobals.setDistFrame(histoFrame);
         	histoFrame.addComponentListener(this);
         	

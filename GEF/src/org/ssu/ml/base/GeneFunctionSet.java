@@ -98,10 +98,9 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener,
 	int interval_space = 0;
     int xOffset = 0;
     int yOffset = 0;
-    
+
+    JFrame main = this;
 	JXPanel mainPanel = null;
-	
-	
 	JXPanel resultPanel = null;
 	JScrollPane scrollPane = null;
 	JTextField filterText = null;
@@ -1133,14 +1132,14 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener,
             if (event.getValueIsAdjusting()) {
                 return;
             }
+            if(!main.isVisible())
+            	main.setVisible(true);
             outputSelection();
         }
     }
     
     private void outputSelection() {
     	int[] selectionIndex = nodeTable.getSelectedRows();
-    	
-    	
     	
     	for(int i = 0 ; i <= maxGridY ; i++){
     		for(int j = 0 ; j <= maxGridX ; j++)
@@ -1269,6 +1268,9 @@ public class GeneFunctionSet extends JFrame implements Runnable, ActionListener,
 		//System.out.println(e.getSource());
 		if(e.getSource() instanceof JPanel){
 			JPanel src = (JPanel)e.getSource();
+			
+			if(!tableFrame.isVisible())
+				tableFrame.setVisible(true);
 			if(nodeTable != null)
 				nodeTable.changeSelection(tableIndexMap.get(src.getName()), 0, false, false);
 		}

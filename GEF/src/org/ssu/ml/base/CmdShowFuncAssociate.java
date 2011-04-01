@@ -42,11 +42,6 @@ public class CmdShowFuncAssociate extends Cmd {
 		thread.start();
     }
 
-    /**
-     * Undo the zoom. Does not yet work for magnitude of 0 (a reset), and is
-     * subject to skew due to precision errors since for floats we cannot assume
-     * <code>(x * f / f) == x</code>
-     */
     public void undoIt() {
        
     }

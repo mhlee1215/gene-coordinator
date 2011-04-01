@@ -108,7 +108,7 @@ public class NodePaletteFig extends WestToolBar implements ActionListener, Prope
         add(new CmdZoom(2), "", "zoomIn", ToolBar.BUTTON_TYPE_TEXT);
         add(new CmdZoom(0.5), "", "zoomOut", ToolBar.BUTTON_TYPE_TEXT);
         //this.addSeparator();
-        add(new CmdGridChart(), "Gene-set size distribution", "siGraph", ToolBar.BUTTON_TYPE_TEXT);
+        add(new CmdGridChart(), "Geneset size distribution", "siGraph", ToolBar.BUTTON_TYPE_TEXT);
         
         if(!UiGlobals.isUseTargetConversion())
         	add(new CmdShowFuncAssociate(), "FuncAssociatie", "funcAssociate", ToolBar.BUTTON_TYPE_TEXT);
