@@ -221,8 +221,8 @@ public class JGridChartPanel extends JGridPanel  implements ActionListener, ISta
     {
     	leftSideToolbar = new WestToolBar();
     	
-		maxCurValue = upperRangeMin;
-		minCurValue = lowerRangeMin;
+		maxCurValue = 500;
+		minCurValue = 25;
 		leftSideToolbar.setLayout(new GridLayout(2, 1));
 		
 		{

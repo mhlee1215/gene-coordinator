@@ -286,7 +286,7 @@ public class LoadingProgressBarNode extends JPanel
       
        
         
-        if(UiGlobals.getcNodeData() == null){
+        if(UiGlobals.getcNodeData() == null || (!UiGlobals.getFileName().equals(UiGlobals.getLoadedFileName()))){
         	int readCount = -1;
         	readCount = readCoordData();
         	UiGlobals.setNodeCount(readCount);
@@ -419,6 +419,7 @@ public class LoadingProgressBarNode extends JPanel
 		try {
 			BufferedReader br = null;
 			if(UiGlobals.getFileName()!=null){
+				UiGlobals.setLoadedFileName(filename);
 				br = Utils.getInputReader(filename);	
 			}
 			

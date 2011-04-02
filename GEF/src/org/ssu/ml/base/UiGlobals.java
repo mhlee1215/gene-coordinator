@@ -42,6 +42,7 @@ public class UiGlobals extends Globals{
 	private static GeneFunctionSet functionUniverse = null;
 	
 	private static String fileName = "";
+	private static String loadedFileName = "";
 	private static String annotationFileName = "";
 	private static int default_grid_spacing = 20;
 	private static int drawingSizeX;
@@ -84,6 +85,14 @@ public class UiGlobals extends Globals{
 	private static boolean isUseTargetConversion = false;
 	private static String targetColumnName = "";
 	
+	public static String getLoadedFileName() {
+		return loadedFileName;
+	}
+
+	public static void setLoadedFileName(String loadedFileName) {
+		UiGlobals.loadedFileName = loadedFileName;
+	}
+
 	public static String getTargetColumnName() {
 		return targetColumnName;
 	}

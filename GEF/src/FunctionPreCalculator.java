@@ -263,8 +263,9 @@ public class FunctionPreCalculator {
 //		nameVector.add("C:/Documents and Settings/hp/바탕 화면/annot/DrosGenome1.na30.annot.csv.trimmed");
 //		nameVector.add("C:/Documents and Settings/hp/바탕 화면/annot/Celegans.na30.annot.csv.trimmed");
 //		nameVector.add("C:/Documents and Settings/hp/바탕 화면/annot/ATH1-121501.na30.annot.csv.trimmed");
-		nameVector.add("C:/Documents and Settings/hp/바탕 화면/annot/HG-U133_Plus_2.na30.annot.csv.trimmed");
-		
+		//nameVector.add("C:/Documents and Settings/hp/바탕 화면/annot/HG-U133_Plus_2.na30.annot.csv.trimmed");
+		nameVector.add("C:/Documents and Settings/Administrator/My Documents/Downloads/HG_U95Av2.na31.annot.csv/HG_U95Av2.na31.annot.csv.trimmed");
+		nameVector.add("C:/Documents and Settings/Administrator/My Documents/Downloads/HG_U95Av2.na31.annot.csv/MG_U74Av2.na31.annot.csv.trimmed");
 		
 		for(String filename : nameVector){
 		

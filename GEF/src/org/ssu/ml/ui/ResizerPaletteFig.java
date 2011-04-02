@@ -392,27 +392,7 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
 		int taskWidth = 125;
 		
 		
-		JXTaskPane scaleTask = new JXTaskPane();
-		scaleTask.setLayout(new GridBagLayout());
-		GridBagConstraints taskConstraints = new GridBagConstraints();
-		taskConstraints.fill = GridBagConstraints.HORIZONTAL;
-		taskConstraints.anchor = GridBagConstraints.PAGE_START;
-		taskConstraints.weightx = 1;
-		taskConstraints.insets = new Insets(-6,-8,-6,-8);  //top padding
-		taskConstraints.gridx = 0;
-		taskConstraints.gridy = 0;
-        
-		Icon scaleTaskIcon = ResourceLoader.lookupIconResource("scaleTask1", "scaleTask1");
-		scaleTask.setTitle("Scale");
-		scaleTask.setFocusable(false);
-		scaleTask.setCollapsed(true);
-		scaleTask.setIcon(scaleTaskIcon);
 		
-		scaleTask.add(scaleCombo, taskConstraints);
-		
-		
-		
-		mainPanel.add(scaleTask, "wrap, width "+taskWidth+"::"+taskWidth+"");
 		
 		
         
@@ -482,6 +462,26 @@ public class ResizerPaletteFig extends WestToolBar implements ChangeListener, Ac
         searchOptionTask.setIcon(searchOptionTaskIcon);
         searchOptionTask.add(searchOptionPanel, "wrap");
 		mainPanel.add(searchOptionTask, "wrap, width "+taskWidth+"::"+taskWidth+"");
+		
+		JXTaskPane scaleTask = new JXTaskPane();
+		scaleTask.setLayout(new GridBagLayout());
+		GridBagConstraints taskConstraints = new GridBagConstraints();
+		taskConstraints.fill = GridBagConstraints.HORIZONTAL;
+		taskConstraints.anchor = GridBagConstraints.PAGE_START;
+		taskConstraints.weightx = 1;
+		taskConstraints.insets = new Insets(-6,-8,-6,-8);  //top padding
+		taskConstraints.gridx = 0;
+		taskConstraints.gridy = 0;
+        
+		Icon scaleTaskIcon = ResourceLoader.lookupIconResource("scaleTask1", "scaleTask1");
+		scaleTask.setTitle("Scale");
+		scaleTask.setFocusable(false);
+		scaleTask.setCollapsed(true);
+		scaleTask.setIcon(scaleTaskIcon);
+		
+		scaleTask.add(scaleCombo, taskConstraints);
+		
+		mainPanel.add(scaleTask, "wrap, width "+taskWidth+"::"+taskWidth+"");
         
 		UiGlobals.set_scaleSlider(scaleResizer);
 	}
